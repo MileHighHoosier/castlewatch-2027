@@ -1,1 +1,3 @@
 # No third-party dependencies required - all imports use Python standard library
+flask
+gunicorn
