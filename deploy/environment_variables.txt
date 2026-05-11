@@ -1,0 +1,5 @@
+DATABASE_URL=postgresql://username:password@host:5432/castlewatch
+OPENAI_API_KEY=replace_me
+SECRET_KEY=replace_me
+EMAIL_ADDRESS=replace_me
+EMAIL_PASSWORD=replace_me

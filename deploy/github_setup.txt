@@ -1,0 +1,8 @@
+GITHUB SETUP
+
+1. Create a private repository called:
+   castlewatch-2027
+
+2. Upload all previous file packs.
+
+3. Commit changes.

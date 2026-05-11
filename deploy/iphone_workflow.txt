@@ -1,0 +1,6 @@
+IPHONE WORKFLOW
+
+1. Use Safari
+2. Open GitHub, Railway, and Vercel
+3. Upload project files
+4. Save CastleWatch to Home Screen

@@ -1,0 +1,6 @@
+VERCEL FRONTEND SETUP
+
+1. Create Vercel account
+2. Import GitHub repository
+3. Select website folder
+4. Deploy frontend

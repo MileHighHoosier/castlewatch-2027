@@ -1,0 +1,8 @@
+RAILWAY BACKEND SETUP
+
+1. Create Railway account
+2. Create new project
+3. Add PostgreSQL database
+4. Connect GitHub repository
+5. Add environment variables
+6. Deploy backend services

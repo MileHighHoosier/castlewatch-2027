@@ -1,0 +1,8 @@
+POST-LAUNCH CHECKLIST
+
+[ ] Login page loads
+[ ] Dashboard loads
+[ ] Database connected
+[ ] Bots running
+[ ] AI engine active
+[ ] Weather tracking active
