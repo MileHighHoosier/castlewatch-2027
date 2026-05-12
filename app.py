@@ -1,4 +1,5 @@
 import os
+import requests
 from datetime import datetime
 
 from flask import Flask
@@ -10,13 +11,21 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)
 
+WAIT_API = "https://queue-times.com/parks/6/queue_times.json"
+
 @app.route("/")
 def home():
 
     try:
+
+        response = requests.get(WAIT_API)
+
+        data = response.json()
+
+        lands = data.get("lands", [])
+
         connection = engine.connect()
 
-        # Create table if missing
         connection.execute(text("""
             CREATE TABLE IF NOT EXISTS wait_times (
                 id SERIAL PRIMARY KEY,
@@ -26,35 +35,53 @@ def home():
             )
         """))
 
-        # Insert test data
-        connection.execute(text("""
-            INSERT INTO wait_times
-            (ride_name, wait_time, created_at)
+        inserted = 0
 
-            VALUES
-            (:ride_name, :wait_time, :created_at)
-        """), {
-            "ride_name": "Space Mountain",
-            "wait_time": 55,
-            "created_at": datetime.utcnow()
-        })
+        for land in lands:
+
+            rides = land.get("rides", [])
+
+            for ride in rides:
+
+                name = ride.get("name")
+
+                wait_time = ride.get("wait_time")
+
+                if wait_time is None:
+                    continue
+
+                connection.execute(text("""
+                    INSERT INTO wait_times
+                    (ride_name, wait_time, created_at)
+
+                    VALUES
+                    (:ride_name, :wait_time, :created_at)
+                """), {
+                    "ride_name": name,
+                    "wait_time": wait_time,
+                    "created_at": datetime.utcnow()
+                })
+
+                inserted += 1
 
         connection.commit()
 
-        # Count rows
         result = connection.execute(text("""
             SELECT COUNT(*) FROM wait_times
         """))
 
-        count = result.scalar()
+        total = result.scalar()
 
         connection.close()
 
-        return f"CastleWatch Database Entries: {count}"
+        return (
+            f"Inserted {inserted} rides. "
+            f"Total historical entries: {total}"
+        )
 
     except Exception as e:
 
-        return f"Database Error: {str(e)}"
+        return f"System Error: {str(e)}"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
