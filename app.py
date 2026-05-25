@@ -4,6 +4,7 @@ from datetime import datetime
 
 from flask import Flask
 from sqlalchemy import create_engine, text
+from flask_cors import CORS
 
 app = Flask(__name__)
 
