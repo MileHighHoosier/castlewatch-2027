@@ -87,3 +87,28 @@ def home():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+
+@app.route("/health")
+def health():
+    return {"status": "ok"}
+
+@app.route("/api/rides")
+def api_rides():
+    with engine.connect() as connection:
+        result = connection.execute(text("""
+            SELECT ride_name, wait_time, created_at
+            FROM wait_times
+            ORDER BY created_at DESC
+            LIMIT 50
+        """))
+
+        rides = [
+            {
+                "name": row.ride_name,
+                "wait_time": row.wait_time,
+                "created_at": str(row.created_at)
+            }
+            for row in result
+        ]
+
+    return rides
