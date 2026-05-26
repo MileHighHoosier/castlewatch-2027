@@ -55,12 +55,13 @@ def home():
 
                 connection.execute(text("""
                     INSERT INTO wait_times
-                    (ride_name, wait_time, created_at)
+                    (ride_name, land, wait_time, created_at)
 
                     VALUES
-                    (:ride_name, :wait_time, :created_at)
+                    (:ride_name, :land, :wait_time, :created_at)
                 """), {
                     "ride_name": name,
+                    "land": land.get("name"),
                     "wait_time": wait_time,
                     "created_at": datetime.utcnow()
                 })
