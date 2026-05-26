@@ -38,6 +38,11 @@ def home():
             )
         """))
 
+        connection.execute(text("""
+            ALTER TABLE wait_times
+            ADD COLUMN IF NOT EXISTS land TEXT
+        """))
+
         inserted = 0
 
         for land in lands:
