@@ -102,6 +102,7 @@ def api_rides():
         result = connection.execute(text("""
             SELECT DISTINCT ON (ride_name)
                 ride_name,
+                land,
                 wait_time,
                 created_at
             FROM wait_times
@@ -111,6 +112,7 @@ def api_rides():
         rides = [
             {
                 "name": row.ride_name,
+                "land": row.land,
                 "wait_time": row.wait_time,
                 "created_at": str(row.created_at)
             }
