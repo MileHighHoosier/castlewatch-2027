@@ -94,12 +94,16 @@ def health():
 
 @app.route("/api/rides")
 def api_rides():
+
     with engine.connect() as connection:
+
         result = connection.execute(text("""
-            SELECT ride_name, wait_time, created_at
+            SELECT DISTINCT ON (ride_name)
+                ride_name,
+                wait_time,
+                created_at
             FROM wait_times
-            ORDER BY created_at DESC
-            LIMIT 50
+            ORDER BY ride_name, created_at DESC
         """))
 
         rides = [
