@@ -32,6 +32,7 @@ def home():
             CREATE TABLE IF NOT EXISTS wait_times (
                 id SERIAL PRIMARY KEY,
                 ride_name TEXT,
+                land TEXT,
                 wait_time INTEGER,
                 created_at TIMESTAMP
             )
