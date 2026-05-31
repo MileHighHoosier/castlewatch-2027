@@ -240,6 +240,7 @@ def api_rides():
 
         count = connection.execute(text("""
             SELECT COUNT(*) FROM wait_times
+            WHERE park IS NOT NULL
         """)).scalar()
 
         if count == 0:
@@ -255,6 +256,8 @@ def api_rides():
                 created_at
             FROM wait_times
             WHERE ride_name IS NOT NULL
+              AND park IS NOT NULL
+              AND park <> ''
             ORDER BY park, ride_name, created_at DESC
         """))
 
