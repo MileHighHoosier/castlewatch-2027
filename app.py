@@ -34,6 +34,48 @@ CHARACTER_MEET_KEYWORDS = [
     "town square theater",
 ]
 
+# Queue Times includes many shows, trails, exhibits, play areas, and walkthroughs.
+# CastleWatch is intended to focus on ride-demand attractions only.
+NON_RIDE_EXPERIENCE_KEYWORDS = [
+    "affection section",
+    "animal care",
+    "beauty and the beast live on stage",
+    "bird",
+    "boneyard",
+    "conservation station",
+    "discovery island trails",
+    "entertainment",
+    "exploration trail",
+    "feathered friends",
+    "festival",
+    "finding nemo",
+    "gorilla falls",
+    "hall of presidents",
+    "hoop-dee-doo",
+    "indiana jones epic stunt spectacular",
+    "journey of water",
+    "lightning mcqueen",
+    "live on stage",
+    "mickey shorts theater",
+    "muppet*vision",
+    "muppet vision",
+    "nighttime spectacular",
+    "play disney parks",
+    "rafiki",
+    "sing-along",
+    "stage",
+    "swiss family treehouse",
+    "the american adventure",
+    "the boneyard",
+    "tiki room",
+    "tom sawyer island",
+    "trail",
+    "tree of life awakenings",
+    "vacation fun",
+    "walt disney presents",
+    "wildlife express train",
+]
+
 
 def is_character_meet(name):
     if not name:
@@ -41,6 +83,18 @@ def is_character_meet(name):
 
     normalized = name.lower()
     return any(keyword in normalized for keyword in CHARACTER_MEET_KEYWORDS)
+
+
+def is_non_ride_experience(name):
+    if not name:
+        return True
+
+    normalized = name.lower()
+    return any(keyword in normalized for keyword in NON_RIDE_EXPERIENCE_KEYWORDS)
+
+
+def should_include_attraction(name):
+    return not is_character_meet(name) and not is_non_ride_experience(name)
 
 
 def setup_database(connection):
@@ -75,6 +129,7 @@ def setup_database(connection):
 def collect_wait_times():
     inserted = 0
     skipped_character_meets = 0
+    skipped_non_ride_experiences = 0
     park_results = []
 
     with engine.connect() as connection:
@@ -87,7 +142,8 @@ def collect_wait_times():
             data = response.json()
 
             park_inserted = 0
-            park_skipped = 0
+            park_skipped_character_meets = 0
+            park_skipped_non_rides = 0
             lands = data.get("lands", [])
 
             for land in lands:
@@ -98,7 +154,12 @@ def collect_wait_times():
 
                     if is_character_meet(name):
                         skipped_character_meets += 1
-                        park_skipped += 1
+                        park_skipped_character_meets += 1
+                        continue
+
+                    if is_non_ride_experience(name):
+                        skipped_non_ride_experiences += 1
+                        park_skipped_non_rides += 1
                         continue
 
                     wait_time = ride.get("wait_time")
@@ -126,7 +187,8 @@ def collect_wait_times():
             park_results.append({
                 "park": park["name"],
                 "inserted": park_inserted,
-                "skipped_character_meets": park_skipped,
+                "skipped_character_meets": park_skipped_character_meets,
+                "skipped_non_ride_experiences": park_skipped_non_rides,
             })
 
         connection.commit()
@@ -138,6 +200,7 @@ def collect_wait_times():
     return {
         "inserted": inserted,
         "skipped_character_meets": skipped_character_meets,
+        "skipped_non_ride_experiences": skipped_non_ride_experiences,
         "total_historical_entries": total,
         "parks": park_results,
         "updated_at": datetime.utcnow().isoformat() + "Z",
@@ -150,7 +213,7 @@ def home():
         "name": "CastleWatch API",
         "status": "online",
         "parks": [park["name"] for park in PARKS],
-        "note": "Use /api/refresh-rides to collect current ride waits and /api/rides to read the latest data.",
+        "note": "Use /api/refresh-rides to collect current ride waits and /api/rides to read the latest filtered ride-demand data.",
     })
 
 
@@ -205,6 +268,7 @@ def api_rides():
                 "created_at": row.created_at.isoformat() if row.created_at else None,
             }
             for row in result
+            if should_include_attraction(row.ride_name)
         ]
 
     return jsonify(rides)
