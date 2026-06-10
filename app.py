@@ -24,6 +24,28 @@ PARKS = [
     {"id": 8, "name": "Animal Kingdom"},
 ]
 
+# Approximate Walt Disney World Resort coordinates for official weather alerts.
+WDW_LATITUDE = 28.3772
+WDW_LONGITUDE = -81.5707
+WEATHER_USER_AGENT = os.getenv(
+    "WEATHER_USER_AGENT",
+    "CastleWatch/1.0 personal Disney planning app; contact: castlewatch@example.com",
+)
+
+HEAT_ALERT_KEYWORDS = [
+    "heat advisory",
+    "excessive heat warning",
+    "excessive heat watch",
+]
+
+STORM_ALERT_KEYWORDS = [
+    "severe thunderstorm warning",
+    "severe thunderstorm watch",
+    "tornado warning",
+    "tornado watch",
+    "flash flood warning",
+]
+
 CHARACTER_MEET_KEYWORDS = [
     "meet",
     "greet",
@@ -113,6 +135,83 @@ def normalize_park(value):
 
     normalized = value.strip().lower()
     return PARK_ALIASES.get(normalized, value.strip())
+
+
+def alert_text(feature):
+    properties = feature.get("properties") or {}
+    parts = [
+        properties.get("event"),
+        properties.get("headline"),
+        properties.get("description"),
+        properties.get("instruction"),
+    ]
+    return " ".join(str(part) for part in parts if part).lower()
+
+
+def classify_weather_alert(feature):
+    text_value = alert_text(feature)
+    if any(keyword in text_value for keyword in HEAT_ALERT_KEYWORDS):
+        return "hot"
+    if any(keyword in text_value for keyword in STORM_ALERT_KEYWORDS):
+        return "storm"
+    return None
+
+
+def get_weather_advisory():
+    url = "https://api.weather.gov/alerts/active"
+    response = requests.get(
+        url,
+        params={"point": f"{WDW_LATITUDE},{WDW_LONGITUDE}"},
+        headers={
+            "Accept": "application/geo+json",
+            "User-Agent": WEATHER_USER_AGENT,
+        },
+        timeout=12,
+    )
+    response.raise_for_status()
+    data = response.json()
+    features = data.get("features") or []
+
+    classified_alerts = []
+    for feature in features:
+        mode = classify_weather_alert(feature)
+        if not mode:
+            continue
+        properties = feature.get("properties") or {}
+        classified_alerts.append({
+            "mode": mode,
+            "event": properties.get("event"),
+            "headline": properties.get("headline") or properties.get("event"),
+            "severity": properties.get("severity"),
+            "effective": properties.get("effective"),
+            "expires": properties.get("expires"),
+            "source": "weather.gov",
+        })
+
+    if not classified_alerts:
+        return {
+            "advisoryActive": False,
+            "mode": "normal",
+            "advisoryType": None,
+            "headline": None,
+            "expiresAt": None,
+            "source": "weather.gov",
+            "checkedAt": datetime.utcnow().isoformat() + "Z",
+        }
+
+    # Heat is the first auto target for CastleWatch. If heat and storm both exist, heat wins for mode,
+    # while the full alert list still includes the storm information.
+    primary = next((alert for alert in classified_alerts if alert["mode"] == "hot"), classified_alerts[0])
+    return {
+        "advisoryActive": True,
+        "mode": primary["mode"],
+        "advisoryType": primary.get("event"),
+        "headline": primary.get("headline"),
+        "expiresAt": primary.get("expires"),
+        "source": primary.get("source"),
+        "alerts": classified_alerts,
+        "checkedAt": datetime.utcnow().isoformat() + "Z",
+    }
 
 
 def setup_database(connection):
@@ -361,13 +460,28 @@ def home():
         "name": "CastleWatch API",
         "status": "online",
         "parks": [park["name"] for park in PARKS],
-        "note": "Use /api/refresh-rides to collect current ride waits, /api/rides to read latest data, and /api/planning-insights for historical planning analysis.",
+        "note": "Use /api/refresh-rides to collect current ride waits, /api/rides to read latest data, /api/planning-insights for historical planning analysis, and /api/weather-advisory for official weather alert mode.",
     })
 
 
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})
+
+
+@app.route("/api/weather-advisory")
+def api_weather_advisory():
+    try:
+        return jsonify(get_weather_advisory())
+    except Exception as error:
+        return jsonify({
+            "advisoryActive": False,
+            "mode": "normal",
+            "source": "weather.gov",
+            "status": "error",
+            "message": str(error),
+            "checkedAt": datetime.utcnow().isoformat() + "Z",
+        }), 502
 
 
 @app.route("/api/refresh-rides")
