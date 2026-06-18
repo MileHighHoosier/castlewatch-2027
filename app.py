@@ -6,6 +6,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from sqlalchemy import create_engine, text
 
+from tomorrow_forecast import get_tomorrow_forecast
+
 app = Flask(__name__)
 CORS(app)
 
@@ -199,8 +201,6 @@ def get_weather_advisory():
             "checkedAt": datetime.utcnow().isoformat() + "Z",
         }
 
-    # Heat is the first auto target for CastleWatch. If heat and storm both exist, heat wins for mode,
-    # while the full alert list still includes the storm information.
     primary = next((alert for alert in classified_alerts if alert["mode"] == "hot"), classified_alerts[0])
     return {
         "advisoryActive": True,
@@ -280,7 +280,6 @@ def collect_wait_times():
                         continue
 
                     wait_time = ride.get("wait_time")
-
                     if wait_time is None:
                         continue
 
@@ -382,7 +381,13 @@ def get_historical_planning_insights(park):
             if not should_include_attraction(row.ride_name):
                 continue
 
-            typical_wait = row.same_hour_average if row.same_hour_samples and row.same_hour_samples >= 3 and row.same_hour_average is not None else row.average_wait
+            typical_wait = (
+                row.same_hour_average
+                if row.same_hour_samples
+                and row.same_hour_samples >= 3
+                and row.same_hour_average is not None
+                else row.average_wait
+            )
             current_wait = row.current_wait if row.current_wait is not None else 0
             opportunity_score = max((typical_wait or 0) - current_wait, 0)
             pressure_score = max(current_wait - (typical_wait or 0), 0)
@@ -404,9 +409,21 @@ def get_historical_planning_insights(park):
             })
 
     open_rides = [ride for ride in rides if ride.get("is_open") is not False]
-    best_now = sorted(open_rides, key=lambda ride: (-ride["opportunity_score"], ride["current_wait"], -(ride["samples"] or 0)))[:5]
-    unusually_high = sorted(open_rides, key=lambda ride: (-ride["pressure_score"], -ride["current_wait"]))[:5]
-    reliable_low_wait = sorted(open_rides, key=lambda ride: (ride["typical_wait"] if ride["typical_wait"] is not None else 999, ride["current_wait"]))[:5]
+    best_now = sorted(
+        open_rides,
+        key=lambda ride: (-ride["opportunity_score"], ride["current_wait"], -(ride["samples"] or 0)),
+    )[:5]
+    unusually_high = sorted(
+        open_rides,
+        key=lambda ride: (-ride["pressure_score"], -ride["current_wait"]),
+    )[:5]
+    reliable_low_wait = sorted(
+        open_rides,
+        key=lambda ride: (
+            ride["typical_wait"] if ride["typical_wait"] is not None else 999,
+            ride["current_wait"],
+        ),
+    )[:5]
 
     land_map = {}
     for ride in rides:
@@ -420,7 +437,11 @@ def get_historical_planning_insights(park):
             continue
 
         avg_current = round(sum(ride["current_wait"] for ride in open_land_rides) / len(open_land_rides))
-        avg_typical_values = [ride["typical_wait"] for ride in open_land_rides if ride["typical_wait"] is not None]
+        avg_typical_values = [
+            ride["typical_wait"]
+            for ride in open_land_rides
+            if ride["typical_wait"] is not None
+        ]
         avg_typical = round(sum(avg_typical_values) / len(avg_typical_values)) if avg_typical_values else 0
 
         lands.append({
@@ -428,10 +449,19 @@ def get_historical_planning_insights(park):
             "open_rides": len(open_land_rides),
             "average_current_wait": avg_current,
             "average_typical_wait": avg_typical,
-            "trend": "better_than_usual" if avg_current < avg_typical else "busier_than_usual" if avg_current > avg_typical else "normal",
+            "trend": (
+                "better_than_usual"
+                if avg_current < avg_typical
+                else "busier_than_usual"
+                if avg_current > avg_typical
+                else "normal"
+            ),
         })
 
-    lands = sorted(lands, key=lambda land: land["average_current_wait"] - land["average_typical_wait"])
+    lands = sorted(
+        lands,
+        key=lambda land: land["average_current_wait"] - land["average_typical_wait"],
+    )
 
     summary = "Historical sample is still small. Recommendations will improve as CastleWatch collects more refreshes."
     if len(rides) >= 5:
@@ -451,6 +481,7 @@ def get_historical_planning_insights(park):
         "unusually_high": unusually_high,
         "reliable_low_wait": reliable_low_wait,
         "land_trends": lands,
+        "tomorrow_forecast": get_tomorrow_forecast(engine, park),
     }
 
 
@@ -460,7 +491,7 @@ def home():
         "name": "CastleWatch API",
         "status": "online",
         "parks": [park["name"] for park in PARKS],
-        "note": "Use /api/refresh-rides to collect current ride waits, /api/rides to read latest data, /api/planning-insights for historical planning analysis, and /api/weather-advisory for official weather alert mode.",
+        "note": "Use /api/refresh-rides to collect current ride waits, /api/rides to read latest data, /api/planning-insights for historical and tomorrow planning analysis, and /api/weather-advisory for official weather alert mode.",
     })
 
 
