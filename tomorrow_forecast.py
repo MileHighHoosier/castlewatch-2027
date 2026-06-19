@@ -31,6 +31,18 @@ def _block_metadata(key):
     return next((block for block in TIME_BLOCKS if block["key"] == key), None)
 
 
+def _ensure_indexes(connection):
+    connection.execute(text("""
+        CREATE INDEX IF NOT EXISTS idx_wait_times_park_created_at
+        ON wait_times (park, created_at)
+    """))
+    connection.execute(text("""
+        CREATE INDEX IF NOT EXISTS idx_wait_times_park_ride_created_at
+        ON wait_times (park, ride_name, created_at DESC)
+    """))
+    connection.commit()
+
+
 def _load_block_rows(connection, park, target_dow=None):
     block_case = _block_case_sql()
     weekday_filter = "AND local_dow = :target_dow" if target_dow is not None else ""
@@ -145,6 +157,8 @@ def get_tomorrow_forecast(engine, park):
     target_dow = _postgres_dow(tomorrow)
 
     with engine.connect() as connection:
+        _ensure_indexes(connection)
+        connection.execute(text("SET LOCAL statement_timeout = '9000ms'"))
         weekday_blocks = _load_block_rows(connection, park, target_dow)
         overall_blocks = _load_block_rows(connection, park)
 
