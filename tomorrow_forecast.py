@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import text
@@ -150,11 +150,20 @@ def _confidence(source, samples, distinct_days):
     return {"level": "early", "label": "Early signal"}
 
 
-def get_tomorrow_forecast(engine, park):
-    now_eastern = datetime.now(WDW_TIMEZONE)
-    tomorrow = (now_eastern + timedelta(days=1)).date()
-    weekday = tomorrow.strftime("%A")
-    target_dow = _postgres_dow(tomorrow)
+def _normalize_target_date(target_date):
+    if isinstance(target_date, datetime):
+        return target_date.date()
+    if isinstance(target_date, date):
+        return target_date
+    if isinstance(target_date, str):
+        return date.fromisoformat(target_date)
+    raise ValueError("target_date must be a date, datetime, or ISO date string")
+
+
+def get_date_forecast(engine, park, target_date):
+    target = _normalize_target_date(target_date)
+    weekday = target.strftime("%A")
+    target_dow = _postgres_dow(target)
 
     with engine.connect() as connection:
         _ensure_indexes(connection)
@@ -173,12 +182,12 @@ def get_tomorrow_forecast(engine, park):
 
     if not forecast_blocks:
         return {
-            "date": tomorrow.isoformat(),
+            "date": target.isoformat(),
             "weekday": weekday,
             "timezone": "America/New_York",
             "status": "learning",
             "source": "insufficient_data",
-            "summary": "CastleWatch is still collecting enough history to forecast tomorrow.",
+            "summary": "CastleWatch is still collecting enough history to forecast this day.",
             "confidence": {"level": "low", "label": "Low confidence"},
             "blocks": [],
             "best_window": None,
@@ -196,7 +205,7 @@ def get_tomorrow_forecast(engine, park):
     peak_window = max(forecast_blocks, key=lambda block: (block["average_wait"], block["samples"]))
 
     return {
-        "date": tomorrow.isoformat(),
+        "date": target.isoformat(),
         "weekday": weekday,
         "timezone": "America/New_York",
         "status": "ready" if source == "same_weekday" else "fallback",
@@ -211,3 +220,9 @@ def get_tomorrow_forecast(engine, park):
         "best_window": best_window,
         "peak_window": peak_window,
     }
+
+
+def get_tomorrow_forecast(engine, park):
+    now_eastern = datetime.now(WDW_TIMEZONE)
+    tomorrow = (now_eastern + timedelta(days=1)).date()
+    return get_date_forecast(engine, park, tomorrow)
