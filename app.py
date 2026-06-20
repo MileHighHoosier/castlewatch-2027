@@ -7,6 +7,7 @@ from flask_cors import CORS
 from sqlalchemy import create_engine, text
 
 from tomorrow_forecast import get_tomorrow_forecast
+from trip_week import get_trip_week_plan
 
 app = Flask(__name__)
 CORS(app)
@@ -491,7 +492,7 @@ def home():
         "name": "CastleWatch API",
         "status": "online",
         "parks": [park["name"] for park in PARKS],
-        "note": "Use /api/refresh-rides to collect current ride waits, /api/rides to read latest data, /api/planning-insights for historical and tomorrow planning analysis, and /api/weather-advisory for official weather alert mode.",
+        "note": "Use /api/refresh-rides to collect current ride waits, /api/rides to read latest data, /api/planning-insights for historical and tomorrow planning analysis, /api/trip-week for the 2027 trip plan, and /api/weather-advisory for official weather alert mode.",
     })
 
 
@@ -531,6 +532,17 @@ def api_planning_insights():
     try:
         park = normalize_park(request.args.get("park", "Magic Kingdom"))
         return jsonify(get_historical_planning_insights(park))
+    except Exception as error:
+        return jsonify({
+            "status": "error",
+            "message": str(error),
+        }), 500
+
+
+@app.route("/api/trip-week")
+def api_trip_week():
+    try:
+        return jsonify(get_trip_week_plan(engine))
     except Exception as error:
         return jsonify({
             "status": "error",
