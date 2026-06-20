@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 
 from tomorrow_forecast import get_date_forecast
@@ -81,37 +82,71 @@ ALTERNATE_SWAP = {
 }
 
 
-def _safe_forecast(engine, park, target_date):
-    try:
-        return get_date_forecast(engine, park, target_date)
-    except Exception as error:
-        return {
-            "date": target_date,
-            "status": "unavailable",
-            "source": "error",
-            "summary": "Historical forecast is temporarily unavailable.",
-            "confidence": {"level": "low", "label": "Unavailable"},
-            "best_window": None,
-            "peak_window": None,
-            "message": str(error),
+def _unavailable_forecast(target_date, error):
+    return {
+        "date": target_date,
+        "status": "unavailable",
+        "source": "error",
+        "summary": "Historical forecast is temporarily unavailable.",
+        "confidence": {"level": "low", "label": "Unavailable"},
+        "best_window": None,
+        "peak_window": None,
+        "message": str(error),
+    }
+
+
+def _forecast_requests():
+    requests = []
+    for day in BASE_DAYS:
+        if day.get("type") == "park" and day.get("park"):
+            requests.append((day["park"], day["date"]))
+    for day in ALTERNATE_SWAP["days"]:
+        requests.append((day["park"], day["date"]))
+    return list(dict.fromkeys(requests))
+
+
+def _load_forecasts(engine):
+    forecasts = {}
+    requests = _forecast_requests()
+
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        future_map = {
+            executor.submit(get_date_forecast, engine, park, target_date): (park, target_date)
+            for park, target_date in requests
         }
+        for future in as_completed(future_map):
+            park, target_date = future_map[future]
+            try:
+                forecasts[(park, target_date)] = future.result()
+            except Exception as error:
+                forecasts[(park, target_date)] = _unavailable_forecast(target_date, error)
+
+    return forecasts
 
 
-def _attach_forecasts(engine, days):
+def _attach_forecasts(days, forecasts):
     enriched = []
     for day in days:
         item = dict(day)
         if item.get("type") == "park" and item.get("park"):
-            item["forecast"] = _safe_forecast(engine, item["park"], item["date"])
+            item["forecast"] = forecasts.get(
+                (item["park"], item["date"]),
+                _unavailable_forecast(item["date"], "Forecast was not returned."),
+            )
         enriched.append(item)
     return enriched
 
 
 def get_trip_week_plan(engine):
+    forecasts = _load_forecasts(engine)
+
     alternate_days = []
     for day in ALTERNATE_SWAP["days"]:
         item = dict(day)
-        item["forecast"] = _safe_forecast(engine, item["park"], item["date"])
+        item["forecast"] = forecasts.get(
+            (item["park"], item["date"]),
+            _unavailable_forecast(item["date"], "Forecast was not returned."),
+        )
         alternate_days.append(item)
 
     return {
@@ -127,7 +162,7 @@ def get_trip_week_plan(engine):
             "Beach Club rest day stays fixed",
             "AKL / private-tour flex day stays fixed",
         ],
-        "days": _attach_forecasts(engine, BASE_DAYS),
+        "days": _attach_forecasts(BASE_DAYS, forecasts),
         "alternate_swap": {
             **ALTERNATE_SWAP,
             "days": alternate_days,
