@@ -1,6 +1,9 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 
+from flask import has_request_context, request
+
+from calendar_ingestion import refresh_calendar_ingestion
 from special_events import get_special_event_intelligence
 from tomorrow_forecast import get_date_forecast
 
@@ -167,9 +170,21 @@ def _alternate_signals(day, signals):
     return day_signals
 
 
+def _force_calendar_refresh_requested():
+    if not has_request_context():
+        return False
+    return request.args.get("refresh_calendar", "").strip().lower() in {"1", "true", "yes"}
+
+
 def get_trip_week_plan(engine):
     forecasts = _load_forecasts(engine)
-    intelligence = get_special_event_intelligence(engine, refresh_if_stale=True)
+    force_calendar_refresh = _force_calendar_refresh_requested()
+    if force_calendar_refresh:
+        refresh_calendar_ingestion(engine, force=True)
+    intelligence = get_special_event_intelligence(
+        engine,
+        refresh_if_stale=not force_calendar_refresh,
+    )
     signals = _signal_map(intelligence)
 
     alternate_days = []
