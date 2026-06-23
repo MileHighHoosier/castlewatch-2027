@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 
+from special_events import get_special_event_intelligence
 from tomorrow_forecast import get_date_forecast
 
 TRIP_START = date(2027, 10, 9)
@@ -124,7 +125,14 @@ def _load_forecasts(engine):
     return forecasts
 
 
-def _attach_forecasts(days, forecasts):
+def _signal_map(intelligence):
+    return {
+        item["date"]: item.get("signals", [])
+        for item in intelligence.get("day_signals", [])
+    }
+
+
+def _attach_forecasts_and_events(days, forecasts, signals):
     enriched = []
     for day in days:
         item = dict(day)
@@ -133,12 +141,15 @@ def _attach_forecasts(days, forecasts):
                 (item["park"], item["date"]),
                 _unavailable_forecast(item["date"], "Forecast was not returned."),
             )
+        item["special_event_signals"] = signals.get(item["date"], [])
         enriched.append(item)
     return enriched
 
 
 def get_trip_week_plan(engine):
     forecasts = _load_forecasts(engine)
+    intelligence = get_special_event_intelligence()
+    signals = _signal_map(intelligence)
 
     alternate_days = []
     for day in ALTERNATE_SWAP["days"]:
@@ -147,6 +158,7 @@ def get_trip_week_plan(engine):
             (item["park"], item["date"]),
             _unavailable_forecast(item["date"], "Forecast was not returned."),
         )
+        item["special_event_signals"] = signals.get(item["date"], [])
         alternate_days.append(item)
 
     return {
@@ -154,7 +166,7 @@ def get_trip_week_plan(engine):
         "start_date": TRIP_START.isoformat(),
         "end_date": TRIP_END.isoformat(),
         "status": "provisional",
-        "party_schedule_status": "2027 MNSSHP dates not yet loaded",
+        "party_schedule_status": intelligence["sources"][0]["note"],
         "constraints": [
             "One park per day",
             "No park hopping",
@@ -162,9 +174,10 @@ def get_trip_week_plan(engine):
             "Beach Club rest day stays fixed",
             "AKL / private-tour flex day stays fixed",
         ],
-        "days": _attach_forecasts(BASE_DAYS, forecasts),
+        "days": _attach_forecasts_and_events(BASE_DAYS, forecasts, signals),
         "alternate_swap": {
             **ALTERNATE_SWAP,
             "days": alternate_days,
         },
+        "special_event_intelligence": intelligence,
     }
