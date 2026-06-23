@@ -1,6 +1,8 @@
 import os
 from datetime import datetime, timezone
 
+from calendar_ingestion import get_calendar_ingestion_status
+
 TRIP_DATES = [
     "2027-10-09",
     "2027-10-10",
@@ -26,24 +28,27 @@ ALTERNATE_ASSIGNMENTS = {
     "2027-10-14": "Animal Kingdom",
 }
 
+VALID_SCHEDULE_STATUSES = {"unreleased", "partial", "official"}
+
 
 def _configured_party_dates():
     raw = os.getenv("MNSSHP_2027_DATES", "")
     return sorted({value.strip() for value in raw.split(",") if value.strip()})
 
 
-def _schedule_status(party_dates):
-    configured = os.getenv("MNSSHP_2027_SCHEDULE_STATUS", "").strip().lower()
-    if configured in {"unreleased", "partial", "official"}:
-        return configured
-    return "official" if party_dates else "unreleased"
+def _configured_status(variable_name):
+    configured = os.getenv(variable_name, "").strip().lower()
+    return configured if configured in VALID_SCHEDULE_STATUSES else None
 
 
-def _park_hours_status():
-    configured = os.getenv("WDW_2027_PARK_HOURS_STATUS", "").strip().lower()
-    if configured in {"unreleased", "partial", "official"}:
-        return configured
-    return "unreleased"
+def _display_time(value):
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        return parsed.strftime("%-I:%M %p")
+    except (TypeError, ValueError):
+        return str(value)
 
 
 def _party_signal(target_date, party_dates, schedule_status):
@@ -103,7 +108,30 @@ def _party_signal(target_date, party_dates, schedule_status):
     }
 
 
-def _day_signals(party_dates, schedule_status, hours_status):
+def _park_hours_signal(target_date, park, hours_status, calendar_data):
+    hours = (calendar_data.get("park_hours") or {}).get(f"{park}|{target_date}")
+    if hours:
+        opening = _display_time(hours.get("openingTime"))
+        closing = _display_time(hours.get("closingTime"))
+        times = "–".join(value for value in [opening, closing] if value)
+        return {
+            "id": "park_hours",
+            "status": "official",
+            "severity": "low",
+            "label": f"{park} hours loaded",
+            "summary": f"{times}. Use the loaded operating window for arrival and evening planning." if times else "Official operating hours are loaded for this park day.",
+        }
+
+    return {
+        "id": "park_hours",
+        "status": hours_status,
+        "severity": "medium" if hours_status != "official" else "low",
+        "label": "2027 park hours partially loaded" if hours_status == "partial" else "2027 park hours not loaded",
+        "summary": "Early Entry, regular closing time and Extended Evening Hours remain provisional.",
+    }
+
+
+def _day_signals(party_dates, schedule_status, hours_status, calendar_data):
     signals = {target_date: [] for target_date in TRIP_DATES}
 
     for target_date in TRIP_DATES:
@@ -119,22 +147,32 @@ def _day_signals(party_dates, schedule_status, hours_status):
         "summary": "Expect holiday-weekend attendance pressure even when historical ride samples look quieter.",
     })
 
-    for target_date in ["2027-10-10", "2027-10-11", "2027-10-13", "2027-10-14"]:
-        signals[target_date].append({
-            "id": "park_hours",
-            "status": "official" if hours_status == "official" else "unreleased",
-            "severity": "medium" if hours_status != "official" else "low",
-            "label": "Official park hours loaded" if hours_status == "official" else "2027 park hours not loaded",
-            "summary": "Early Entry, regular closing time and Extended Evening Hours remain provisional." if hours_status != "official" else "Use the loaded operating hours for final arrival and evening planning.",
-        })
+    for target_date, park in BASE_ASSIGNMENTS.items():
+        signals[target_date].append(
+            _park_hours_signal(target_date, park, hours_status, calendar_data)
+        )
 
-    signals["2027-10-13"].append({
-        "id": "extended_evening_hours",
-        "status": "unreleased" if hours_status != "official" else "check_eligibility",
-        "severity": "medium",
-        "label": "Extended Evening Hours not confirmed",
-        "summary": "Eligibility depends on the final resort and Disney's 2027 operating calendar.",
-    })
+    extended = [
+        entry for entry in calendar_data.get("extended_evening_hours", [])
+        if entry.get("date") == "2027-10-13"
+    ]
+    if extended:
+        parks = ", ".join(sorted({entry.get("park") for entry in extended if entry.get("park")}))
+        signals["2027-10-13"].append({
+            "id": "extended_evening_hours",
+            "status": "official",
+            "severity": "low",
+            "label": "Extended Evening Hours loaded",
+            "summary": f"Extended Evening Hours are represented for {parks or 'the selected park'}. Confirm resort eligibility before relying on them.",
+        })
+    else:
+        signals["2027-10-13"].append({
+            "id": "extended_evening_hours",
+            "status": "unreleased" if hours_status != "official" else "not_listed",
+            "severity": "medium",
+            "label": "Extended Evening Hours not confirmed",
+            "summary": "Eligibility depends on the final resort and Disney's 2027 operating calendar.",
+        })
 
     return signals
 
@@ -162,7 +200,7 @@ def _scenario(name, assignments, party_dates, schedule_status, hours_status):
 
     if hours_status != "official":
         risk_score += 1
-        reasons.append("Official 2027 park hours are not loaded yet.")
+        reasons.append("Official 2027 park hours are not fully loaded yet.")
 
     return {
         "id": name,
@@ -214,32 +252,101 @@ def _recommendation(base, alternate, party_dates, schedule_status):
     }
 
 
-def get_special_event_intelligence():
-    party_dates = _configured_party_dates()
-    schedule_status = _schedule_status(party_dates)
-    hours_status = _park_hours_status()
-    signals = _day_signals(party_dates, schedule_status, hours_status)
+def _source_note(calendar_status, data_status, source_name):
+    ingestion_status = calendar_status.get("status")
+    last_success = calendar_status.get("last_success_at")
+
+    if ingestion_status == "unavailable":
+        return f"{source_name} could not be checked and no cached schedule is available."
+    if ingestion_status == "stale":
+        return f"Using the last successful cached schedule from {last_success or 'an earlier check'}; refresh is overdue."
+    if ingestion_status == "partial":
+        return f"Some park schedules updated, while failed parks retained their last known good data."
+    if data_status == "official":
+        return f"Official schedule entries were detected automatically. Last successful check: {last_success or 'just now'}."
+    if data_status == "partial":
+        return f"Some 2027 schedule entries were detected automatically. Last successful check: {last_success or 'just now'}."
+    return f"The source was checked automatically, but official 2027 entries are not available yet."
+
+
+def get_special_event_intelligence(engine=None, refresh_if_stale=True):
+    calendar_status = (
+        get_calendar_ingestion_status(engine, refresh_if_stale=refresh_if_stale)
+        if engine is not None
+        else {
+            "source": "Environment configuration",
+            "status": "unreleased",
+            "checked_at": None,
+            "last_success_at": None,
+            "last_changed_at": None,
+            "changed": False,
+            "error": None,
+            "data": {
+                "party_dates": [],
+                "mnsshp_status": "unreleased",
+                "park_hours_status": "unreleased",
+                "park_hours": {},
+                "early_entry": [],
+                "extended_evening_hours": [],
+                "relevant_park_dates_loaded": 0,
+                "relevant_park_dates_expected": 4,
+            },
+        }
+    )
+    calendar_data = calendar_status.get("data") or {}
+
+    configured_party_dates = _configured_party_dates()
+    automatic_party_dates = calendar_data.get("party_dates") or []
+    party_dates = sorted(set(configured_party_dates).union(automatic_party_dates))
+
+    configured_schedule_status = _configured_status("MNSSHP_2027_SCHEDULE_STATUS")
+    configured_hours_status = _configured_status("WDW_2027_PARK_HOURS_STATUS")
+    schedule_status = configured_schedule_status or (
+        "official" if configured_party_dates else calendar_data.get("mnsshp_status", "unreleased")
+    )
+    hours_status = configured_hours_status or calendar_data.get("park_hours_status", "unreleased")
+
+    signals = _day_signals(
+        party_dates,
+        schedule_status,
+        hours_status,
+        calendar_data,
+    )
     base = _scenario("base", BASE_ASSIGNMENTS, party_dates, schedule_status, hours_status)
     alternate = _scenario("alternate", ALTERNATE_ASSIGNMENTS, party_dates, schedule_status, hours_status)
+
+    ingestion_status = calendar_status.get("status", "unreleased")
+    if ingestion_status in {"stale", "unavailable"}:
+        overall_status = ingestion_status
+    elif schedule_status == "official" and hours_status == "official":
+        overall_status = "official"
+    elif schedule_status == "partial" or hours_status == "partial" or ingestion_status == "partial":
+        overall_status = "partial"
+    else:
+        overall_status = "provisional"
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "trip_start": TRIP_DATES[0],
         "trip_end": TRIP_DATES[-1],
-        "overall_status": "official" if schedule_status == "official" and hours_status == "official" else "provisional",
+        "overall_status": overall_status,
+        "calendar_ingestion": calendar_status,
+        "calendar_data": calendar_data,
         "sources": [
             {
                 "id": "mnsshp_calendar",
-                "label": "Walt Disney World MNSSHP calendar",
-                "status": schedule_status,
+                "label": "ThemeParks.wiki MNSSHP schedule",
+                "status": schedule_status if ingestion_status not in {"stale", "unavailable"} else ingestion_status,
+                "data_status": schedule_status,
                 "loaded_dates": party_dates,
-                "note": "Official 2027 dates have not been loaded." if schedule_status != "official" else "Official party dates are loaded.",
+                "note": _source_note(calendar_status, schedule_status, "The MNSSHP calendar"),
             },
             {
                 "id": "park_hours",
-                "label": "Walt Disney World park-hours calendar",
-                "status": hours_status,
-                "note": "Official 2027 park hours have not been loaded." if hours_status != "official" else "Official park hours are loaded.",
+                "label": "ThemeParks.wiki park-hours calendar",
+                "status": hours_status if ingestion_status not in {"stale", "unavailable"} else ingestion_status,
+                "data_status": hours_status,
+                "note": _source_note(calendar_status, hours_status, "The park-hours calendar"),
             },
         ],
         "tracked_items": [
@@ -262,14 +369,14 @@ def get_special_event_intelligence():
                 "name": "Early Theme Park Entry",
                 "park": "All parks",
                 "priority": "medium",
-                "schedule_status": hours_status,
+                "schedule_status": "official" if calendar_data.get("early_entry") else hours_status,
             },
             {
                 "id": "extended_evening_hours",
                 "name": "Extended Evening Hours",
                 "park": "Selected parks",
                 "priority": "medium",
-                "schedule_status": hours_status,
+                "schedule_status": "official" if calendar_data.get("extended_evening_hours") else hours_status,
             },
         ],
         "day_signals": [
