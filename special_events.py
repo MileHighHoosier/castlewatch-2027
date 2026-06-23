@@ -47,32 +47,60 @@ def _park_hours_status():
 
 
 def _party_signal(target_date, party_dates, schedule_status):
+    if target_date not in {"2027-10-10", "2027-10-13"}:
+        return None
+
+    is_swap_date = target_date == "2027-10-13"
+
     if schedule_status == "official":
         if target_date in party_dates:
             return {
                 "id": "mnsshp",
                 "status": "confirmed_event",
                 "severity": "high",
-                "label": "Confirmed MNSSHP night",
-                "summary": "Regular Magic Kingdom hours are expected to end early for day guests.",
+                "label": (
+                    "Magic Kingdom swap date is a confirmed MNSSHP night"
+                    if is_swap_date
+                    else "Confirmed MNSSHP night"
+                ),
+                "summary": (
+                    "Do not move Magic Kingdom to Wednesday; regular day-guest hours would end early."
+                    if is_swap_date
+                    else "Regular Magic Kingdom hours are expected to end early for day guests."
+                ),
             }
         return {
             "id": "mnsshp",
             "status": "confirmed_clear",
             "severity": "low",
-            "label": "No MNSSHP loaded for this date",
-            "summary": "This date is clear in the loaded official party schedule.",
+            "label": (
+                "Magic Kingdom swap date is clear"
+                if is_swap_date
+                else "No MNSSHP loaded for this date"
+            ),
+            "summary": (
+                "Wednesday is clear in the loaded official party schedule and can serve as the Magic Kingdom swap date."
+                if is_swap_date
+                else "This date is clear in the loaded official party schedule."
+            ),
         }
 
-    if target_date in {"2027-10-10", "2027-10-13"}:
+    if is_swap_date:
         return {
             "id": "mnsshp",
-            "status": "possible_event",
-            "severity": "high" if target_date == "2027-10-10" else "medium",
-            "label": "Possible MNSSHP night — schedule unreleased",
-            "summary": "Do not lock the Magic Kingdom assignment until Disney publishes the 2027 party calendar.",
+            "status": "swap_date_unknown",
+            "severity": "medium",
+            "label": "Magic Kingdom swap-date status unknown",
+            "summary": "Confirm Wednesday is not an MNSSHP night before moving Magic Kingdom here.",
         }
-    return None
+
+    return {
+        "id": "mnsshp",
+        "status": "possible_event",
+        "severity": "high",
+        "label": "Possible MNSSHP night — schedule unreleased",
+        "summary": "Do not lock the Magic Kingdom assignment until Disney publishes the 2027 party calendar.",
+    }
 
 
 def _day_signals(party_dates, schedule_status, hours_status):
