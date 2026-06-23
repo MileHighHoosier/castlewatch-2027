@@ -146,6 +146,27 @@ def _attach_forecasts_and_events(days, forecasts, signals):
     return enriched
 
 
+def _alternate_signals(day, signals):
+    day_signals = [dict(signal) for signal in signals.get(day["date"], [])]
+
+    if day["date"] == "2027-10-10" and day.get("park") == "Epcot":
+        for signal in day_signals:
+            if signal.get("id") != "mnsshp":
+                continue
+
+            if signal.get("status") == "confirmed_event":
+                signal["label"] = "Sunday Magic Kingdom is a confirmed MNSSHP night"
+                signal["summary"] = "The alternate uses Epcot because regular Magic Kingdom day-guest hours would end early."
+            elif signal.get("status") == "confirmed_clear":
+                signal["label"] = "Sunday Magic Kingdom is clear"
+                signal["summary"] = "The loaded party calendar does not require using Epcot as an event-driven alternate."
+            else:
+                signal["label"] = "Sunday Magic Kingdom party status unknown"
+                signal["summary"] = "The alternate uses Epcot because Sunday may become an MNSSHP night at Magic Kingdom."
+
+    return day_signals
+
+
 def get_trip_week_plan(engine):
     forecasts = _load_forecasts(engine)
     intelligence = get_special_event_intelligence()
@@ -158,7 +179,7 @@ def get_trip_week_plan(engine):
             (item["park"], item["date"]),
             _unavailable_forecast(item["date"], "Forecast was not returned."),
         )
-        item["special_event_signals"] = signals.get(item["date"], [])
+        item["special_event_signals"] = _alternate_signals(item, signals)
         alternate_days.append(item)
 
     return {
