@@ -169,7 +169,7 @@ def _alternate_signals(day, signals):
 
 def get_trip_week_plan(engine):
     forecasts = _load_forecasts(engine)
-    intelligence = get_special_event_intelligence()
+    intelligence = get_special_event_intelligence(engine, refresh_if_stale=True)
     signals = _signal_map(intelligence)
 
     alternate_days = []
