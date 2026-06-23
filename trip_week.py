@@ -179,12 +179,15 @@ def _force_calendar_refresh_requested():
 def get_trip_week_plan(engine):
     forecasts = _load_forecasts(engine)
     force_calendar_refresh = _force_calendar_refresh_requested()
+    refresh_result = None
     if force_calendar_refresh:
-        refresh_calendar_ingestion(engine, force=True)
+        refresh_result = refresh_calendar_ingestion(engine, force=True)
     intelligence = get_special_event_intelligence(
         engine,
         refresh_if_stale=not force_calendar_refresh,
     )
+    if refresh_result is not None:
+        intelligence["calendar_ingestion"] = refresh_result
     signals = _signal_map(intelligence)
 
     alternate_days = []
