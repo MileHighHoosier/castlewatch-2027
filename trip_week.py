@@ -176,16 +176,53 @@ def _force_calendar_refresh_requested():
     return request.args.get("refresh_calendar", "").strip().lower() in {"1", "true", "yes"}
 
 
+def _fallback_intelligence(error):
+    intelligence = get_special_event_intelligence(
+        engine=None,
+        refresh_if_stale=False,
+    )
+    intelligence["overall_status"] = "unavailable"
+    intelligence["calendar_ingestion"] = {
+        "source": "Provisional CastleWatch rules",
+        "status": "unavailable",
+        "checked_at": None,
+        "last_success_at": None,
+        "last_changed_at": None,
+        "freshness_hours": None,
+        "changed": False,
+        "error": str(error),
+        "data": intelligence.get("calendar_data") or {},
+    }
+    for source in intelligence.get("sources", []):
+        source["status"] = "unavailable"
+        source["note"] = "Live calendar intelligence is temporarily unavailable. CastleWatch is using the provisional trip rules and will not lock an event-sensitive park order."
+    intelligence["degraded"] = True
+    intelligence["degraded_reason"] = str(error)
+    return intelligence
+
+
+def _party_schedule_note(intelligence):
+    for source in intelligence.get("sources") or []:
+        if source.get("id") == "mnsshp_calendar" and source.get("note"):
+            return source["note"]
+    return "The live party calendar is temporarily unavailable; provisional MNSSHP rules remain active."
+
+
 def get_trip_week_plan(engine):
     forecasts = _load_forecasts(engine)
     force_calendar_refresh = _force_calendar_refresh_requested()
     refresh_result = None
-    if force_calendar_refresh:
-        refresh_result = refresh_calendar_ingestion(engine, force=True)
-    intelligence = get_special_event_intelligence(
-        engine,
-        refresh_if_stale=not force_calendar_refresh,
-    )
+
+    try:
+        if force_calendar_refresh:
+            refresh_result = refresh_calendar_ingestion(engine, force=True)
+        intelligence = get_special_event_intelligence(
+            engine,
+            refresh_if_stale=not force_calendar_refresh,
+        )
+    except Exception as error:
+        intelligence = _fallback_intelligence(error)
+
     if refresh_result is not None:
         intelligence["calendar_ingestion"] = refresh_result
     signals = _signal_map(intelligence)
@@ -205,7 +242,7 @@ def get_trip_week_plan(engine):
         "start_date": TRIP_START.isoformat(),
         "end_date": TRIP_END.isoformat(),
         "status": "provisional",
-        "party_schedule_status": intelligence["sources"][0]["note"],
+        "party_schedule_status": _party_schedule_note(intelligence),
         "constraints": [
             "One park per day",
             "No park hopping",
