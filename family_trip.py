@@ -53,15 +53,16 @@ def _row_payload(row):
             "updatedAt": None,
         }
 
-    payload = row.payload
+    payload = row["payload"]
     if isinstance(payload, str):
         payload = json.loads(payload)
 
+    updated_at = row["updated_at"]
     return {
         "status": "ok",
-        "version": row.version,
+        "version": row["version"],
         "payload": payload,
-        "updatedAt": row.updated_at.isoformat() if row.updated_at else None,
+        "updatedAt": updated_at.isoformat() if updated_at else None,
     }
 
 
@@ -125,7 +126,7 @@ def put_family_trip(engine):
             FOR UPDATE
         """), {"id": FAMILY_TRIP_ID}).mappings().first()
 
-        current_version = current.version if current else 0
+        current_version = current["version"] if current else 0
         if expected_version != current_version:
             response = _row_payload(current)
             response.update({
