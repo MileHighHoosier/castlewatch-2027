@@ -9,6 +9,7 @@ from sqlalchemy import text
 FAMILY_TRIP_ID = "family"
 FAMILY_KEY_HEADER = "X-CastleWatch-Key"
 MAX_PAYLOAD_BYTES = 500_000
+WRITE_LOCK_KEY = "castlewatch_family_trip"
 
 
 def _utc_now_iso():
@@ -119,6 +120,9 @@ def put_family_trip(engine):
 
     with engine.begin() as connection:
         setup_family_trip_database(connection)
+        connection.execute(text("""
+            SELECT pg_advisory_xact_lock(hashtext(:lock_key))
+        """), {"lock_key": WRITE_LOCK_KEY})
         current = connection.execute(text("""
             SELECT payload, version, updated_at
             FROM family_trip_state
