@@ -1,4 +1,5 @@
 import json
+import math
 from datetime import datetime, timedelta, timezone
 
 from flask import jsonify
@@ -18,6 +19,10 @@ RAILWAY_EGRESS_USD_PER_GIB = 0.05
 RAILWAY_VOLUME_USD_PER_GIB_MONTH = 0.15
 PRICING_REVIEWED_AT = "2026-07-05"
 RESPONSE_OVERHEAD_BYTES = 1024
+PROJECTION_DAYS = 30
+ILLUSTRATIVE_FAMILY_READS_PER_DAY = 2
+MONTHLY_EGRESS_WARNING_BYTES = GIB_BYTES
+MONTHLY_EGRESS_CRITICAL_BYTES = 10 * GIB_BYTES
 
 
 def _utc_now():
@@ -49,12 +54,26 @@ def _usd_for_bytes(byte_count, rate_per_gib):
     return round((max(byte_count, 0) / GIB_BYTES) * rate_per_gib, 10)
 
 
+def _operations_per_dollar(usd_per_operation):
+    if usd_per_operation <= 0:
+        return None
+    return math.floor(1 / usd_per_operation)
+
+
 def _warning(level, code, message):
     return {
         "level": level,
         "code": code,
         "message": message,
     }
+
+
+def _projection_reliability(history_count):
+    if history_count >= HISTORY_LIMIT:
+        return "limited_by_retention"
+    if history_count < 7:
+        return "early_estimate"
+    return "moderate"
 
 
 def build_family_operations_report(current, history_rows, now=None):
@@ -84,9 +103,25 @@ def build_family_operations_report(current, history_rows, now=None):
     versions_last_7_days = sum(timestamp >= week_ago for timestamp in history_times)
 
     estimated_full_read_bytes = current_payload_bytes + RESPONSE_OVERHEAD_BYTES
-    estimated_guarded_autosave_bytes = (
-        (current_payload_bytes + RESPONSE_OVERHEAD_BYTES) * 2
+    estimated_guarded_autosave_bytes = estimated_full_read_bytes * 2
+    full_read_usd = _usd_for_bytes(estimated_full_read_bytes, RAILWAY_EGRESS_USD_PER_GIB)
+    guarded_autosave_usd = _usd_for_bytes(
+        estimated_guarded_autosave_bytes,
+        RAILWAY_EGRESS_USD_PER_GIB,
     )
+
+    observed_daily_version_rate = max(
+        float(versions_last_24_hours),
+        versions_last_7_days / 7,
+    )
+    projected_autosaves = math.ceil(observed_daily_version_rate * PROJECTION_DAYS)
+    projected_read_checks = ILLUSTRATIVE_FAMILY_READS_PER_DAY * PROJECTION_DAYS
+    projected_autosave_egress_bytes = projected_autosaves * estimated_guarded_autosave_bytes
+    projected_family_egress_bytes = (
+        projected_autosave_egress_bytes
+        + projected_read_checks * estimated_full_read_bytes
+    )
+    projection_reliability = _projection_reliability(history_count)
 
     warnings = []
     payload_ratio = current_payload_bytes / MAX_PAYLOAD_BYTES if MAX_PAYLOAD_BYTES else 0
@@ -114,6 +149,19 @@ def build_family_operations_report(current, history_rows, now=None):
             "warning",
             "high_version_churn",
             "At least 100 shared versions were created in the last 24 hours.",
+        ))
+
+    if projected_family_egress_bytes >= MONTHLY_EGRESS_CRITICAL_BYTES:
+        warnings.append(_warning(
+            "critical",
+            "projected_monthly_egress_very_high",
+            "The illustrative 30-day family-sync projection exceeds 10 GiB of Railway egress.",
+        ))
+    elif projected_family_egress_bytes >= MONTHLY_EGRESS_WARNING_BYTES:
+        warnings.append(_warning(
+            "warning",
+            "projected_monthly_egress_high",
+            "The illustrative 30-day family-sync projection exceeds 1 GiB of Railway egress.",
         ))
 
     if history_count >= HISTORY_LIMIT:
@@ -159,19 +207,29 @@ def build_family_operations_report(current, history_rows, now=None):
             "estimatedRailwayEgressBytesPerGuardedAutosave": estimated_guarded_autosave_bytes,
             "note": "A guarded autosave is modeled as one preflight read and one save response. Request uploads are not counted as Railway egress.",
         },
+        "monthlyProjection": {
+            "projectionDays": PROJECTION_DAYS,
+            "observedDailyVersionRate": round(observed_daily_version_rate, 2),
+            "projectedGuardedAutosaves": projected_autosaves,
+            "projectedRailwayEgressBytesFromAutosaves": projected_autosave_egress_bytes,
+            "illustrativeFamilyReadChecks": projected_read_checks,
+            "illustrativeFamilyRailwayEgressBytes": projected_family_egress_bytes,
+            "illustrativeFamilyRailwayEgressUsd": _usd_for_bytes(
+                projected_family_egress_bytes,
+                RAILWAY_EGRESS_USD_PER_GIB,
+            ),
+            "reliability": projection_reliability,
+            "note": "The version-driven portion uses the greater of the retained 24-hour rate and retained seven-day daily average. The illustrative family total adds two full shared-plan reads per day. Retention limits can make the observed rate an undercount.",
+        },
         "costEstimates": {
-            "estimatedRailwayEgressUsdPerFullRead": _usd_for_bytes(
-                estimated_full_read_bytes,
-                RAILWAY_EGRESS_USD_PER_GIB,
-            ),
-            "estimatedRailwayEgressUsdPerGuardedAutosave": _usd_for_bytes(
-                estimated_guarded_autosave_bytes,
-                RAILWAY_EGRESS_USD_PER_GIB,
-            ),
+            "estimatedRailwayEgressUsdPerFullRead": full_read_usd,
+            "estimatedRailwayEgressUsdPerGuardedAutosave": guarded_autosave_usd,
             "estimatedRailwayVolumeUsdPerMonthAtHistoryLimit": _usd_for_bytes(
                 projected_database_json_bytes,
                 RAILWAY_VOLUME_USD_PER_GIB_MONTH,
             ),
+            "estimatedFullReadsPerRailwayEgressDollar": _operations_per_dollar(full_read_usd),
+            "estimatedGuardedAutosavesPerRailwayEgressDollar": _operations_per_dollar(guarded_autosave_usd),
             "note": "These estimates cover CastleWatch family-plan JSON transfer and storage only, not Railway CPU, RAM, database overhead, Vercel usage, taxes, or provider plan fees.",
         },
         "pricingAssumptions": {
@@ -185,6 +243,8 @@ def build_family_operations_report(current, history_rows, now=None):
             "telemetryRowsWritten": False,
             "historyLimit": HISTORY_LIMIT,
             "payloadLimitBytes": MAX_PAYLOAD_BYTES,
+            "monthlyEgressWarningBytes": MONTHLY_EGRESS_WARNING_BYTES,
+            "monthlyEgressCriticalBytes": MONTHLY_EGRESS_CRITICAL_BYTES,
         },
         "warnings": warnings,
     }
