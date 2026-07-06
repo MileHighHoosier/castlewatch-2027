@@ -23,8 +23,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run family storage contract tests
+      - name: Run backend contract tests
         run: python -m unittest discover -s tests -v
 
       - name: Compile production modules
-        run: python -m py_compile app.py family_trip.py
+        run: python -m py_compile app.py family_trip.py operations.py
