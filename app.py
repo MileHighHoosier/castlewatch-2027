@@ -14,6 +14,7 @@ from family_trip import (
     put_family_trip,
     restore_family_trip_version,
 )
+from operations import get_family_trip_operations
 
 
 @app.route("/api/family-trip", methods=["GET"])
@@ -64,6 +65,17 @@ def api_get_family_trip_history_version(version):
 def api_restore_family_trip_version():
     try:
         return restore_family_trip_version(engine)
+    except Exception as error:
+        return {
+            "status": "error",
+            "message": str(error),
+        }, 500
+
+
+@app.route("/api/family-trip/operations", methods=["GET"])
+def api_get_family_trip_operations():
+    try:
+        return get_family_trip_operations(engine)
     except Exception as error:
         return {
             "status": "error",
