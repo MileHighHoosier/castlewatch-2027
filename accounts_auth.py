@@ -1,4 +1,3 @@
-import base64
 import hashlib
 import hmac
 import re
@@ -28,8 +27,8 @@ class ParsedAccessToken:
     raw_token: str
 
 
-def _urlsafe_random(byte_count: int) -> str:
-    return base64.urlsafe_b64encode(secrets.token_bytes(byte_count)).decode("ascii").rstrip("=")
+def _token_segment(byte_count: int) -> str:
+    return secrets.token_hex(byte_count)
 
 
 def utc_now_iso() -> str:
@@ -62,15 +61,15 @@ def token_kind_prefix(kind: str) -> str:
 
 def generate_access_token(kind: str) -> str:
     public_prefix = token_kind_prefix(kind)
-    lookup_prefix = _urlsafe_random(TOKEN_PREFIX_BYTES)
-    secret = _urlsafe_random(TOKEN_SECRET_BYTES)
+    lookup_prefix = _token_segment(TOKEN_PREFIX_BYTES)
+    secret = _token_segment(TOKEN_SECRET_BYTES)
     return f"{public_prefix}_{lookup_prefix}_{secret}"
 
 
 def parse_access_token(token: Any, expected_kind: str | None = None) -> ParsedAccessToken | None:
     if not isinstance(token, str):
         return None
-    parts = token.strip().split("_", 2)
+    parts = token.strip().split("_")
     if len(parts) != 3:
         return None
 
