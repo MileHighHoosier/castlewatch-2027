@@ -70,7 +70,7 @@ def generate_access_token(kind: str) -> str:
 def parse_access_token(token: Any, expected_kind: str | None = None) -> ParsedAccessToken | None:
     if not isinstance(token, str):
         return None
-    parts = token.strip().split("_")
+    parts = token.strip().split("_", 2)
     if len(parts) != 3:
         return None
 
