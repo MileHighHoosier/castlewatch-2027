@@ -1,7 +1,6 @@
 from sqlalchemy import text
 
-from family_trip import FAMILY_TRIP_ID
-
+FAMILY_WORKSPACE_ID = "family"
 DEFAULT_FAMILY_DISPLAY_NAME = "CastleWatch family"
 DEFAULT_OWNER_MEMBER_ID = "00000000-0000-0000-0000-000000000001"
 DEFAULT_OWNER_DISPLAY_NAME = "Family owner"
@@ -82,7 +81,7 @@ def setup_accounts_database(connection):
         VALUES (:family_id, :display_name)
         ON CONFLICT (id) DO NOTHING
     """), {
-        "family_id": FAMILY_TRIP_ID,
+        "family_id": FAMILY_WORKSPACE_ID,
         "display_name": DEFAULT_FAMILY_DISPLAY_NAME,
     })
     connection.execute(text("""
@@ -91,6 +90,6 @@ def setup_accounts_database(connection):
         ON CONFLICT (id) DO NOTHING
     """), {
         "member_id": DEFAULT_OWNER_MEMBER_ID,
-        "family_id": FAMILY_TRIP_ID,
+        "family_id": FAMILY_WORKSPACE_ID,
         "display_name": DEFAULT_OWNER_DISPLAY_NAME,
     })
