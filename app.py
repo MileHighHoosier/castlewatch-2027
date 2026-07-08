@@ -7,6 +7,13 @@ the repository's api_server entrypoint.
 """
 
 from core_app import *  # noqa: F401,F403
+from accounts_routes import (
+    accept_family_invite,
+    create_family_invite,
+    list_family_devices,
+    rename_family_device,
+    revoke_family_device,
+)
 from family_trip import (
     get_family_trip,
     get_family_trip_history,
@@ -76,6 +83,61 @@ def api_restore_family_trip_version():
 def api_get_family_trip_operations():
     try:
         return get_family_trip_operations(engine)
+    except Exception as error:
+        return {
+            "status": "error",
+            "message": str(error),
+        }, 500
+
+
+@app.route("/api/family-trip/devices", methods=["GET"])
+def api_list_family_devices():
+    try:
+        return list_family_devices(engine)
+    except Exception as error:
+        return {
+            "status": "error",
+            "message": str(error),
+        }, 500
+
+
+@app.route("/api/family-trip/invites", methods=["POST"])
+def api_create_family_invite():
+    try:
+        return create_family_invite(engine)
+    except Exception as error:
+        return {
+            "status": "error",
+            "message": str(error),
+        }, 500
+
+
+@app.route("/api/family-trip/devices/accept-invite", methods=["POST"])
+def api_accept_family_invite():
+    try:
+        return accept_family_invite(engine)
+    except Exception as error:
+        return {
+            "status": "error",
+            "message": str(error),
+        }, 500
+
+
+@app.route("/api/family-trip/devices/rename", methods=["POST"])
+def api_rename_family_device():
+    try:
+        return rename_family_device(engine)
+    except Exception as error:
+        return {
+            "status": "error",
+            "message": str(error),
+        }, 500
+
+
+@app.route("/api/family-trip/devices/revoke", methods=["POST"])
+def api_revoke_family_device():
+    try:
+        return revoke_family_device(engine)
     except Exception as error:
         return {
             "status": "error",
