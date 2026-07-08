@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from flask import jsonify, request
 from sqlalchemy import text
 
-from accounts_access import authorize_request
+from accounts_access import _token_pepper, authorize_request
 from accounts_auth import (
     DEVICE_TOKEN_KIND,
     INVITE_TOKEN_KIND,
@@ -16,8 +16,7 @@ from accounts_auth import (
     safe_invite_record,
     verify_access_token,
 )
-from accounts_schema import FAMILY_WORKSPACE_ID, setup_accounts_database
-from accounts_access import _token_pepper
+from accounts_schema import setup_accounts_database
 
 INVITE_EXPIRATION_DAYS = 7
 
@@ -54,30 +53,6 @@ def _prefix_for(token):
     if parsed is None:
         raise ValueError("Generated token could not be parsed.")
     return parsed.lookup_prefix
-
-
-def _authorized_connection(engine, permission="manage"):
-    connection = engine.begin().__enter__()
-    try:
-        setup_accounts_database(connection)
-        authorization = authorize_request(connection, permission=permission)
-        if authorization.error:
-            connection.__exit__ = None
-            return None, None, authorization.error
-        return connection, authorization.actor, None
-    except Exception:
-        try:
-            connection.__exit__(None, None, None)
-        except Exception:
-            pass
-        raise
-
-
-def _close_connection(connection):
-    if connection is not None:
-        manager_exit = getattr(connection, "__exit__", None)
-        if callable(manager_exit):
-            manager_exit(None, None, None)
 
 
 def list_family_devices(engine):
