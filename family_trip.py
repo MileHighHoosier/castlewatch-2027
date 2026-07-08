@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from flask import jsonify, request
 from sqlalchemy import text
 
+from accounts_schema import setup_accounts_database
+
 FAMILY_TRIP_ID = "family"
 FAMILY_KEY_HEADER = "X-CastleWatch-Key"
 MAX_PAYLOAD_BYTES = 500_000
@@ -53,6 +55,7 @@ def setup_family_trip_database(connection):
         WHERE id = :id
         ON CONFLICT (id, version) DO NOTHING
     """), {"id": FAMILY_TRIP_ID})
+    setup_accounts_database(connection)
 
 
 def _authorization_error():

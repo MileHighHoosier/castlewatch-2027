@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from flask import Flask
 
+import accounts_schema
 import family_trip
 
 
@@ -38,6 +39,9 @@ class FakeEngine:
     def __init__(self):
         self.state = None
         self.history = {}
+        self.account_families = {}
+        self.account_members = {}
+        self.schema_statements = []
 
     def begin(self):
         return FakeTransaction(self)
@@ -51,7 +55,8 @@ class FakeConnection:
         sql = " ".join(str(statement).split()).lower()
         parameters = parameters or {}
 
-        if sql.startswith("create table") or sql.startswith("create index"):
+        if sql.startswith("create extension") or sql.startswith("create table") or sql.startswith("create index"):
+            self.engine.schema_statements.append(sql)
             return FakeResult()
 
         if (
@@ -65,6 +70,28 @@ class FakeConnection:
                     "payload": state["payload"],
                     "created_at": state["updated_at"],
                     "restored_from_version": None,
+                }
+            return FakeResult()
+
+        if sql.startswith("insert into castlewatch_families"):
+            family_id = parameters["family_id"]
+            if family_id not in self.engine.account_families:
+                self.engine.account_families[family_id] = {
+                    "id": family_id,
+                    "display_name": parameters["display_name"],
+                    "legacy_family_key_enabled": True,
+                }
+            return FakeResult()
+
+        if sql.startswith("insert into castlewatch_members"):
+            member_id = parameters["member_id"]
+            if member_id not in self.engine.account_members:
+                self.engine.account_members[member_id] = {
+                    "id": member_id,
+                    "family_id": parameters["family_id"],
+                    "display_name": parameters["display_name"],
+                    "role": "owner",
+                    "status": "active",
                 }
             return FakeResult()
 
@@ -190,6 +217,28 @@ class FamilyTripContractTests(unittest.TestCase):
             body={"expectedVersion": expected_version, "payload": payload},
         )
 
+    def test_additive_account_schema_setup_preserves_empty_shared_plan(self):
+        status, downloaded = self.invoke(family_trip.get_family_trip)
+
+        self.assertEqual(status, 200)
+        self.assertEqual(downloaded["status"], "empty")
+        self.assertIsNone(self.engine.state)
+        self.assertEqual(self.engine.history, {})
+        self.assertEqual(
+            self.engine.account_families[accounts_schema.FAMILY_WORKSPACE_ID]["display_name"],
+            accounts_schema.DEFAULT_FAMILY_DISPLAY_NAME,
+        )
+        owner = self.engine.account_members[accounts_schema.DEFAULT_OWNER_MEMBER_ID]
+        self.assertEqual(owner["family_id"], accounts_schema.FAMILY_WORKSPACE_ID)
+        self.assertEqual(owner["display_name"], accounts_schema.DEFAULT_OWNER_DISPLAY_NAME)
+        self.assertEqual(owner["role"], "owner")
+        self.assertEqual(owner["status"], "active")
+        schema_sql = "\n".join(self.engine.schema_statements)
+        self.assertIn("create table if not exists castlewatch_families", schema_sql)
+        self.assertIn("create table if not exists castlewatch_members", schema_sql)
+        self.assertIn("create table if not exists castlewatch_devices", schema_sql)
+        self.assertIn("create table if not exists castlewatch_invites", schema_sql)
+
     def test_first_upload_and_download_round_trip(self):
         original = self.payload("First shared plan")
 
@@ -281,6 +330,8 @@ class FamilyTripContractTests(unittest.TestCase):
         self.assertEqual(status, 401)
         self.assertEqual(response.get_json()["status"], "unauthorized")
         self.assertIsNone(self.engine.state)
+        self.assertEqual(self.engine.account_families, {})
+        self.assertEqual(self.engine.account_members, {})
 
 
 if __name__ == "__main__":
