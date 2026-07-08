@@ -27,4 +27,4 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Compile production modules
-        run: python -m py_compile app.py family_trip.py operations.py accounts_auth.py
+        run: python -m py_compile app.py family_trip.py operations.py accounts_auth.py accounts_schema.py
