@@ -3,10 +3,12 @@ from datetime import datetime, timedelta, timezone
 from flask import jsonify, request
 from sqlalchemy import text
 
-from accounts_access import _token_pepper, authorize_request
+from accounts_access import DEVICE_TOKEN_HEADER, _token_pepper, authorize_request
 from accounts_auth import (
     DEVICE_TOKEN_KIND,
     INVITE_TOKEN_KIND,
+    can_manage_devices,
+    can_write_shared_plan,
     generate_access_token,
     hash_access_token,
     normalize_display_name,
@@ -53,6 +55,108 @@ def _prefix_for(token):
     if parsed is None:
         raise ValueError("Generated token could not be parsed.")
     return parsed.lookup_prefix
+
+
+def _device_by_id(connection, family_id, device_id):
+    if not device_id:
+        return None
+    return connection.execute(text("""
+        SELECT
+            id::text AS id,
+            display_name,
+            role,
+            status,
+            token_prefix,
+            created_at,
+            last_seen_at,
+            last_read_at,
+            last_write_at,
+            revoked_at
+        FROM castlewatch_devices
+        WHERE family_id = :family_id
+          AND id = CAST(:device_id AS UUID)
+    """), {
+        "family_id": family_id,
+        "device_id": device_id,
+    }).mappings().first()
+
+
+def _verified_current_device_token_record(connection):
+    token = request.headers.get(DEVICE_TOKEN_HEADER, "").strip()
+    parsed = parse_access_token(token, expected_kind=DEVICE_TOKEN_KIND)
+    if parsed is None:
+        return None
+
+    pepper = _token_pepper()
+    if not pepper:
+        return None
+
+    rows = connection.execute(text("""
+        SELECT
+            id::text AS id,
+            family_id,
+            display_name,
+            role,
+            status,
+            token_hash,
+            token_prefix,
+            created_at,
+            last_seen_at,
+            last_read_at,
+            last_write_at,
+            revoked_at
+        FROM castlewatch_devices
+        WHERE token_prefix = :token_prefix
+    """), {"token_prefix": parsed.lookup_prefix}).mappings().all()
+
+    for row in rows:
+        if verify_access_token(token, row["token_hash"], pepper, expected_kind=DEVICE_TOKEN_KIND):
+            return row
+    return None
+
+
+def check_family_device_access(engine):
+    with engine.begin() as connection:
+        setup_accounts_database(connection)
+        authorization = authorize_request(connection, permission="read")
+        if authorization.error:
+            device = _verified_current_device_token_record(connection)
+            if device and device.get("status") == "revoked":
+                return jsonify({
+                    "status": "revoked",
+                    "authState": "revoked_device_token",
+                    "message": "This saved device token was revoked. Reconnect with a new invite or use the family key.",
+                    "device": _safe_device(device),
+                    "canManageDevices": False,
+                    "canWriteSharedPlan": False,
+                    "migrationRecommended": False,
+                }), 401
+            return authorization.error
+
+        actor = authorization.actor
+        if actor.auth_type == "legacy_key":
+            return jsonify({
+                "status": "ok",
+                "authState": "family_key",
+                "role": "owner",
+                "device": None,
+                "canManageDevices": True,
+                "canWriteSharedPlan": True,
+                "migrationRecommended": True,
+                "message": "This browser is using the family key owner path. Keep it enabled for recovery until device access is fully verified.",
+            })
+
+        device = _device_by_id(connection, actor.family_id, actor.device_id)
+        return jsonify({
+            "status": "ok",
+            "authState": "device_token",
+            "role": actor.role,
+            "device": _safe_device(device) if device else None,
+            "canManageDevices": can_manage_devices(actor.role),
+            "canWriteSharedPlan": can_write_shared_plan(actor.role),
+            "migrationRecommended": False,
+            "message": "This browser is connected with a device token.",
+        })
 
 
 def list_family_devices(engine):
