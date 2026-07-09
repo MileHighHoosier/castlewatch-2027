@@ -9,6 +9,7 @@ from accounts_access import DEVICE_TOKEN_HEADER, FAMILY_KEY_HEADER
 from accounts_auth import DEVICE_TOKEN_KIND, generate_access_token, hash_access_token, parse_access_token
 from accounts_routes import (
     accept_family_invite,
+    check_family_device_access,
     create_family_invite,
     list_family_devices,
     rename_family_device,
@@ -87,14 +88,32 @@ class FakeConnection:
             return FakeResult()
 
         if "from castlewatch_devices d" in sql and "where d.token_prefix" in sql:
+            active_only = "and d.status = 'active'" in sql
             rows = []
             for device in self.engine.devices.values():
-                if device["token_prefix"] == parameters["token_prefix"] and device["status"] == "active":
-                    rows.append({
-                        **device,
-                        "member_status": None,
-                    })
+                if device["token_prefix"] != parameters["token_prefix"]:
+                    continue
+                if active_only and device["status"] != "active":
+                    continue
+                rows.append({
+                    **device,
+                    "member_status": None,
+                })
             return FakeResult(rows)
+
+        if sql.startswith("select") and "from castlewatch_devices" in sql and "where token_prefix" in sql:
+            rows = [
+                dict(device)
+                for device in self.engine.devices.values()
+                if device["token_prefix"] == parameters["token_prefix"]
+            ]
+            return FakeResult(rows)
+
+        if sql.startswith("select") and "from castlewatch_devices" in sql and "id = cast(:device_id as uuid)" in sql:
+            device = self.engine.devices.get(parameters["device_id"])
+            if device and device["family_id"] == parameters["family_id"]:
+                return FakeResult([dict(device)])
+            return FakeResult()
 
         if sql.startswith("update castlewatch_devices") and "set last_seen_at" in sql:
             device = self.engine.devices.get(parameters["device_id"])
@@ -268,6 +287,18 @@ class AccountRouteTests(unittest.TestCase):
         self.assertNotIn("invite_hash", serialized)
         self.assertNotIn("token_hash", serialized)
 
+    def test_family_key_access_state_is_explicit_owner_path(self):
+        status, result = self.invoke(check_family_device_access)
+
+        self.assertEqual(status, 200)
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["authState"], "family_key")
+        self.assertEqual(result["role"], "owner")
+        self.assertTrue(result["canManageDevices"])
+        self.assertTrue(result["canWriteSharedPlan"])
+        self.assertTrue(result["migrationRecommended"])
+        self.assertIsNone(result["device"])
+
     def test_accept_invite_creates_device_token_once(self):
         _, invite = self.create_invite(role="editor")
         status, accepted = self.accept_invite(invite["inviteToken"], "Katie iPhone")
@@ -280,6 +311,25 @@ class AccountRouteTests(unittest.TestCase):
         self.assertNotIn("token_hash", repr(accepted))
         self.assertNotIn(accepted["deviceToken"], repr(accepted["device"]))
 
+    def test_editor_device_access_state_is_explicit_without_manage_permission(self):
+        _, invite = self.create_invite(role="editor")
+        _, accepted = self.accept_invite(invite["inviteToken"], "Katie iPhone")
+
+        status, result = self.invoke(
+            check_family_device_access,
+            headers={DEVICE_TOKEN_HEADER: accepted["deviceToken"]},
+        )
+
+        self.assertEqual(status, 200)
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["authState"], "device_token")
+        self.assertEqual(result["role"], "editor")
+        self.assertFalse(result["canManageDevices"])
+        self.assertTrue(result["canWriteSharedPlan"])
+        self.assertFalse(result["migrationRecommended"])
+        self.assertEqual(result["device"]["displayName"], "Katie iPhone")
+        self.assertNotIn("token_hash", repr(result))
+
     def test_editor_device_cannot_manage_devices(self):
         _, invite = self.create_invite(role="editor")
         _, accepted = self.accept_invite(invite["inviteToken"], "Katie iPhone")
@@ -291,6 +341,33 @@ class AccountRouteTests(unittest.TestCase):
 
         self.assertEqual(status, 403)
         self.assertEqual(result["status"], "forbidden")
+
+    def test_revoked_device_access_state_is_explicit_and_reconnectable(self):
+        _, invite = self.create_invite(role="editor")
+        _, accepted = self.accept_invite(invite["inviteToken"], "Katie iPhone")
+        device_id = accepted["device"]["id"]
+
+        status, revoked = self.invoke(
+            revoke_family_device,
+            method="POST",
+            body={"deviceId": device_id},
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(revoked["device"]["status"], "revoked")
+
+        status, result = self.invoke(
+            check_family_device_access,
+            headers={DEVICE_TOKEN_HEADER: accepted["deviceToken"]},
+        )
+
+        self.assertEqual(status, 401)
+        self.assertEqual(result["status"], "revoked")
+        self.assertEqual(result["authState"], "revoked_device_token")
+        self.assertEqual(result["device"]["status"], "revoked")
+        self.assertFalse(result["canManageDevices"])
+        self.assertFalse(result["canWriteSharedPlan"])
+        self.assertIn("Reconnect", result["message"])
+        self.assertNotIn("token_hash", repr(result))
 
     def test_owner_device_lists_renames_and_revokes_devices(self):
         owner_token, _ = self.seed_owner_device()
