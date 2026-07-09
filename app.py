@@ -9,6 +9,7 @@ the repository's api_server entrypoint.
 from core_app import *  # noqa: F401,F403
 from accounts_routes import (
     accept_family_invite,
+    check_family_device_access,
     create_family_invite,
     list_family_devices,
     rename_family_device,
@@ -83,6 +84,17 @@ def api_restore_family_trip_version():
 def api_get_family_trip_operations():
     try:
         return get_family_trip_operations(engine)
+    except Exception as error:
+        return {
+            "status": "error",
+            "message": str(error),
+        }, 500
+
+
+@app.route("/api/family-trip/devices/access", methods=["GET"])
+def api_check_family_device_access():
+    try:
+        return check_family_device_access(engine)
     except Exception as error:
         return {
             "status": "error",
