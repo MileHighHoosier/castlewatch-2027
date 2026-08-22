@@ -2,7 +2,9 @@
 
 ## Status
 
-Design proposal only. This document does not add a production schema migration, new endpoint, or GUI change.
+**Historical design baseline; partially implemented.** This document records the original migration design and therefore still uses terms such as "proposed" and step-by-step future language. Since it was written, CastleWatch has implemented the additive account/device schema, authorization helpers, device/invite endpoints, frontend plumbing and a minimal device-management GUI. The migration is **not complete**: normal shared-plan actions still rely on the legacy family key in important paths, owner-device bootstrap/verification is incomplete, production two-device verification remains open, and family-key retirement is not allowed yet.
+
+For authoritative current status, read root `PROJECT_STATE.md`, `ARCHITECTURE.md`, and `ROADMAP.md` before using this document to plan new work. The design below remains useful as historical intent, but current code wins when it conflicts with the original proposal.
 
 ## Goals
 
