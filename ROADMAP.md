@@ -36,8 +36,8 @@ Priority findings:
 
 Implementation batches:
 
-- **2A - backend request hardening:** bound/serialize ride-refresh writes, sanitize internal 5xx responses, add backend `.gitignore`, and add focused regression tests.
-- **2B - weather reliability:** preserve last-known heat/storm warnings across transient refresh failures and expose stale/unknown state safely.
+- **2A - backend request hardening: Complete.** Ride-refresh writes are bounded/serialized, internal 5xx responses are sanitized, backend secret/local-artifact ignore rules are in place, focused regression tests pass, and the merged Railway deployment is healthy.
+- **2B - weather reliability: Next.** Preserve last-known heat/storm warnings across transient refresh failures and expose stale/unknown state safely.
 - **2C - account/input hardening:** make invite acceptance atomic and reduce unsafe dynamic HTML around browser-held credentials.
 - **2D - origin/CORS hardening:** narrow browser origins after the production frontend origin set is verified so current iPhone access is not accidentally blocked.
 
