@@ -7,6 +7,7 @@ storage and production request guards are registered even when Railway launches
 """
 
 from flask import jsonify
+from sqlalchemy import text
 
 from core_app import *  # noqa: F401,F403
 from accounts_routes import (
@@ -27,8 +28,24 @@ from family_trip import (
 from live_planning_insights import get_live_planning_insights
 from operations import get_family_trip_operations
 from response_security import GENERIC_SERVER_ERROR_MESSAGE, sanitize_server_error_payload
+from ride_collection import collect_wait_times_without_schema
 from ride_read import get_latest_rides
 from ride_refresh_guard import guarded_collect_wait_times
+
+SCHEMA_BOOTSTRAP_LOCK_ID = 20271010
+
+
+def bootstrap_wait_times_schema():
+    """Ensure the wait-times schema before serving traffic, not during refreshes."""
+    with engine.begin() as connection:
+        connection.execute(
+            text("SELECT pg_advisory_xact_lock(:lock_id)"),
+            {"lock_id": SCHEMA_BOOTSTRAP_LOCK_ID},
+        )
+        setup_database(connection)
+
+
+bootstrap_wait_times_schema()
 
 
 @app.after_request
@@ -58,10 +75,19 @@ def _internal_error(context, error):
     }, 500
 
 
+def _collect_wait_times_request_safe():
+    return collect_wait_times_without_schema(
+        engine,
+        PARKS,
+        is_character_meet,
+        is_non_ride_experience,
+    )
+
+
 def guarded_api_refresh_rides():
     """Keep the public refresh URL while bounding expensive collection writes."""
     try:
-        return jsonify(guarded_collect_wait_times(engine, collect_wait_times))
+        return jsonify(guarded_collect_wait_times(engine, _collect_wait_times_request_safe))
     except Exception as error:
         return _internal_error("ride refresh", error)
 
