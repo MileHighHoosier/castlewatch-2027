@@ -120,10 +120,10 @@ def resilient_api_weather_advisory():
             exc_info=(type(error), error, error.__traceback__),
         )
         return jsonify({
-            "advisoryActive": False,
-            "mode": "normal",
+            "advisoryActive": None,
+            "mode": None,
             "source": "weather.gov",
-            "status": "error",
+            "status": "unknown",
             "message": GENERIC_SERVER_ERROR_MESSAGE,
             "checkedAt": datetime.utcnow().isoformat() + "Z",
         }), 502
