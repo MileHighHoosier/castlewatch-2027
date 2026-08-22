@@ -24,6 +24,7 @@ from family_trip import (
     put_family_trip,
     restore_family_trip_version,
 )
+from live_planning_insights import get_live_planning_insights
 from operations import get_family_trip_operations
 from response_security import GENERIC_SERVER_ERROR_MESSAGE, sanitize_server_error_payload
 from ride_read import get_latest_rides
@@ -73,10 +74,20 @@ def resilient_api_rides():
         return _internal_error("ride data read", error)
 
 
+def resilient_api_planning_insights():
+    """Keep live historical insights independent from heavier forecast work."""
+    try:
+        park = normalize_park(request.args.get("park", "Magic Kingdom"))
+        return jsonify(get_live_planning_insights(engine, park, should_include_attraction))
+    except Exception as error:
+        return _internal_error("live planning insights", error)
+
+
 # Install production guards at the shared Flask-app layer so both `app:app` and
 # `api_server:app` deployment entrypoints use the same protected endpoints.
 app.view_functions["api_refresh_rides"] = guarded_api_refresh_rides
 app.view_functions["api_rides"] = resilient_api_rides
+app.view_functions["api_planning_insights"] = resilient_api_planning_insights
 
 
 @app.route("/api/family-trip", methods=["GET"])
