@@ -8,7 +8,7 @@ This roadmap supersedes older chat-only progress estimates. It should be updated
 
 ### Section 1 - Authoritative project documentation
 
-Status: **In progress**
+Status: **Complete**
 
 Deliverables:
 
@@ -22,6 +22,8 @@ No product behavior changes belong in this section.
 
 ### Section 2 - Immediate security and reliability fixes
 
+Status: **In progress**
+
 Priority findings:
 
 - protect/internalize the ride-refresh write path,
@@ -31,6 +33,13 @@ Priority findings:
 - add backend `.gitignore`,
 - reduce unsafe dynamic HTML/credential exposure,
 - make invite acceptance atomic.
+
+Implementation batches:
+
+- **2A - backend request hardening:** bound/serialize ride-refresh writes, sanitize internal 5xx responses, add backend `.gitignore`, and add focused regression tests.
+- **2B - weather reliability:** preserve last-known heat/storm warnings across transient refresh failures and expose stale/unknown state safely.
+- **2C - account/input hardening:** make invite acceptance atomic and reduce unsafe dynamic HTML around browser-held credentials.
+- **2D - origin/CORS hardening:** narrow browser origins after the production frontend origin set is verified so current iPhone access is not accidentally blocked.
 
 ### Section 3 - Dependency management
 
