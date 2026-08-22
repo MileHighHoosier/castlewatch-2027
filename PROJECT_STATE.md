@@ -28,7 +28,7 @@ The original feature roadmap is mostly implemented, but CastleWatch is not yet p
 - Shared family sync/history: substantial implementation.
 - Account/device migration: partially implemented and not ready for family-key retirement.
 - Automated quality control: stronger for newer sync/account work than for older planning features.
-- Documentation and handoff quality: being rebuilt in the current rebaseline.
+- Documentation and handoff quality: rebaselined in Section 1 and now maintained as repository source of truth.
 
 ## Major implemented capabilities
 
@@ -144,21 +144,45 @@ Prediction Phase 2 still needs:
 
 Do not present current 2027 forecasts as precise predictions.
 
-## Known rebaseline findings requiring remediation
+## Rebaseline stabilization status
 
-These are documented here for prioritization. They are **not fixed by this documentation phase**.
+### Section 1 - Authoritative project documentation
+
+**Complete.** Canonical project state, architecture, roadmap and agent instructions are now stored in the repositories rather than relying on chat history.
+
+### Section 2A - Backend request hardening
+
+**Complete and production-verified on August 22, 2026.**
+
+Implemented and verified:
+
+- ride-refresh writes are serialized and bounded by a persistent PostgreSQL cooldown,
+- internal HTTP 5xx payloads are sanitized,
+- backend `.gitignore` protection covers secrets/local artifacts,
+- Railway uses multiple Gunicorn workers so long collection work does not monopolize all reads,
+- `/api/rides` is a pure nonblocking read path and no longer performs schema/setup or surprise collection work,
+- focused backend regression tests pass,
+- live iPhone verification confirmed normal closed-park behavior returned,
+- live History returned a real value (35,169) rather than a false zero,
+- History and Updated stayed unchanged 20-30 seconds after the initial refresh, consistent with the cooldown preventing an immediate duplicate refresh.
+
+Remaining caveat: `/api/refresh-rides` is still a public GET endpoint for compatibility. The cooldown materially reduces abuse/duplication risk, but full authorization/interface hardening remains future stabilization work.
+
+### Section 2B - Weather reliability
+
+**Next.** Preserve last-known heat/storm warnings across transient weather-refresh failures and explicitly represent stale/unknown weather state rather than silently clearing an active warning.
+
+## Known rebaseline findings still requiring remediation
 
 ### High priority
 
-- `/api/refresh-rides` performs external collection and database writes without an explicit authentication boundary and is exposed as a GET endpoint.
 - Weather frontend behavior can clear a previously active automatic warning when the weather request fails; stale last-known warnings should be preserved instead.
 - Accounts/device migration is incomplete and must not be mistaken for completed family-key replacement.
+- The ride-refresh endpoint remains a public GET even though 2A now rate-limits/serializes the expensive work.
 
 ### Important hardening/maintainability
 
 - Global Flask CORS should be narrowed for protected routes.
-- HTTP 500 responses should not expose raw exception text to clients.
-- Backend repository needs a root `.gitignore`.
 - Long-lived family/device credentials currently live in browser `localStorage`; dynamic `innerHTML` usage raises the impact of any XSS defect.
 - Invite acceptance should be made atomic against concurrent acceptance.
 - Frontend behavior relies in several places on imperative DOM patching and polling rather than shared React state.
@@ -167,25 +191,26 @@ These are documented here for prioritization. They are **not fixed by this docum
 - Legacy scaffold code remains beside production code and needs cleanup or explicit archiving.
 - Both repositories are public while personal trip dates and itinerary assumptions are encoded in source; repository privacy/config separation should be decided explicitly.
 
-## Where development stopped
+## Where development stopped before the rebaseline
 
-The most recent development thread was the Accounts / Invitations / Device Management migration and production verification work. The frontend production-verification issue for the Family devices panel remained open. The prior Trip Week Phase 2 plan is no longer a clean "next feature" because the decision engine already exists in partial form.
+The most recent pre-rebaseline development thread was the Accounts / Invitations / Device Management migration and production verification work. The frontend production-verification issue for the Family devices panel remained open. The prior Trip Week Phase 2 plan is no longer a clean "next feature" because the decision engine already exists in partial form.
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization**
+**CastleWatch Rebaseline & Stabilization - Section 2B next**
 
-Do not add major new product features until the rebaseline/stabilization work establishes authoritative documentation, fixes the highest-priority reliability/security issues, improves automated regression coverage, and resolves the account/device migration direction.
+Do not add major new product features until the rebaseline/stabilization work fixes the remaining high-priority reliability/security issues, improves automated regression coverage, and resolves the account/device migration direction.
 
 ## Exact next priorities
 
-1. Finish Section 1 documentation and merge after review.
-2. Rebaseline/Stabilization security and reliability fixes.
-3. Dependency-management controls.
-4. Broaden automated quality-control coverage.
-5. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
-6. Production smoke verification.
-7. Establish a lightweight project/task tracker.
-8. Resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 2B - Weather reliability.**
+2. Section 2C - account/input hardening.
+3. Section 2D - origin/CORS hardening.
+4. Dependency-management controls.
+5. Broaden automated quality-control coverage.
+6. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
+7. Production smoke verification.
+8. Establish a lightweight project/task tracker.
+9. Resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
