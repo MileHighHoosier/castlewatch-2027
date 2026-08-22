@@ -6,7 +6,7 @@ storage and production request guards are registered even when Railway launches
 `gunicorn app:app` instead of the repository's api_server entrypoint.
 """
 
-from flask import jsonify, request
+from flask import jsonify
 
 from core_app import *  # noqa: F401,F403
 from accounts_routes import (
@@ -25,7 +25,6 @@ from family_trip import (
     restore_family_trip_version,
 )
 from operations import get_family_trip_operations
-from planning_insights_fast import get_fast_historical_planning_insights
 from response_security import GENERIC_SERVER_ERROR_MESSAGE, sanitize_server_error_payload
 from ride_refresh_guard import guarded_collect_wait_times
 
@@ -65,24 +64,9 @@ def guarded_api_refresh_rides():
         return _internal_error("ride refresh", error)
 
 
-def resilient_api_planning_insights():
-    """Serve live dashboard history without blocking on tomorrow forecasting."""
-    try:
-        park = normalize_park(request.args.get("park", "Magic Kingdom"))
-        return jsonify(get_fast_historical_planning_insights(
-            engine,
-            park,
-            should_include_attraction,
-            logger=app.logger,
-        ))
-    except Exception as error:
-        return _internal_error("planning insights", error)
-
-
-# Install production guards at the shared Flask-app layer so both `app:app` and
-# `api_server:app` deployment entrypoints use the same protected endpoints.
+# Install the guard at the shared Flask-app layer so both `app:app` and
+# `api_server:app` deployment entrypoints use the same protected endpoint.
 app.view_functions["api_refresh_rides"] = guarded_api_refresh_rides
-app.view_functions["api_planning_insights"] = resilient_api_planning_insights
 
 
 @app.route("/api/family-trip", methods=["GET"])
