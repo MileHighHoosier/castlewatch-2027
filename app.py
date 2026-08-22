@@ -31,6 +31,7 @@ from response_security import GENERIC_SERVER_ERROR_MESSAGE, sanitize_server_erro
 from ride_collection import collect_wait_times_without_schema
 from ride_read import get_latest_rides
 from ride_refresh_guard import guarded_collect_wait_times
+from weather_safety import prioritize_weather_advisory
 
 SCHEMA_BOOTSTRAP_LOCK_ID = 20271010
 
@@ -109,11 +110,31 @@ def resilient_api_planning_insights():
         return _internal_error("live planning insights", error)
 
 
+def resilient_api_weather_advisory():
+    """Return official alerts with shelter-first severe-weather prioritization."""
+    try:
+        return jsonify(prioritize_weather_advisory(get_weather_advisory()))
+    except Exception as error:
+        app.logger.error(
+            "CastleWatch backend failure: weather advisory",
+            exc_info=(type(error), error, error.__traceback__),
+        )
+        return jsonify({
+            "advisoryActive": None,
+            "mode": None,
+            "source": "weather.gov",
+            "status": "unknown",
+            "message": GENERIC_SERVER_ERROR_MESSAGE,
+            "checkedAt": datetime.utcnow().isoformat() + "Z",
+        }), 502
+
+
 # Install production guards at the shared Flask-app layer so both `app:app` and
 # `api_server:app` deployment entrypoints use the same protected endpoints.
 app.view_functions["api_refresh_rides"] = guarded_api_refresh_rides
 app.view_functions["api_rides"] = resilient_api_rides
 app.view_functions["api_planning_insights"] = resilient_api_planning_insights
+app.view_functions["api_weather_advisory"] = resilient_api_weather_advisory
 
 
 @app.route("/api/family-trip", methods=["GET"])
