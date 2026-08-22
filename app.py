@@ -26,6 +26,7 @@ from family_trip import (
 )
 from operations import get_family_trip_operations
 from response_security import GENERIC_SERVER_ERROR_MESSAGE, sanitize_server_error_payload
+from ride_read import get_latest_rides
 from ride_refresh_guard import guarded_collect_wait_times
 
 
@@ -64,9 +65,18 @@ def guarded_api_refresh_rides():
         return _internal_error("ride refresh", error)
 
 
-# Install the guard at the shared Flask-app layer so both `app:app` and
-# `api_server:app` deployment entrypoints use the same protected endpoint.
+def resilient_api_rides():
+    """Serve ride reads without schema changes or surprise collection work."""
+    try:
+        return jsonify(get_latest_rides(engine, should_include_attraction))
+    except Exception as error:
+        return _internal_error("ride data read", error)
+
+
+# Install production guards at the shared Flask-app layer so both `app:app` and
+# `api_server:app` deployment entrypoints use the same protected endpoints.
 app.view_functions["api_refresh_rides"] = guarded_api_refresh_rides
+app.view_functions["api_rides"] = resilient_api_rides
 
 
 @app.route("/api/family-trip", methods=["GET"])
