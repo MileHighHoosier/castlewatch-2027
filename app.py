@@ -2,9 +2,11 @@
 
 The original application implementation lives in core_app.py. This wrapper keeps
 all existing routes and helpers available while ensuring private family-trip
-storage is registered even when Railway launches `gunicorn app:app` instead of
-the repository's api_server entrypoint.
+storage and production request guards are registered even when Railway launches
+`gunicorn app:app` instead of the repository's api_server entrypoint.
 """
+
+from flask import jsonify
 
 from core_app import *  # noqa: F401,F403
 from accounts_routes import (
@@ -24,6 +26,7 @@ from family_trip import (
 )
 from operations import get_family_trip_operations
 from response_security import GENERIC_SERVER_ERROR_MESSAGE, sanitize_server_error_payload
+from ride_refresh_guard import guarded_collect_wait_times
 
 
 @app.after_request
@@ -51,6 +54,19 @@ def _internal_error(context, error):
         "status": "error",
         "message": GENERIC_SERVER_ERROR_MESSAGE,
     }, 500
+
+
+def guarded_api_refresh_rides():
+    """Keep the public refresh URL while bounding expensive collection writes."""
+    try:
+        return jsonify(guarded_collect_wait_times(engine, collect_wait_times))
+    except Exception as error:
+        return _internal_error("ride refresh", error)
+
+
+# Install the guard at the shared Flask-app layer so both `app:app` and
+# `api_server:app` deployment entrypoints use the same protected endpoint.
+app.view_functions["api_refresh_rides"] = guarded_api_refresh_rides
 
 
 @app.route("/api/family-trip", methods=["GET"])
