@@ -123,7 +123,7 @@ def guarded_collect_wait_times(
             return _base_result("refresh_not_due", False, latest, interval)
 
         result = dict(collect_wait_times() or {})
-        completed_at = _now_utc()
+        completed_at = _now_utc(now)
         _record_refresh(connection, completed_at)
         result.update(_base_result("refreshed", True, completed_at, interval))
         return result
