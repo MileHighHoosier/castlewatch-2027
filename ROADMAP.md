@@ -36,7 +36,7 @@ Priority findings:
 
 Implementation batches:
 
-- **2A - backend request hardening: Complete.** Ride-refresh writes are bounded/serialized, internal 5xx responses are sanitized, backend secret/local-artifact ignore rules are in place, focused regression tests pass, and the merged Railway deployment is healthy.
+- **2A - backend request hardening: Complete and production-verified.** Ride-refresh writes are bounded/serialized with persisted cooldown state, internal 5xx responses are sanitized, backend secret/local-artifact ignore rules are in place, Railway runs enough workers to keep reads available during collection, and `/api/rides` is now a pure nonblocking read path rather than performing schema/setup or collection work. Automated regression tests pass. iPhone verification on August 22, 2026 confirmed normal closed-park behavior returned, History restored to a real value (35,169), and both History and Updated remained unchanged 20-30 seconds after the initial refresh. The refresh endpoint remains a public GET for compatibility and still requires later authorization/interface hardening before CastleWatch is considered production-hardened.
 - **2B - weather reliability: Next.** Preserve last-known heat/storm warnings across transient refresh failures and expose stale/unknown state safely.
 - **2C - account/input hardening:** make invite acceptance atomic and reduce unsafe dynamic HTML around browser-held credentials.
 - **2D - origin/CORS hardening:** narrow browser origins after the production frontend origin set is verified so current iPhone access is not accidentally blocked.
