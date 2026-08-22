@@ -41,7 +41,7 @@ The original feature roadmap is mostly implemented, but CastleWatch is not yet p
 - Live Plan recommendations with multiple planning modes.
 - Shows, activities and character layers.
 - Emergency break/leave-park behavior.
-- Weather-aware planning.
+- Weather-aware planning with last-known advisory preservation and stale/unknown reliability states.
 - Manual Lightning Lane window tracking and conflict guidance.
 
 ### Trip planning
@@ -170,20 +170,33 @@ Remaining caveat: `/api/refresh-rides` is still a public GET endpoint for compat
 
 ### Section 2B - Weather reliability
 
-**Next.** Preserve last-known heat/storm warnings across transient weather-refresh failures and explicitly represent stale/unknown weather state rather than silently clearing an active warning.
+**Complete and production-verified on August 22, 2026.**
+
+Implemented and verified:
+
+- transient weather refresh failures no longer clear a previously known automatic heat/storm advisory,
+- automatic weather state explicitly distinguishes `current`, `stale`, and `unknown`,
+- the last successful weather-check timestamp advances only after a valid successful response,
+- a previously automatic heat/storm mode is cleared only after a successful response confirms no advisory,
+- stale/unknown weather is surfaced in the frontend instead of being silently treated as normal,
+- manual Weather OK/Heat/Storm controls and same-day manual Weather OK override behavior are preserved,
+- touched weather UI uses safe text rendering rather than dynamic `innerHTML`,
+- backend weather selection gives shelter-first storm/tornado alerts priority over simultaneous heat alerts,
+- weather-provider failures return HTTP 502 with unknown/null weather state rather than falsely reporting normal conditions,
+- focused frontend weather reliability tests, the frontend production build, backend tests, and backend production-module compilation passed,
+- the merged frontend commit deployed successfully to Vercel and the merged backend commit deployed successfully to Railway.
 
 ## Known rebaseline findings still requiring remediation
 
 ### High priority
 
-- Weather frontend behavior can clear a previously active automatic warning when the weather request fails; stale last-known warnings should be preserved instead.
 - Accounts/device migration is incomplete and must not be mistaken for completed family-key replacement.
 - The ride-refresh endpoint remains a public GET even though 2A now rate-limits/serializes the expensive work.
 
 ### Important hardening/maintainability
 
 - Global Flask CORS should be narrowed for protected routes.
-- Long-lived family/device credentials currently live in browser `localStorage`; dynamic `innerHTML` usage raises the impact of any XSS defect.
+- Long-lived family/device credentials currently live in browser `localStorage`; remaining dynamic `innerHTML` usage elsewhere still raises the impact of any XSS defect.
 - Invite acceptance should be made atomic against concurrent acceptance.
 - Frontend behavior relies in several places on imperative DOM patching and polling rather than shared React state.
 - Backend dependencies are unpinned; frontend manifest uses `latest` ranges even though the lockfile currently stabilizes installs.
@@ -197,20 +210,19 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Section 2B next**
+**CastleWatch Rebaseline & Stabilization - Section 2C next**
 
 Do not add major new product features until the rebaseline/stabilization work fixes the remaining high-priority reliability/security issues, improves automated regression coverage, and resolves the account/device migration direction.
 
 ## Exact next priorities
 
-1. **Section 2B - Weather reliability.**
-2. Section 2C - account/input hardening.
-3. Section 2D - origin/CORS hardening.
-4. Dependency-management controls.
-5. Broaden automated quality-control coverage.
-6. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
-7. Production smoke verification.
-8. Establish a lightweight project/task tracker.
-9. Resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 2C - account/input hardening.**
+2. Section 2D - origin/CORS hardening.
+3. Dependency-management controls.
+4. Broaden automated quality-control coverage.
+5. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
+6. Production smoke verification.
+7. Establish a lightweight project/task tracker.
+8. Resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
