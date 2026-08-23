@@ -1,5 +1,6 @@
 import os
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from flask import Flask, jsonify
@@ -21,6 +22,11 @@ class CorsPolicyTests(unittest.TestCase):
             return jsonify({"status": "ok"})
 
         return app.test_client()
+
+    def test_production_entrypoint_installs_cors_enforcement(self):
+        source = Path("app.py").read_text(encoding="utf-8")
+        self.assertIn("from cors_policy import install_cors_enforcement", source)
+        self.assertIn("install_cors_enforcement(app)", source)
 
     def test_production_and_castlewatch_preview_origins_are_allowed(self):
         self.assertTrue(origin_is_allowed("https://castlewatch-frontend.vercel.app"))
