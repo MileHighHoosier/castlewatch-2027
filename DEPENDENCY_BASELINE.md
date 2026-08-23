@@ -1,25 +1,23 @@
 # CastleWatch Dependency Baseline
 
-_Baseline captured August 22, 2026 during Rebaseline & Stabilization Section 3A._
+_Baseline captured August 22, 2026 during Rebaseline & Stabilization Section 3A and reconciled through Section 3C._
 
-This file records the dependency/runtime state that is already known to build and test successfully. Section 3 should preserve this known-good baseline before considering any upgrades.
+This file records the exact dependency/runtime state proven during Section 3. It is the rollback/reference baseline for future dependency work. The upgrade procedure is defined in `DEPENDENCY_POLICY.md`.
 
-## Policy decision for Section 3
+## Baseline policy
 
-CastleWatch will use **exact direct-dependency pins** for the current stabilization baseline.
+CastleWatch uses **exact direct-dependency pins** for the stabilization baseline.
 
-- Do not opportunistically upgrade dependencies while introducing reproducibility controls.
-- Pin the versions that are already proven by the current lockfile/green CI first.
-- Keep frontend `package-lock.json` committed and use `npm ci` in CI.
-- Backend direct dependencies should be pinned to the exact versions proven by green CI.
-- Runtime versions should be made explicit where practical so production does not silently drift away from CI.
-- Future dependency upgrades should be separate, reviewable changes with tests/builds before production deployment.
+- Backend direct Python dependencies are exact-pinned in `requirements.txt`.
+- Backend Python is pinned to 3.12.14 in `.python-version`, and CI uses the same interpreter.
+- Frontend direct npm dependencies are exact-pinned in `package.json`.
+- Frontend `package-lock.json` is committed and CI installs with `npm ci`.
+- Frontend declares Node `22.x`, and CI uses Node 22.
+- Dependency upgrades are separate, reviewable changes with tests/builds before production deployment.
 
 ## Backend known-good baseline
 
 Repository: `MileHighHoosier/castlewatch-2027`
-
-The backend CI workflow uses Python 3.12. The green Section 2D PR run resolved CPython 3.12.14 and successfully ran the full backend test suite and production-module compilation with these direct dependencies:
 
 | Direct dependency | Known-good version |
 | --- | --- |
@@ -30,24 +28,21 @@ The backend CI workflow uses Python 3.12. The green Section 2D PR run resolved C
 | requests | 2.34.2 |
 | flask-cors | 6.0.5 |
 
-Current `requirements.txt` does **not** pin these versions yet. Section 3B will convert the direct dependency list to exact pins and add a regression/reproducibility check without changing application behavior.
+Runtime/control state:
 
-### Backend runtime status
-
-- CI runtime family: Python 3.12.
-- Exact green CI interpreter observed: CPython 3.12.14.
-- No repository-level production Python version pin was found during 3A.
-- Railway may therefore select a compatible/default Python runtime independently of CI unless deployment configuration outside the repository pins it.
-
-Section 3B should make the supported Python runtime explicit in source/deployment configuration after verifying the production-compatible mechanism.
+- Python: **3.12.14**.
+- `.python-version`: **3.12.14**.
+- GitHub Actions: **3.12.14**.
+- `requirements.txt`: exact direct pins above.
+- `tests/test_dependency_policy.py`: guards the expected dependency/runtime controls.
+- Section 3B clean CI successfully installed from the exact pins, ran the full backend test suite, and compiled production modules.
+- The merged 3B Railway deployment completed successfully.
 
 ## Frontend known-good baseline
 
 Repository: `MileHighHoosier/castlewatch-frontend`
 
-The committed npm lockfile currently resolves these direct dependencies:
-
-| Direct dependency | Known-good lockfile version |
+| Direct dependency | Known-good version |
 | --- | --- |
 | next | 16.2.6 |
 | react | 19.2.6 |
@@ -60,34 +55,24 @@ The committed npm lockfile currently resolves these direct dependencies:
 | eslint | 9.39.4 |
 | eslint-config-next | 16.2.6 |
 
-Current `package.json` declares all of these as `latest`, even though `package-lock.json` resolves exact versions. This means `npm ci` is deterministic today, but future lockfile regeneration or ordinary `npm install` can move the direct dependencies unexpectedly.
+Runtime/control state:
 
-Section 3C will replace the `latest` declarations with the exact versions above, synchronize the lockfile, and preserve deterministic `npm ci` behavior.
+- Node: **22.x** declared in `package.json`.
+- GitHub Actions: **Node 22**.
+- CI install command: **`npm ci`**.
+- `package-lock.json`: committed and synchronized to the exact direct pins.
+- `tests/dependencyPolicy.test.mjs`: guards manifest/lockfile/runtime/CI alignment.
+- Section 3C clean CI successfully ran `npm ci`, the full frontend tests, and the production Next.js build.
+- The actual `castlewatch-frontend` Vercel preview and merged production deployment completed successfully.
+- The separate legacy `castlewatch-2027` Vercel project is not the production frontend and may continue to report an unrelated error until later deployment-hygiene cleanup.
 
-### Frontend runtime status
+## Section 3 history
 
-- CI explicitly uses Node.js 22.
-- CI installs with `npm ci`, then runs tests and a production Next.js build.
-- `package.json` currently has no `engines.node` constraint.
-- No repository-level `.nvmrc` or equivalent Node runtime pin was found during 3A.
-- The Vercel production runtime may therefore be controlled by Vercel project settings/defaults rather than repository source.
+- **3A:** captured the known-good dependency/runtime baseline and selected exact direct pins as the stabilization strategy.
+- **3B:** implemented backend exact pins and Python runtime alignment with regression protection.
+- **3C:** replaced frontend `latest` declarations with exact known-good versions, synchronized the lockfile, declared Node 22.x, and added regression protection.
+- **3D:** establishes the long-term upgrade/rollback procedure and performs the final cross-repository QC pass before Section 3 is closed.
 
-Section 3C should make the supported Node runtime explicit in the repository after verifying compatibility with the actual Vercel build environment.
+## Rollback reference
 
-## What 3A does not do
-
-3A is inventory and policy only. It does not:
-
-- change any package version,
-- regenerate a lockfile,
-- alter Railway/Vercel runtime settings,
-- change application behavior,
-- retire the family key,
-- change account/device authorization,
-- introduce dependency upgrades.
-
-## Next actions
-
-1. **3B — Backend dependency controls:** exact-pin the six proven direct Python dependencies and make the supported Python runtime explicit using the deployment mechanism verified for Railway.
-2. **3C — Frontend dependency controls:** replace `latest` with the lockfile-proven direct versions, keep `package-lock.json` synchronized, and make the Node runtime expectation explicit.
-3. **3D — Upgrade procedure and full QC:** document the upgrade workflow, run full backend/frontend tests and production builds, and only then consider Section 3 complete.
+If a future dependency/runtime upgrade causes a production regression and no data/schema migration prevents rollback, restore the exact versions/runtime controls in this file first, then investigate the upgrade separately. Do not normalize a broken upgrade by weakening tests or stacking unrelated fixes onto it.

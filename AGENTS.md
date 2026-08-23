@@ -14,6 +14,8 @@ Before cross-cutting or architectural changes, inspect both repositories and rea
 - `PROJECT_STATE.md`
 - `ARCHITECTURE.md`
 - `ROADMAP.md`
+- `DEPENDENCY_POLICY.md` before any dependency/runtime change
+- `DEPENDENCY_BASELINE.md` when evaluating or rolling back dependency/runtime changes
 
 Do not rely on old chat history as the source of truth when repository documentation and code disagree.
 
@@ -39,6 +41,7 @@ Legacy-looking areas such as `bots/`, `scheduler/`, `collectors/`, `ai_engine/`,
 8. Keep secrets, family keys, raw device tokens and raw invite tokens out of source control, logs and error output.
 9. Do not return internal exception details to clients when a generic error can be used.
 10. Update project documentation when a change alters architecture, roadmap status or the authoritative project state.
+11. Keep dependency/runtime changes isolated and follow `DEPENDENCY_POLICY.md`; do not reintroduce floating direct dependency ranges or bundle opportunistic upgrades into unrelated work.
 
 ## Account/device migration safety gate
 
@@ -70,5 +73,6 @@ Verify source provenance before adding a new source or changing fallback behavio
 - run the relevant tests,
 - compile/build affected production code when applicable,
 - verify no secret/token was added to source or output,
+- for dependency/runtime changes, verify the exact pin/runtime/rollback requirements in `DEPENDENCY_POLICY.md`,
 - check whether the frontend repository needs a coordinated change,
 - update `PROJECT_STATE.md`, `ARCHITECTURE.md` or `ROADMAP.md` when status/boundaries changed.
