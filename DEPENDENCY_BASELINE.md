@@ -1,6 +1,6 @@
 # CastleWatch Dependency Baseline
 
-_Baseline captured August 22, 2026 during Rebaseline & Stabilization Section 3A and reconciled through Section 3C._
+_Baseline captured August 22, 2026 during Rebaseline & Stabilization Section 3A and finalized through Section 3D on August 23, 2026._
 
 This file records the exact dependency/runtime state proven during Section 3. It is the rollback/reference baseline for future dependency work. The upgrade procedure is defined in `DEPENDENCY_POLICY.md`.
 
@@ -71,7 +71,7 @@ Runtime/control state:
 - **3A:** captured the known-good dependency/runtime baseline and selected exact direct pins as the stabilization strategy.
 - **3B:** implemented backend exact pins and Python runtime alignment with regression protection.
 - **3C:** replaced frontend `latest` declarations with exact known-good versions, synchronized the lockfile, declared Node 22.x, and added regression protection.
-- **3D:** establishes the long-term upgrade/rollback procedure and performs the final cross-repository QC pass before Section 3 is closed.
+- **3D:** established the long-term upgrade/rollback procedure, passed the final backend/frontend clean-install test/build verification, and production-deployed the documentation/policy closeout successfully to Railway and the real `castlewatch-frontend` Vercel project.
 
 ## Rollback reference
 
