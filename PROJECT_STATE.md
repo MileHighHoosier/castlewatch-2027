@@ -224,7 +224,9 @@ Implemented and verified:
 
 ### Section 3 - Dependency management
 
-**In progress. Sections 3A, 3B and 3C are complete; Section 3D is next.**
+**Complete and production-deployed on August 23, 2026.**
+
+CastleWatch now has a reproducible known-good dependency/runtime baseline and a controlled, reversible upgrade procedure across both repositories.
 
 #### Section 3A - Dependency/runtime baseline
 
@@ -232,7 +234,7 @@ Implemented and verified:
 
 #### Section 3B - Backend dependency controls
 
-**Complete and merged.**
+**Complete and production-deployed.**
 
 Implemented and verified:
 
@@ -240,7 +242,8 @@ Implemented and verified:
 - `.python-version` pins Python 3.12.14 for Railway's source-controlled runtime selection,
 - GitHub Actions uses the same Python 3.12.14 interpreter,
 - regression checks detect backend dependency or runtime/CI drift,
-- the change contains no application behavior, account/family-key, or frontend modifications.
+- the change contains no application behavior, account/family-key, or frontend modifications,
+- the merged Railway deployment succeeded.
 
 #### Section 3C - Frontend dependency controls
 
@@ -259,7 +262,23 @@ Implemented and verified:
 
 ### Section 3D - Controlled upgrade policy and final dependency verification
 
-**Next.** Document the normal safe dependency-upgrade procedure and perform the final cross-repository dependency/regression verification required to close Section 3 before moving to broader automated quality-control expansion.
+**Complete and production-deployed on August 23, 2026.**
+
+Implemented and verified:
+
+- canonical `DEPENDENCY_POLICY.md` defines safe dependency/runtime upgrades and rollback behavior,
+- direct dependencies remain exact-pinned and floating `latest`/caret/tilde declarations are prohibited by policy unless a future architecture decision explicitly changes that rule,
+- dependency changes must stay isolated from unrelated feature work when practical,
+- major framework/runtime upgrades are treated as architecture changes,
+- security upgrades can be expedited but still require appropriate test/build/deployment gates,
+- automatic dependency-update merging is prohibited,
+- `DEPENDENCY_BASELINE.md` is the known-good rollback reference,
+- backend and frontend `AGENTS.md` files now require dependency/runtime work to follow the canonical policy and baseline,
+- exact-head backend CI passed clean installation, the full backend contract suite, and production-module compilation,
+- exact-head frontend CI passed deterministic `npm ci`, the full frontend test suite, and the production Next.js build,
+- no application code, dependency versions, lockfile versions, runtime versions, database behavior, account/family-key behavior, or Trip Week behavior changed in 3D,
+- backend PR #34 and frontend PR #33 were merged,
+- the merged Railway deployment succeeded and the real `castlewatch-frontend` production Vercel deployment succeeded.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -272,7 +291,6 @@ Implemented and verified:
 
 - Long-lived family/device credentials currently live in browser `localStorage`; remaining dynamic `innerHTML` usage elsewhere still raises the impact of any XSS defect.
 - Frontend behavior relies in several places on imperative DOM patching and polling rather than shared React state.
-- Section 3D still needs to document the controlled dependency-upgrade procedure and close the dependency-management phase with full cross-repository verification.
 - Automated regression coverage is concentrated around family sync/account work and is sparse for older park-planning features.
 - Legacy scaffold code remains beside production code and needs cleanup or explicit archiving.
 - Legacy `core_app.py` still initializes Flask-CORS globally; Section 2D safely enforces the effective narrowed browser policy at the production boundary, but eventual core cleanup remains maintainability debt.
@@ -285,17 +303,16 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Section 3D next**
+**CastleWatch Rebaseline & Stabilization - Section 4 next**
 
-Do not add major new product features until the rebaseline/stabilization work completes dependency controls, improves automated regression coverage, and resolves the account/device migration direction.
+Do not add major new product features until the rebaseline/stabilization work improves automated regression coverage and resolves the account/device migration direction.
 
 ## Exact next priorities
 
-1. **Section 3D - controlled dependency-upgrade policy and final cross-repository dependency verification.**
-2. **Section 4 - broaden automated quality-control coverage.**
-3. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
-4. Production smoke verification.
-5. Establish a lightweight project/task tracker.
-6. Resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 4 - broaden automated quality-control coverage.**
+2. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
+3. Production smoke verification.
+4. Establish a lightweight project/task tracker.
+5. Resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
