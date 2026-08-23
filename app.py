@@ -11,7 +11,6 @@ from sqlalchemy import text
 
 from core_app import *  # noqa: F401,F403
 from accounts_routes import (
-    accept_family_invite,
     check_family_device_access,
     create_family_invite,
     list_family_devices,
@@ -25,6 +24,7 @@ from family_trip import (
     put_family_trip,
     restore_family_trip_version,
 )
+from invite_acceptance import accept_family_invite_atomic
 from live_planning_insights import get_live_planning_insights
 from operations import get_family_trip_operations
 from response_security import GENERIC_SERVER_ERROR_MESSAGE, sanitize_server_error_payload
@@ -212,7 +212,7 @@ def api_create_family_invite():
 @app.route("/api/family-trip/devices/accept-invite", methods=["POST"])
 def api_accept_family_invite():
     try:
-        return accept_family_invite(engine)
+        return accept_family_invite_atomic(engine)
     except Exception as error:
         return _internal_error("family invite acceptance", error)
 
