@@ -280,6 +280,31 @@ Implemented and verified:
 - backend PR #34 and frontend PR #33 were merged,
 - the merged Railway deployment succeeded and the real `castlewatch-frontend` production Vercel deployment succeeded.
 
+### Section 4 - Automated quality-control expansion
+
+**In progress as of August 23, 2026.**
+
+#### Section 4A - QC inventory and Trip Week core decision contracts
+
+**Complete, merged and production-deployed on August 23, 2026.**
+
+Implemented and verified:
+
+- current automated coverage was inventoried across both repositories and recorded in backend issue #35;
+- direct frontend regression contracts now protect the existing Trip Week decision engine's `Wait`, `Review`, `Swap` and `Keep` outcomes;
+- confirmed reservation conflicts cannot be hidden by a lower aggregate scenario score;
+- the approved no-park-hopping constraint remains a stronger cross-park reservation penalty;
+- swap guidance remains a manual user-approval action rather than an automatic itinerary mutation;
+- the fixtures preserve the approved October 9-16, 2027 real-trip assignments, family profile and split-resort planning model;
+- all 37 frontend tests passed under the required Node 22 CI runtime;
+- the production Next.js build passed;
+- frontend PR #34 was squash-merged at `fac7ff1fcbe7310d2a4ff25f59fc4fdd02a9549f`;
+- the real `castlewatch-frontend` production Vercel deployment succeeded.
+
+No application code, itinerary state, account/family-key behavior, dependency or runtime version changed in 4A.
+
+**Next Section 4 batch: 4B - historical/date forecasting and calendar/event contracts.**
+
 ## Known rebaseline findings still requiring remediation
 
 ### High priority
@@ -303,13 +328,13 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Section 4 next**
+**CastleWatch Rebaseline & Stabilization - Section 4 in progress**
 
-Do not add major new product features until the rebaseline/stabilization work improves automated regression coverage and resolves the account/device migration direction.
+Section 4A is complete. Section 4B is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work improves automated regression coverage and the account/device migration direction is resolved.
 
 ## Exact next priorities
 
-1. **Section 4 - broaden automated quality-control coverage.**
+1. **Section 4B - add historical/date forecasting and calendar/event regression contracts.**
 2. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
 3. Production smoke verification.
 4. Establish a lightweight project/task tracker.
