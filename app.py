@@ -17,6 +17,7 @@ from accounts_routes import (
     rename_family_device,
     revoke_family_device,
 )
+from cors_policy import install_cors_enforcement
 from family_trip import (
     get_family_trip,
     get_family_trip_history,
@@ -34,6 +35,11 @@ from ride_refresh_guard import guarded_collect_wait_times
 from weather_safety import prioritize_weather_advisory
 
 SCHEMA_BOOTSTRAP_LOCK_ID = 20271010
+
+# core_app.py still initializes legacy global Flask-CORS. Install this response
+# guard before later after_request handlers are registered; the policy inserts
+# itself first so Flask executes it last and strips any unapproved CORS grant.
+install_cors_enforcement(app)
 
 
 def bootstrap_wait_times_schema():
