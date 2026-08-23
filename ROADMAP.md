@@ -42,18 +42,20 @@ Implementation batches:
 
 ### Section 3 - Dependency management
 
-Status: **In progress**
+Status: **Complete — production-deployed August 23, 2026**
 
-Goal: make installs reproducible and establish a controlled dependency-upgrade policy without changing product behavior.
+Goal achieved: installs are reproducible, the known-good backend/frontend dependency and runtime baselines are explicit, drift is regression-checked, and future upgrades follow a controlled rollback-aware policy without automatic or opportunistic package movement.
 
 Implementation batches:
 
 - **3A - dependency/runtime baseline: Complete.** Exact known-good backend and frontend direct dependency versions and CI runtimes were inventoried and documented before installation behavior changed.
-- **3B - backend dependency controls: Complete and merged.** Backend direct dependencies are exact-pinned to the verified working baseline, `.python-version` pins Python 3.12.14 for the Railway source-controlled runtime, GitHub Actions uses the same interpreter, and regression checks guard dependency/runtime drift.
+- **3B - backend dependency controls: Complete and production-deployed.** Backend direct dependencies are exact-pinned to the verified working baseline, `.python-version` pins Python 3.12.14 for the Railway source-controlled runtime, GitHub Actions uses the same interpreter, regression checks guard dependency/runtime drift, and the merged Railway deployment succeeded.
 - **3C - frontend dependency controls: Complete and production-deployed August 22, 2026.** All direct frontend `latest` declarations were replaced with exact lockfile-proven versions, `package.json` declares Node `22.x`, package-lock root metadata was synchronized without moving any transitive dependency version, and dependency-policy tests guard manifest/lockfile/runtime/`npm ci` alignment. Clean `npm ci`, full frontend tests, the production Next.js build, Vercel preview, and the merged production Vercel deployment all succeeded.
-- **3D - controlled upgrade policy and full dependency regression verification: Next.** Document the normal safe-upgrade procedure and run the final cross-repository dependency/regression verification needed to close Section 3.
+- **3D - controlled upgrade policy and full dependency regression verification: Complete and production-deployed August 23, 2026.** Canonical `DEPENDENCY_POLICY.md` now defines isolated, exact-version, test/build/deployment and rollback gates for future backend/frontend dependency and runtime changes; both repository agent instructions require that policy; `DEPENDENCY_BASELINE.md` is the known-good rollback reference; backend exact-head clean install/tests/compilation and frontend deterministic `npm ci`/tests/production build passed; the 3D changes contained no application/package/runtime behavior changes; backend PR #34 and frontend PR #33 merged; the resulting Railway and real `castlewatch-frontend` Vercel production deployments both succeeded.
 
 ### Section 4 - Automated quality-control expansion
+
+Status: **Next**
 
 Add regression coverage for core product behavior, especially:
 
