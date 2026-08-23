@@ -1,6 +1,6 @@
 import inspect
+from pathlib import Path
 
-import app
 import invite_acceptance
 
 
@@ -26,6 +26,7 @@ def test_invite_consumption_update_is_defensive_and_returns_confirmation():
 
 
 def test_production_route_uses_atomic_invite_handler():
-    source = inspect.getsource(app.api_accept_family_invite)
+    source = Path("app.py").read_text(encoding="utf-8")
 
-    assert "accept_family_invite_atomic(engine)" in source
+    assert "from invite_acceptance import accept_family_invite_atomic" in source
+    assert "return accept_family_invite_atomic(engine)" in source
