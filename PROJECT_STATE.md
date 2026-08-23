@@ -94,11 +94,14 @@ Implemented:
 - owner/editor/viewer role helpers,
 - hashed device and invite tokens,
 - device access checks,
-- invite creation and acceptance,
+- invite creation and atomic single-consumption acceptance,
 - device list,
 - rename,
 - revoke,
 - frontend device-management UI/plumbing,
+- bounded validation for persisted/returned device and invite credentials,
+- credential-management errors no longer append raw backend response bodies,
+- credential-adjacent Family devices UI is regression-checked against dynamic HTML sinks,
 - automated tests for much of the newer account behavior,
 - production verification documentation.
 
@@ -186,6 +189,24 @@ Implemented and verified:
 - focused frontend weather reliability tests, the frontend production build, backend tests, and backend production-module compilation passed,
 - the merged frontend commit deployed successfully to Vercel and the merged backend commit deployed successfully to Railway.
 
+### Section 2C - Account/input hardening
+
+**Complete and production-deployed on August 22, 2026.**
+
+Implemented and verified:
+
+- invite acceptance locks matching invite rows before consumption so simultaneous requests cannot both create devices from one invite,
+- already-consumed invites are rejected and the final accepted-state update is conditioned on the invite still being open,
+- persisted/returned `cwdev_` device tokens and `cwinv_` invite tokens are bounded and validated on user-facing credential paths,
+- malformed saved device credentials are ignored rather than trusted,
+- malformed invite tokens are rejected client-side,
+- raw backend response text is no longer appended to user-visible Family devices errors,
+- credential-adjacent Family devices components are regression-checked to avoid `innerHTML` and `dangerouslySetInnerHTML`,
+- family-key compatibility and persistent device-token storage remain intentionally unchanged during the migration,
+- backend tests and production-module compilation passed,
+- frontend tests and the production Next.js build passed,
+- merged backend and frontend commits deployed successfully to Railway and Vercel.
+
 ## Known rebaseline findings still requiring remediation
 
 ### High priority
@@ -197,7 +218,6 @@ Implemented and verified:
 
 - Global Flask CORS should be narrowed for protected routes.
 - Long-lived family/device credentials currently live in browser `localStorage`; remaining dynamic `innerHTML` usage elsewhere still raises the impact of any XSS defect.
-- Invite acceptance should be made atomic against concurrent acceptance.
 - Frontend behavior relies in several places on imperative DOM patching and polling rather than shared React state.
 - Backend dependencies are unpinned; frontend manifest uses `latest` ranges even though the lockfile currently stabilizes installs.
 - Automated regression coverage is concentrated around family sync/account work and is sparse for older park-planning features.
@@ -210,19 +230,18 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Section 2C next**
+**CastleWatch Rebaseline & Stabilization - Section 2D next**
 
 Do not add major new product features until the rebaseline/stabilization work fixes the remaining high-priority reliability/security issues, improves automated regression coverage, and resolves the account/device migration direction.
 
 ## Exact next priorities
 
-1. **Section 2C - account/input hardening.**
-2. Section 2D - origin/CORS hardening.
-3. Dependency-management controls.
-4. Broaden automated quality-control coverage.
-5. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
-6. Production smoke verification.
-7. Establish a lightweight project/task tracker.
-8. Resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 2D - origin/CORS hardening.**
+2. Dependency-management controls.
+3. Broaden automated quality-control coverage.
+4. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
+5. Production smoke verification.
+6. Establish a lightweight project/task tracker.
+7. Resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
