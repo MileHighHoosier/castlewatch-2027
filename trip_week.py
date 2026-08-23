@@ -95,7 +95,7 @@ def _unavailable_forecast(target_date, error):
         "confidence": {"level": "low", "label": "Unavailable"},
         "best_window": None,
         "peak_window": None,
-        "message": str(error),
+        "message": "Forecast data could not be loaded.",
     }
 
 
@@ -177,6 +177,7 @@ def _force_calendar_refresh_requested():
 
 
 def _fallback_intelligence(error):
+    unavailable_message = "Calendar intelligence is temporarily unavailable."
     intelligence = get_special_event_intelligence(
         engine=None,
         refresh_if_stale=False,
@@ -190,14 +191,14 @@ def _fallback_intelligence(error):
         "last_changed_at": None,
         "freshness_hours": None,
         "changed": False,
-        "error": str(error),
+        "error": unavailable_message,
         "data": intelligence.get("calendar_data") or {},
     }
     for source in intelligence.get("sources", []):
         source["status"] = "unavailable"
         source["note"] = "Live calendar intelligence is temporarily unavailable. CastleWatch is using the provisional trip rules and will not lock an event-sensitive park order."
     intelligence["degraded"] = True
-    intelligence["degraded_reason"] = str(error)
+    intelligence["degraded_reason"] = unavailable_message
     return intelligence
 
 
