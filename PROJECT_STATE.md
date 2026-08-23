@@ -28,7 +28,7 @@ The original feature roadmap is mostly implemented, but CastleWatch is not yet p
 - Shared family sync/history: substantial implementation.
 - Account/device migration: partially implemented and not ready for family-key retirement.
 - Automated quality control: stronger for newer sync/account work than for older planning features.
-- Documentation and handoff quality: rebaselined in Section 1 and now maintained as repository source of truth.
+- Documentation and handoff quality: rebaselined in Section 1 and maintained as repository source of truth.
 
 ## Major implemented capabilities
 
@@ -166,8 +166,8 @@ Implemented and verified:
 - `/api/rides` is a pure nonblocking read path and no longer performs schema/setup or surprise collection work,
 - focused backend regression tests pass,
 - live iPhone verification confirmed normal closed-park behavior returned,
-- live History returned a real value (35,169) rather than a false zero,
-- History and Updated stayed unchanged 20-30 seconds after the initial refresh, consistent with the cooldown preventing an immediate duplicate refresh.
+- live History returned a real value rather than a false zero,
+- History and Updated stayed unchanged during the cooldown verification window, consistent with prevention of an immediate duplicate refresh.
 
 Remaining caveat: `/api/refresh-rides` is still a public GET endpoint for compatibility. The cooldown materially reduces abuse/duplication risk, but full authorization/interface hardening remains future stabilization work.
 
@@ -207,6 +207,60 @@ Implemented and verified:
 - frontend tests and the production Next.js build passed,
 - merged backend and frontend commits deployed successfully to Railway and Vercel.
 
+### Section 2D - Origin/CORS hardening
+
+**Complete and production-verified on August 22, 2026.**
+
+Implemented and verified:
+
+- the effective production Flask CORS policy is narrowed at the shared `app.py` boundary despite legacy `core_app.py` still initializing Flask-CORS globally,
+- the CastleWatch production Vercel origin and CastleWatch project/team preview-origin pattern remain browser-readable,
+- exact additional origins can be supplied through `CASTLEWATCH_ALLOWED_ORIGINS` for controlled local/staging use,
+- unrelated origins, including unrelated Vercel sites, do not receive CORS grant headers,
+- allowed methods/headers are bounded and credentialed CORS remains disabled,
+- regression tests cover allowed production/preview origins, denied origins/preflights and configured local development,
+- the merged Railway deployment succeeded,
+- iPhone production verification confirmed the normal Vercel-to-Railway path still loaded live backend data and reported Backend connected.
+
+### Section 3 - Dependency management
+
+**In progress. Sections 3A, 3B and 3C are complete; Section 3D is next.**
+
+#### Section 3A - Dependency/runtime baseline
+
+**Complete.** The exact known-good direct dependency versions and CI runtimes for both repositories were inventoried and documented before changing installation behavior. Stabilization policy is to exact-pin the proven baseline first rather than combine reproducibility work with opportunistic upgrades.
+
+#### Section 3B - Backend dependency controls
+
+**Complete and merged.**
+
+Implemented and verified:
+
+- all six direct backend dependencies are exact-pinned to the green Section 3A baseline,
+- `.python-version` pins Python 3.12.14 for Railway's source-controlled runtime selection,
+- GitHub Actions uses the same Python 3.12.14 interpreter,
+- regression checks detect backend dependency or runtime/CI drift,
+- the change contains no application behavior, account/family-key, or frontend modifications.
+
+#### Section 3C - Frontend dependency controls
+
+**Complete and production-deployed on August 22, 2026.**
+
+Implemented and verified:
+
+- all direct frontend `latest` declarations were replaced with the exact versions already proven by the committed lockfile,
+- `package.json` now declares Node `22.x`, aligned with CastleWatch CI and the supported Vercel runtime major,
+- `package-lock.json` root metadata was synchronized without changing any transitive dependency version,
+- the lockfile package name was normalized from the legacy `castlewatch-phase-one-filepack` name to `castlewatch-frontend`,
+- dependency-policy regression tests verify exact manifest pins, lockfile alignment, direct resolved versions, Node 22 CI and continued deterministic `npm ci` usage,
+- a clean `npm ci`, full frontend tests and production Next.js build passed,
+- the actual `castlewatch-frontend` Vercel preview passed,
+- frontend PR #32 was squash-merged and the merged production Vercel deployment reported success.
+
+### Section 3D - Controlled upgrade policy and final dependency verification
+
+**Next.** Document the normal safe dependency-upgrade procedure and perform the final cross-repository dependency/regression verification required to close Section 3 before moving to broader automated quality-control expansion.
+
 ## Known rebaseline findings still requiring remediation
 
 ### High priority
@@ -216,12 +270,13 @@ Implemented and verified:
 
 ### Important hardening/maintainability
 
-- Global Flask CORS should be narrowed for protected routes.
 - Long-lived family/device credentials currently live in browser `localStorage`; remaining dynamic `innerHTML` usage elsewhere still raises the impact of any XSS defect.
 - Frontend behavior relies in several places on imperative DOM patching and polling rather than shared React state.
-- Backend dependencies are unpinned; frontend manifest uses `latest` ranges even though the lockfile currently stabilizes installs.
+- Section 3D still needs to document the controlled dependency-upgrade procedure and close the dependency-management phase with full cross-repository verification.
 - Automated regression coverage is concentrated around family sync/account work and is sparse for older park-planning features.
 - Legacy scaffold code remains beside production code and needs cleanup or explicit archiving.
+- Legacy `core_app.py` still initializes Flask-CORS globally; Section 2D safely enforces the effective narrowed browser policy at the production boundary, but eventual core cleanup remains maintainability debt.
+- The obsolete `castlewatch-2027` Vercel project integration can still report failures for frontend commits even when the real `castlewatch-frontend` project is healthy; deployment integration cleanup remains future hygiene work.
 - Both repositories are public while personal trip dates and itinerary assumptions are encoded in source; repository privacy/config separation should be decided explicitly.
 
 ## Where development stopped before the rebaseline
@@ -230,18 +285,17 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Section 2D next**
+**CastleWatch Rebaseline & Stabilization - Section 3D next**
 
-Do not add major new product features until the rebaseline/stabilization work fixes the remaining high-priority reliability/security issues, improves automated regression coverage, and resolves the account/device migration direction.
+Do not add major new product features until the rebaseline/stabilization work completes dependency controls, improves automated regression coverage, and resolves the account/device migration direction.
 
 ## Exact next priorities
 
-1. **Section 2D - origin/CORS hardening.**
-2. Dependency-management controls.
-3. Broaden automated quality-control coverage.
-4. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
-5. Production smoke verification.
-6. Establish a lightweight project/task tracker.
-7. Resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 3D - controlled dependency-upgrade policy and final cross-repository dependency verification.**
+2. **Section 4 - broaden automated quality-control coverage.**
+3. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
+4. Production smoke verification.
+5. Establish a lightweight project/task tracker.
+6. Resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
