@@ -113,6 +113,8 @@ Not complete:
 - production two-device verification remains open,
 - family-key retirement must not occur yet.
 
+Section 5A finalized the authoritative remaining-work contract in `docs/accounts_migration_contract.md`. The audit reconciled both deployed repositories, recorded the current authorization matrix and ten migration gaps, and divided the remaining implementation into separately approved 5B–5E batches. It did not change account state or production authorization.
+
 ### Current account migration rule
 
 **Do not disable or remove `CASTLEWATCH_FAMILY_KEY`.**
@@ -397,7 +399,30 @@ Implemented and verified:
 
 No dependency/runtime version, lockfile, itinerary, reservation, park-order, account/family-key, database, automatic itinerary or Section 5 work was included in 4F.
 
-**Section 4 is complete. Section 5 - Accounts / invitations / device migration completion - is next but has not started.**
+**Section 4 is complete.**
+
+### Section 5 - Accounts / invitations / device migration completion
+
+**In progress.**
+
+#### Section 5A - Architecture audit and migration contract
+
+**Complete, merged and production-deployed on August 24, 2026.**
+
+Implemented and verified:
+
+- the exact post-Section-4 backend and frontend production heads were audited against the deployed account/device code, historical design documents, backend issue #10 and frontend production-verification issue #25;
+- already-deployed schema, token helpers, device/invite routes, frontend clients and device-management UI were inventoried so earlier account gates are not repeated;
+- ten remaining gaps were recorded, including the absent owner-device bootstrap, family-key-only normal shared-plan routes, unwired normal-route role enforcement, non-authoritative legacy-key flag, masked device-only checks, JavaScript-readable raw device credential, pepper-continuity requirement and incomplete production verification;
+- `docs/accounts_migration_contract.md` now defines the target Owner/Editor/Viewer matrix, one-credential/no-silent-fallback rule, protected same-origin credential boundary, owner bootstrap, recovery, last-owner and non-retirement requirements;
+- the remaining work is divided into separately approved 5B–5E batches;
+- exact-head Python 3.12.14 GitHub Actions completed a clean dependency install, passed all 69 backend contracts and compiled every active root production module;
+- the audited frontend head separately passed all 82 contracts and the production Next.js build;
+- backend PR #44 was squash-merged at `8d970cfff75d6b859e3b242f5d0b0d312d0151c5`, and the Railway production deployment succeeded.
+
+No production code, schema, data, credential, dependency, runtime, itinerary, account state or frontend behavior changed in 5A. `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
+
+**Section 5 remains in progress. Section 5B - owner-device bootstrap and protected credential foundation - is next but has not started.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -422,13 +447,13 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Section 5 next**
+**CastleWatch Rebaseline & Stabilization - Section 5 in progress**
 
-Sections 1-4 are complete. Section 5 - Accounts / invitations / device migration completion - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` compatibility unchanged until the documented authorization, owner-device, permission, revocation/recovery and production-verification gates pass and the user explicitly approves any future retirement.
+Sections 1-4 are complete. Section 5A is complete; Section 5B - owner-device bootstrap and protected credential foundation - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` compatibility unchanged until the documented authorization, owner-device, permission, revocation/recovery and production-verification gates pass and the user separately and explicitly approves any future retirement.
 
 ## Exact next priorities
 
-1. **Section 5 - finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.**
+1. **Section 5B - add the owner-device bootstrap and protected credential foundation without enabling normal device-authorized shared-plan operations or disabling the family key.**
 2. Section 6 - production smoke verification.
 3. Section 7 - establish a lightweight project/task tracker.
 4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.

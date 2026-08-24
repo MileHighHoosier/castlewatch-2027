@@ -2,7 +2,7 @@
 
 ## Status
 
-**Section 5A audit contract — review pending.**
+**Section 5A finalized on August 24, 2026 — Section 5B next and not started.**
 
 This document records the August 24, 2026 cross-repository audit of the deployed accounts, invitations and device-management foundation. Section 5A is documentation and planning only: it does not change production authorization, database state, browser credentials, dependencies, runtime configuration or user-visible behavior.
 
@@ -12,6 +12,14 @@ Audited production checkpoints:
 - frontend `main`: `416e8d0deb3c4740f046dd0afa6f9cfe0377cca3`;
 - existing phase tracker: backend issue #10;
 - existing production-verification tracker: frontend issue #25.
+
+Section 5A closeout evidence:
+
+- backend PR #44 was squash-merged at `8d970cfff75d6b859e3b242f5d0b0d312d0151c5`;
+- exact-head Python 3.12.14 CI passed clean dependency installation, all 69 backend contracts and full production-module compilation;
+- the audited frontend head passed all 82 contracts and the production Next.js build;
+- the documentation-only backend merge deployed successfully to Railway;
+- no production authorization, schema, data, credential, dependency, runtime, itinerary, account state or frontend behavior changed.
 
 The historical design in `accounts_device_model.md`, the approval history in `accounts_authorization_gates.md`, and the recovery plan in `accounts_recovery_rollback.md` remain supporting references. This contract governs the remaining Section 5 work when their old future-tense wording conflicts with deployed code.
 
@@ -121,6 +129,8 @@ Implementation must distinguish new-token hashing from legacy-token verification
 ## Section 5 batches
 
 ### 5A — Architecture audit and migration contract
+
+Status: **Complete — merged and production-deployed August 24, 2026.**
 
 Deliverables:
 
