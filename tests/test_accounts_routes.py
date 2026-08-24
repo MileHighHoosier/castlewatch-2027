@@ -1,6 +1,7 @@
 import os
 import unittest
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from unittest.mock import patch
 
 from flask import Flask
@@ -9,13 +10,14 @@ from accounts_access import DEVICE_TOKEN_HEADER, FAMILY_KEY_HEADER
 from accounts_auth import DEVICE_TOKEN_KIND, generate_access_token, hash_access_token, parse_access_token
 from accounts_routes import (
     accept_family_invite,
+    bootstrap_family_owner_device,
     check_family_device_access,
     create_family_invite,
     list_family_devices,
     rename_family_device,
     revoke_family_device,
 )
-from accounts_schema import FAMILY_WORKSPACE_ID
+from accounts_schema import DEFAULT_OWNER_MEMBER_ID, FAMILY_WORKSPACE_ID
 
 
 class FakeResult:
@@ -109,6 +111,33 @@ class FakeConnection:
             ]
             return FakeResult(rows)
 
+        if sql.startswith("select") and "from castlewatch_members" in sql and "for update" in sql:
+            member = self.engine.members.get(parameters["member_id"])
+            if (
+                member
+                and member["family_id"] == parameters["family_id"]
+                and member["role"] == "owner"
+                and member["status"] == "active"
+            ):
+                return FakeResult([dict(member)])
+            return FakeResult()
+
+        if (
+            sql.startswith("select")
+            and "from castlewatch_devices" in sql
+            and "role = 'owner'" in sql
+            and "status = 'active'" in sql
+        ):
+            rows = [
+                dict(device)
+                for device in self.engine.devices.values()
+                if device["family_id"] == parameters["family_id"]
+                and device["role"] == "owner"
+                and device["status"] == "active"
+            ]
+            rows.sort(key=lambda row: row["created_at"])
+            return FakeResult(rows[:1])
+
         if sql.startswith("select") and "from castlewatch_devices" in sql and "id = cast(:device_id as uuid)" in sql:
             device = self.engine.devices.get(parameters["device_id"])
             if device and device["family_id"] == parameters["family_id"]:
@@ -168,11 +197,11 @@ class FakeConnection:
             row = {
                 "id": device_id,
                 "family_id": parameters["family_id"],
-                "member_id": None,
+                "member_id": parameters.get("member_id"),
                 "display_name": parameters["display_name"],
                 "token_hash": parameters["token_hash"],
                 "token_prefix": parameters["token_prefix"],
-                "role": parameters["role"],
+                "role": parameters.get("role", "owner"),
                 "status": "active",
                 "created_at": datetime.now(timezone.utc),
                 "last_seen_at": datetime.now(timezone.utc),
@@ -274,6 +303,105 @@ class AccountRouteTests(unittest.TestCase):
             "revoked_at": None,
         }
         return token, device_id
+
+    def bootstrap_owner(self, device_name="Ryan iPhone", headers=None):
+        return self.invoke(
+            bootstrap_family_owner_device,
+            method="POST",
+            body={"deviceName": device_name},
+            headers=headers,
+        )
+
+    def test_family_key_bootstraps_first_seeded_owner_device_once(self):
+        status, result = self.bootstrap_owner("  Ryan's   iPhone  ")
+
+        self.assertEqual(status, 200)
+        self.assertEqual(result["status"], "ok")
+        self.assertTrue(result["deviceToken"].startswith("cwdev_"))
+        self.assertEqual(result["device"]["displayName"], "Ryan's iPhone")
+        self.assertEqual(result["device"]["role"], "owner")
+        device = next(iter(self.engine.devices.values()))
+        self.assertEqual(device["member_id"], DEFAULT_OWNER_MEMBER_ID)
+        self.assertEqual(self.engine.members[DEFAULT_OWNER_MEMBER_ID]["role"], "owner")
+        self.assertTrue(self.engine.families[FAMILY_WORKSPACE_ID]["legacy_family_key_enabled"])
+        self.assertNotIn("token_hash", repr(result))
+        self.assertNotIn(result["deviceToken"], repr(result["device"]))
+
+        token_status, token_access = self.invoke(
+            check_family_device_access,
+            headers={DEVICE_TOKEN_HEADER: result["deviceToken"]},
+        )
+        self.assertEqual(token_status, 200)
+        self.assertEqual(token_access["authState"], "device_token")
+        self.assertEqual(token_access["role"], "owner")
+        self.assertTrue(token_access["canManageDevices"])
+
+    def test_owner_bootstrap_rejects_repeat_without_returning_a_token(self):
+        first_status, first = self.bootstrap_owner()
+        self.assertEqual(first_status, 200)
+
+        status, result = self.bootstrap_owner("Replacement")
+
+        self.assertEqual(status, 409)
+        self.assertEqual(result["status"], "owner_device_exists")
+        self.assertEqual(result["device"]["id"], first["device"]["id"])
+        self.assertNotIn("deviceToken", result)
+        self.assertEqual(len(self.engine.devices), 1)
+
+    def test_owner_bootstrap_requires_only_the_family_key(self):
+        owner_token, _ = self.seed_owner_device()
+
+        status, device_only = self.bootstrap_owner(headers={DEVICE_TOKEN_HEADER: owner_token})
+        self.assertEqual(status, 401)
+        self.assertEqual(device_only["status"], "unauthorized")
+
+        status, multiple = self.bootstrap_owner(headers={
+            FAMILY_KEY_HEADER: self.key,
+            DEVICE_TOKEN_HEADER: owner_token,
+        })
+        self.assertEqual(status, 400)
+        self.assertEqual(multiple["status"], "invalid_request")
+
+        status, wrong = self.bootstrap_owner(headers={FAMILY_KEY_HEADER: "wrong-key"})
+        self.assertEqual(status, 401)
+        self.assertEqual(wrong["status"], "unauthorized")
+
+    def test_owner_bootstrap_requires_json_and_an_active_seeded_owner(self):
+        status, invalid = self.invoke(
+            bootstrap_family_owner_device,
+            method="POST",
+            body=None,
+        )
+        self.assertEqual(status, 400)
+        self.assertEqual(invalid["status"], "invalid_request")
+
+        self.bootstrap_owner(headers={FAMILY_KEY_HEADER: "wrong-key"})
+        self.engine.members[DEFAULT_OWNER_MEMBER_ID]["status"] = "disabled"
+        status, unavailable = self.bootstrap_owner()
+        self.assertEqual(status, 409)
+        self.assertEqual(unavailable["status"], "bootstrap_unavailable")
+        self.assertEqual(len(self.engine.devices), 0)
+
+    def test_revoked_owner_device_allows_explicit_family_key_replacement(self):
+        _, revoked_id = self.seed_owner_device()
+        self.engine.devices[revoked_id]["status"] = "revoked"
+        self.engine.devices[revoked_id]["revoked_at"] = datetime.now(timezone.utc)
+
+        status, replacement = self.bootstrap_owner("Replacement owner")
+
+        self.assertEqual(status, 200)
+        self.assertEqual(replacement["device"]["role"], "owner")
+        self.assertNotEqual(replacement["device"]["id"], revoked_id)
+        self.assertEqual(len(self.engine.devices), 2)
+        replacement_record = self.engine.devices[replacement["device"]["id"]]
+        self.assertEqual(replacement_record["member_id"], DEFAULT_OWNER_MEMBER_ID)
+        self.assertTrue(self.engine.families[FAMILY_WORKSPACE_ID]["legacy_family_key_enabled"])
+
+    def test_production_app_registers_owner_bootstrap_route(self):
+        source = Path(__file__).resolve().parents[1].joinpath("app.py").read_text()
+        self.assertIn('from accounts_routes import (\n    bootstrap_family_owner_device,', source)
+        self.assertIn('@app.route("/api/family-trip/devices/bootstrap-owner", methods=["POST"])', source)
+        self.assertIn("return bootstrap_family_owner_device(engine)", source)
 
     def test_legacy_key_creates_invite_without_exposing_hashes(self):
         status, result = self.create_invite(role="editor", label="  Katie   iPhone  ")

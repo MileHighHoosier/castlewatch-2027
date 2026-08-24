@@ -160,8 +160,10 @@ def accept_family_invite_atomic(engine):
         if consumed is None:
             raise RuntimeError("Invite acceptance lost its locked open state.")
 
-    return jsonify({
+    response = jsonify({
         "status": "ok",
         "deviceToken": device_token,
         "device": _safe_device(device),
     })
+    response.headers["Cache-Control"] = "no-store, max-age=0"
+    return response
