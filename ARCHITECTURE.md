@@ -224,15 +224,15 @@ Token model:
 
 The migration is incomplete.
 
-The device-management API can authorize device tokens, but normal shared-plan proxy actions still depend on the legacy family key in important paths. Do not infer from the existence of device tables/UI that the family-key migration is complete.
+The device-management API and normal shared-plan read, write, history, history-version, restore and Operations paths can authorize device tokens. Normal routes enforce Owner/Editor/Viewer permissions from the verified server record while retaining the explicit family-key recovery path. Do not infer from dual authorization that the family-key migration or production device verification is complete.
 
 `CASTLEWATCH_FAMILY_KEY` remains required for recovery and current shared-plan behavior until the migration's acceptance gates are explicitly satisfied.
 
 The authoritative remaining-work boundary is `docs/accounts_migration_contract.md`. Section 5B added an explicit family-key-only owner-bootstrap route tied to the seeded owner member. It prevents a second active owner device, permits explicit replacement after revocation, never changes `legacy_family_key_enabled`, and returns its raw credential only through the one-time protected setup flow. Deployment does not itself create a production owner-device record; creation and real-device verification remain explicit 5E work.
 
-The Vercel proxy now stores acknowledged device credentials in a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie, verifies same-origin JSON requests, strips raw credentials before responses reach browser JavaScript, and requires explicit family-key or device-cookie selection for device management without silent fallback. A legacy raw `localStorage` credential is removed only after server-acknowledged migration; safe display metadata may remain browser-readable.
+The Vercel proxy stores acknowledged device credentials in a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie, verifies same-origin JSON requests, strips raw credentials before responses reach browser JavaScript, and requires explicit family-key or device-cookie selection for device management and normal shared-plan flows without silent fallback. A legacy raw `localStorage` credential is removed only after server-acknowledged migration; safe display metadata may remain browser-readable.
 
-Normal shared-plan/history/restore/operations actions intentionally remain family-key-only until Section 5C. `legacy_family_key_enabled` is not yet an authoritative production gate, pepper continuity and last-owner safety remain 5D work, and `CASTLEWATCH_FAMILY_KEY` must stay configured and enabled.
+Section 5C routes normal shared-plan authorization through the common backend layer inside the existing transaction boundary and uses one typed frontend authorization abstraction across manual sync, guarded autosave, history/restore and Operations. Viewer credentials are read/history-only; Owner and Editor credentials may write, restore and use Operations. `legacy_family_key_enabled` is not yet an authoritative production gate, pepper continuity and last-owner safety remain 5D work, production device verification remains 5E work, and `CASTLEWATCH_FAMILY_KEY` must stay configured and enabled.
 
 ## Frontend/backend proxy boundary
 
