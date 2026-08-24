@@ -1,5 +1,11 @@
 # Accounts recovery and rollback plan
 
+## Section 5A audit note
+
+This recovery plan remains valid, but the August 24, 2026 audit confirmed that no product path can create an owner device yet and normal shared-plan/history/restore/operations actions remain family-key-only. The authoritative remaining-work boundary is `accounts_migration_contract.md`.
+
+The raw device token currently stored in `castlewatch.family-device-access.v1` is a transitional credential boundary, not the final state for device-authorized shared-plan operations. Section 5 must establish protected same-origin credential storage before expanding that token's authority. The family-key recovery path remains enabled throughout.
+
 This plan documents how to recover from device-management problems and how to roll back safely before any future legacy family-key retirement option is considered.
 
 ## Current safe state
