@@ -27,7 +27,7 @@ The original feature roadmap is mostly implemented, but CastleWatch is not yet p
 - Historical prediction: useful directional signal, not a precise 2027 crowd model.
 - Shared family sync/history: substantial implementation.
 - Account/device migration: partially implemented and not ready for family-key retirement.
-- Automated quality control: stronger for newer sync/account work than for older planning features.
+- Automated quality control: broad regression protection now covers the core planning, live-operations, sync/account, safety and mobile-browser paths reviewed in Section 4.
 - Documentation and handoff quality: rebaselined in Section 1 and maintained as repository source of truth.
 
 ## Major implemented capabilities
@@ -282,7 +282,7 @@ Implemented and verified:
 
 ### Section 4 - Automated quality-control expansion
 
-**In progress as of August 24, 2026.**
+**Complete and production-deployed on August 24, 2026.**
 
 #### Section 4A - QC inventory and Trip Week core decision contracts
 
@@ -378,7 +378,26 @@ Implemented and verified:
 
 No backend product code, dependency/lockfile/runtime, itinerary, reservation, park-order, account/family-key, database or 4F work was included in 4E.
 
-**Next Section 4 batch: 4F - full regression/build review and Section 4 closeout.**
+#### Section 4F - Full regression/build review and Section 4 closeout
+
+**Complete, merged and production-deployed on August 24, 2026.**
+
+Implemented and verified:
+
+- the exact post-4E production heads were reviewed across both repositories with no later roadmap work pulled forward;
+- exact-head backend GitHub Actions used Python 3.12.14, installed the pinned requirements, passed all 69 contracts and compiled every active root production module with `python -m py_compile *.py`;
+- backend CI no longer relies on a hand-maintained partial production-module list;
+- live-planning query-hour and generated-at output now share one timezone-aware UTC instant, preserving the established RFC 3339 `Z` shape and eliminating the Python 3.12 deprecation warning;
+- exact-head frontend GitHub Actions used Node 22, completed clean `npm ci`, passed all 82 contracts, built the production Next.js app and passed the dependency-free 390×844 Chrome smoke;
+- the browser smoke confirmed six primary buttons, three mobile columns, Activities, timed showtimes, Characters, Epcot switching and zero horizontal overflow;
+- frontend QC documentation now describes the complete contract/build/browser gate and no longer contains the stale Section 1 pre-merge note;
+- backend PR #42 was squash-merged at `1db9c1ac6e00d3555eda9a000b94b9dc67a63aed`, and the Railway production deployment succeeded;
+- frontend PR #38 was squash-merged at `416e8d0deb3c4740f046dd0afa6f9cfe0377cca3`, and the real `castlewatch-frontend` production Vercel deployment succeeded;
+- the pre-existing unlinked `/sexy` concept route was recorded as legacy/experimental surface and intentionally left unchanged rather than silently removed during QC closeout.
+
+No dependency/runtime version, lockfile, itinerary, reservation, park-order, account/family-key, database, automatic itinerary or Section 5 work was included in 4F.
+
+**Section 4 is complete. Section 5 - Accounts / invitations / device migration completion - is next but has not started.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -391,7 +410,7 @@ No backend product code, dependency/lockfile/runtime, itinerary, reservation, pa
 
 - Long-lived family/device credentials currently live in browser `localStorage`; remaining dynamic `innerHTML` usage elsewhere still raises the impact of any XSS defect.
 - Frontend behavior relies in several places on imperative DOM patching and polling rather than shared React state.
-- Automated regression coverage is concentrated around family sync/account work and is sparse for older park-planning features.
+- Section 4 broadened automated regression coverage across core park-planning, trip-planning, safety, sync/account and mobile-browser behavior; production functional smoke verification and future feature-specific contracts remain separate work.
 - Legacy scaffold code remains beside production code and needs cleanup or explicit archiving.
 - Legacy `core_app.py` still initializes Flask-CORS globally; Section 2D safely enforces the effective narrowed browser policy at the production boundary, but eventual core cleanup remains maintainability debt.
 - The obsolete `castlewatch-2027` Vercel project integration can still report failures for frontend commits even when the real `castlewatch-frontend` project is healthy; deployment integration cleanup remains future hygiene work.
@@ -403,16 +422,15 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Section 4 in progress**
+**CastleWatch Rebaseline & Stabilization - Section 5 next**
 
-Sections 4A, 4B, 4C, 4D and 4E are complete. Section 4F is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work completes its full regression/build review and the account/device migration direction is resolved.
+Sections 1-4 are complete. Section 5 - Accounts / invitations / device migration completion - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` compatibility unchanged until the documented authorization, owner-device, permission, revocation/recovery and production-verification gates pass and the user explicitly approves any future retirement.
 
 ## Exact next priorities
 
-1. **Section 4F - run the full cross-repository regression/build review and close out Section 4.**
-2. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
-3. Production smoke verification.
-4. Establish a lightweight project/task tracker.
-5. Resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 5 - finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.**
+2. Section 6 - production smoke verification.
+3. Section 7 - establish a lightweight project/task tracker.
+4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
