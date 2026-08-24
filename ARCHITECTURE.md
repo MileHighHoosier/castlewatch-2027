@@ -80,6 +80,8 @@ Important frontend areas include:
 - `app/lib/familyTripDevices.ts` - device credential storage and typed device/invite models.
 - `app/api/*` - Next.js proxy routes between browser UI and Railway protected endpoints.
 
+The pre-existing unlinked `app/sexy` route is an experimental presentation concept, not the documented core production entry path. Section 4F left it unchanged; any future removal, archival or promotion should be an explicit cleanup/product decision rather than an incidental stabilization edit.
+
 ## Live attraction data flow
 
 Current production live ride collection uses Queue Times, not the old scaffold bots.
@@ -252,19 +254,19 @@ Changing only one layer can create misleading "connected" states.
 - Start command: `gunicorn api_server:app --bind 0.0.0.0:$PORT`.
 - PostgreSQL provided by Railway.
 
-Both repository heads had successful deployment status at the August 2026 rebaseline, but deployment success does not replace functional production verification.
+At the Section 4 closeout, both merged repository heads deployed successfully to Railway and the real `castlewatch-frontend` Vercel project. Deployment success still does not replace functional production verification.
 
 ## Automated checks
 
 ### Backend
 
-GitHub Actions currently runs the Python unit-test suite and compiles key production modules. Coverage is strongest around account authorization, account routes, shared family trip storage and operations.
+GitHub Actions uses Python 3.12.14, installs the exact pinned requirements, runs all 69 backend contracts and compiles every active root production module. Coverage includes account authorization/routes, invite atomicity, shared family storage/history/operations, ride read/refresh safety, response/CORS security, dependency/deployment controls, weather safety, live planning insights, historical/date forecasting, calendar/event intelligence and Trip Week attachment/fallback behavior.
 
 ### Frontend
 
-GitHub Actions currently runs the Node test suite and a production Next.js build. Coverage is strongest around family sync, device management and operations.
+GitHub Actions uses Node 22 with clean `npm ci`, runs all 82 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, credential/device safety, shared sync/history/operations, weather, Trip Week decisions, transportation/reservations, Lightning Lane, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
 
-Older planning features need broader regression coverage during stabilization.
+Section 4 materially broadened core regression protection. Production functional smoke verification and contracts for future Section 5+ behavior remain separate roadmap work.
 
 ## Architecture rules for future work
 
