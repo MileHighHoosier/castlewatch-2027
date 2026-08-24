@@ -244,10 +244,17 @@ def _combined_text(item):
 
 def _is_operating(item):
     text_value = _combined_text(item)
-    return (
-        str(item.get("type") or "").upper() == "OPERATING"
-        or "park open" in text_value
-        or (item.get("openingTime") and item.get("closingTime") and "early entry" not in text_value and "extended evening" not in text_value)
+    schedule_type = str(item.get("type") or "").upper()
+    if schedule_type == "OPERATING" or "park open" in text_value:
+        return True
+    if schedule_type:
+        return False
+    return bool(
+        item.get("openingTime")
+        and item.get("closingTime")
+        and "early entry" not in text_value
+        and "extended evening" not in text_value
+        and not _is_mnsshp(item)
     )
 
 
