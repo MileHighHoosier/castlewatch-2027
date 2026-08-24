@@ -55,7 +55,7 @@ Implementation batches:
 
 ### Section 4 - Automated quality-control expansion
 
-Status: **In progress - 4A complete and production-deployed August 23, 2026; 4B next**
+Status: **In progress - 4A and 4B complete and production-deployed; 4C next**
 
 Add regression coverage for core product behavior, especially:
 
@@ -76,8 +76,8 @@ Add end-to-end browser coverage when practical.
 Implementation batches:
 
 - **4A - QC inventory + Trip Week core decision contracts: Complete and production-deployed August 23, 2026.** Automated coverage was inventoried across both repositories. Five direct frontend contracts now protect `Wait`, `Review`, `Swap` and `Keep` outcomes, confirmed-reservation safety, no-park-hopping weighting, readiness/blocker output and manual itinerary approval. All 37 frontend tests, Node 22 CI and the production Next.js build passed; frontend PR #34 was squash-merged at `fac7ff1fcbe7310d2a4ff25f59fc4fdd02a9549f`; the real `castlewatch-frontend` Vercel production deployment succeeded. No application behavior, itinerary, account/family-key behavior, dependency or runtime version changed.
-- **4B - historical/date forecasting and calendar/event contracts: Next.**
-- **4C - transportation/reservation and Lightning Lane contracts: Planned.**
+- **4B - historical/date forecasting and calendar/event contracts: Complete and production-deployed August 24, 2026.** Sixteen focused backend contracts now protect same-weekday thresholds, directional comparisons, confidence/windows, overall fallback and learning states; official/partial calendar extraction; last-known-good cache preservation; unreleased/base/swap/manual-review event outcomes; stale-source labeling; and exact Trip Week park/date signal attachment. QC also corrected ticketed MNSSHP entries overwriting regular operating hours and replaced raw internal fallback exceptions with stable generic messages. Exact-head Python 3.12.14 CI passed the full backend suite and production-module compilation; backend PR #37 was squash-merged at `b40239860192f72ce58c5e01fafc60e22e8d0887`; the merged Railway deployment succeeded. No frontend, itinerary, account/family-key, dependency, runtime or database-schema change was included.
+- **4C - transportation/reservation and Lightning Lane contracts: Next.**
 - **4D - Park Command Center, Live Plan and emergency-mode contracts: Planned.**
 - **4E - shows/activities/characters plus the smallest practical mobile browser/E2E suite: Planned.**
 - **4F - full regression/build review and Section 4 closeout: Planned.**
