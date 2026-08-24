@@ -217,12 +217,12 @@ Token model:
 - device tokens use a `cwdev_<lookup>_<secret>` form,
 - invite tokens use a `cwinv_<lookup>_<secret>` form,
 - raw secrets appear only in one-time bootstrap/acceptance responses to the protected proxy and are not returned to browser JavaScript,
-- hashes are stored server-side using HMAC-SHA256 with a server pepper,
+- hashes are stored server-side using HMAC-SHA256 with a primary server pepper; verification can temporarily accept a previous pepper and the family-key compatibility source, then rehash on successful use,
 - role helpers support owner/editor/viewer semantics.
 
 ### Migration boundary
 
-The migration is incomplete.
+The migration implementation is complete through Section 5D, but production owner/two-device verification remains incomplete.
 
 The device-management API and normal shared-plan read, write, history, history-version, restore and Operations paths can authorize device tokens. Normal routes enforce Owner/Editor/Viewer permissions from the verified server record while retaining the explicit family-key recovery path. Do not infer from dual authorization that the family-key migration or production device verification is complete.
 
@@ -230,9 +230,11 @@ The device-management API and normal shared-plan read, write, history, history-v
 
 The authoritative remaining-work boundary is `docs/accounts_migration_contract.md`. Section 5B added an explicit family-key-only owner-bootstrap route tied to the seeded owner member. It prevents a second active owner device, permits explicit replacement after revocation, never changes `legacy_family_key_enabled`, and returns its raw credential only through the one-time protected setup flow. Deployment does not itself create a production owner-device record; creation and real-device verification remain explicit 5E work.
 
-The Vercel proxy stores acknowledged device credentials in a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie, verifies same-origin JSON requests, strips raw credentials before responses reach browser JavaScript, and requires explicit family-key or device-cookie selection for device management and normal shared-plan flows without silent fallback. A legacy raw `localStorage` credential is removed only after server-acknowledged migration; safe display metadata may remain browser-readable.
+The Vercel proxy stores acknowledged device credentials in a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie, verifies same-origin JSON requests, strips raw credentials before responses reach browser JavaScript, and requires explicit family-key or device-cookie selection for device management and normal shared-plan flows without silent fallback. A legacy raw `localStorage` credential is removed only after server-acknowledged migration; safe display metadata may remain browser-readable. When a selected protected credential receives `401`, the proxy expires its cookie and the browser clears safe device metadata into an explicit disconnected selection; it does not fall back to a saved family key.
 
-Section 5C routes normal shared-plan authorization through the common backend layer inside the existing transaction boundary and uses one typed frontend authorization abstraction across manual sync, guarded autosave, history/restore and Operations. Viewer credentials are read/history-only; Owner and Editor credentials may write, restore and use Operations. `legacy_family_key_enabled` is not yet an authoritative production gate, pepper continuity and last-owner safety remain 5D work, production device verification remains 5E work, and `CASTLEWATCH_FAMILY_KEY` must stay configured and enabled.
+Section 5C routes normal shared-plan authorization through the common backend layer inside the existing transaction boundary and uses one typed frontend authorization abstraction across manual sync, guarded autosave, history/restore and Operations. Viewer credentials are read/history-only; Owner and Editor credentials may write, restore and use Operations.
+
+Section 5D makes `legacy_family_key_enabled` authoritative for every family-key request while leaving its production value enabled. Revoked credentials are denied across device management and normal shared-plan endpoints without mutation or fallback. Owner-device revocation is transaction-serialized and limited to explicit family-key recovery before replacement bootstrap. New credentials use the primary pepper; active devices and open invites can transition through a previous pepper or the family-key compatibility source and rehash after successful verification. No production device, secret/pepper environment value or flag value changed. Production owner/two-device verification remains 5E work, and `CASTLEWATCH_FAMILY_KEY` must stay configured and enabled.
 
 ## Frontend/backend proxy boundary
 
@@ -261,19 +263,19 @@ Changing only one layer can create misleading "connected" states.
 - Start command: `gunicorn api_server:app --bind 0.0.0.0:$PORT`.
 - PostgreSQL provided by Railway.
 
-At the Section 4 closeout, both merged repository heads deployed successfully to Railway and the real `castlewatch-frontend` Vercel project. Deployment success still does not replace functional production verification.
+At the Section 5D closeout, both merged implementation heads deployed successfully to Railway and the real `castlewatch-frontend` Vercel project. Deployment success still does not replace Section 5E functional production verification.
 
 ## Automated checks
 
 ### Backend
 
-GitHub Actions uses Python 3.12.14, installs the exact pinned requirements, runs all 69 backend contracts and compiles every active root production module. Coverage includes account authorization/routes, invite atomicity, shared family storage/history/operations, ride read/refresh safety, response/CORS security, dependency/deployment controls, weather safety, live planning insights, historical/date forecasting, calendar/event intelligence and Trip Week attachment/fallback behavior.
+GitHub Actions uses Python 3.12.14, installs the exact pinned requirements, runs all 90 backend contracts and compiles every active root production module. Coverage includes account authorization/routes, invite atomicity, role enforcement, legacy-gate/revocation/owner-recovery/pepper continuity, shared family storage/history/operations, ride read/refresh safety, response/CORS security, dependency/deployment controls, weather safety, live planning insights, historical/date forecasting, calendar/event intelligence and Trip Week attachment/fallback behavior.
 
 ### Frontend
 
-GitHub Actions uses Node 22 with clean `npm ci`, runs all 82 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, credential/device safety, shared sync/history/operations, weather, Trip Week decisions, transportation/reservations, Lightning Lane, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
+GitHub Actions uses Node 22 with clean `npm ci`, runs all 104 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, protected credential/device safety and selected-cookie failure cleanup, shared sync/history/operations and role boundaries, weather, Trip Week decisions, transportation/reservations, Lightning Lane, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
 
-Section 4 materially broadened core regression protection. Production functional smoke verification and contracts for future Section 5+ behavior remain separate roadmap work.
+Section 4 materially broadened core regression protection, and Sections 5B–5D added account/device migration contracts. Section 5E production functional verification remains separate roadmap work.
 
 ## Architecture rules for future work
 
