@@ -77,7 +77,8 @@ Important frontend areas include:
 - `app/components/WeatherAwarePlanning.tsx` - weather risk mode and automatic weather advisory integration.
 - Lightning Lane / emergency / show / activity / character components - active park-day support layers.
 - `app/lib/familyTripSync.ts` - browser-local/shared plan synchronization model.
-- `app/lib/familyTripDevices.ts` - device credential storage and typed device/invite models.
+- `app/lib/familyTripDevices.ts` - typed device/invite clients, safe browser-readable device metadata and acknowledged migration into protected storage.
+- `app/lib/familyTripDeviceProxy.ts` - shared-family proxy credential-cookie, same-origin validation and response-scrubbing boundary.
 - `app/api/*` - Next.js proxy routes between browser UI and Railway protected endpoints.
 
 The pre-existing unlinked `app/sexy` route is an experimental presentation concept, not the documented core production entry path. Section 4F left it unchanged; any future removal, archival or promotion should be an explicit cleanup/product decision rather than an incidental stabilization edit.
@@ -173,7 +174,7 @@ Several user-editable planning features currently use `localStorage`, including:
 - weather mode/override state,
 - family sync metadata,
 - legacy family key,
-- device token metadata/credential.
+- safe device display metadata; acknowledged raw device credentials live in the protected proxy cookie rather than long-term `localStorage`.
 
 The newer shared-family system synchronizes selected trip state to PostgreSQL, but browser-local state remains important to the current UI.
 
@@ -215,7 +216,7 @@ Token model:
 
 - device tokens use a `cwdev_<lookup>_<secret>` form,
 - invite tokens use a `cwinv_<lookup>_<secret>` form,
-- raw secrets are intended to be shown only at creation/acceptance time,
+- raw secrets appear only in one-time bootstrap/acceptance responses to the protected proxy and are not returned to browser JavaScript,
 - hashes are stored server-side using HMAC-SHA256 with a server pepper,
 - role helpers support owner/editor/viewer semantics.
 
@@ -227,9 +228,11 @@ The device-management API can authorize device tokens, but normal shared-plan pr
 
 `CASTLEWATCH_FAMILY_KEY` remains required for recovery and current shared-plan behavior until the migration's acceptance gates are explicitly satisfied.
 
-The authoritative remaining-work boundary is `docs/accounts_migration_contract.md`. Section 5A confirmed that no product route currently creates an owner device, normal shared-plan/history/restore/operations actions remain family-key-only, browser credential selection can mask device-only state, `legacy_family_key_enabled` is not yet an authoritative production gate, and raw device credentials still live in JavaScript-readable `localStorage`.
+The authoritative remaining-work boundary is `docs/accounts_migration_contract.md`. Section 5B added an explicit family-key-only owner-bootstrap route tied to the seeded owner member. It prevents a second active owner device, permits explicit replacement after revocation, never changes `legacy_family_key_enabled`, and returns its raw credential only through the one-time protected setup flow. Deployment does not itself create a production owner-device record; creation and real-device verification remain explicit 5E work.
 
-Before device credentials gain normal shared-plan authority, the protected Vercel proxy must move the raw token into a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie, retain strict same-origin request validation, and select exactly one credential without silently falling back from a rejected/revoked device to the family key. This is the planned Section 5B boundary, not current deployed behavior. Owner bootstrap must remain an explicit family-key recovery action and must not disable the legacy-key flag.
+The Vercel proxy now stores acknowledged device credentials in a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie, verifies same-origin JSON requests, strips raw credentials before responses reach browser JavaScript, and requires explicit family-key or device-cookie selection for device management without silent fallback. A legacy raw `localStorage` credential is removed only after server-acknowledged migration; safe display metadata may remain browser-readable.
+
+Normal shared-plan/history/restore/operations actions intentionally remain family-key-only until Section 5C. `legacy_family_key_enabled` is not yet an authoritative production gate, pepper continuity and last-owner safety remain 5D work, and `CASTLEWATCH_FAMILY_KEY` must stay configured and enabled.
 
 ## Frontend/backend proxy boundary
 
