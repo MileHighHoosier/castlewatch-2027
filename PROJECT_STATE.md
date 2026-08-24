@@ -303,7 +303,28 @@ Implemented and verified:
 
 No application code, itinerary state, account/family-key behavior, dependency or runtime version changed in 4A.
 
-**Next Section 4 batch: 4B - historical/date forecasting and calendar/event contracts.**
+#### Section 4B - Historical/date forecasting and calendar/event contracts
+
+**Complete, merged and production-deployed on August 24, 2026.**
+
+Implemented and verified:
+
+- 16 focused backend contracts now protect same-weekday evidence thresholds, directional comparison boundaries, confidence, best/peak historical windows, overall-baseline fallback and learning state;
+- historical outputs remain directional signals rather than invented precise 2027 predictions;
+- calendar extraction distinguishes regular operating hours from ticketed events, Early Entry and Extended Evening Hours;
+- partial calendar refreshes preserve last-known-good data for failed parks, while total failures preserve stale cached intelligence;
+- unreleased, clean Sunday, clean alternate and conflicting MNSSHP schedules retain their provisional/base/swap/manual-review outcomes;
+- stale cached calendars are not reported as current official data;
+- forecasts and event signals remain attached to the exact approved base and alternate park/date assignments;
+- isolated forecast failures and calendar-intelligence failures degrade safely without exposing raw internal exception text;
+- the calendar parser no longer lets a timed MNSSHP ticketed event overwrite the true regular park closing time;
+- exact-head GitHub Actions passed the pinned Python 3.12.14 dependency installation, full backend contract suite and production-module compilation;
+- backend PR #37 was squash-merged at `b40239860192f72ce58c5e01fafc60e22e8d0887`;
+- the merged Railway deployment succeeded.
+
+No frontend, itinerary, account/family-key, dependency, runtime or database-schema change was included in 4B.
+
+**Next Section 4 batch: 4C - transportation/reservation and Lightning Lane contracts.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -330,11 +351,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **CastleWatch Rebaseline & Stabilization - Section 4 in progress**
 
-Section 4A is complete. Section 4B is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work improves automated regression coverage and the account/device migration direction is resolved.
+Sections 4A and 4B are complete. Section 4C is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work improves automated regression coverage and the account/device migration direction is resolved.
 
 ## Exact next priorities
 
-1. **Section 4B - add historical/date forecasting and calendar/event regression contracts.**
+1. **Section 4C - add transportation/reservation and Lightning Lane regression contracts.**
 2. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
 3. Production smoke verification.
 4. Establish a lightweight project/task tracker.
