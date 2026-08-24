@@ -2,7 +2,7 @@
 
 ## Status
 
-**Sections 5A–5B finalized on August 24, 2026 — Section 5C next and not started.**
+**Sections 5A–5C finalized on August 24, 2026 — Section 5D next and not started.**
 
 This document records the August 24, 2026 cross-repository audit of the deployed accounts, invitations and device-management foundation. Section 5A is documentation and planning only: it does not change production authorization, database state, browser credentials, dependencies, runtime configuration or user-visible behavior.
 
@@ -30,6 +30,15 @@ Section 5B closeout evidence:
 - the owner-bootstrap and protected-credential foundation is deployed without creating a production owner device or enabling device credentials for normal shared-plan operations;
 - no schema/data, dependency/runtime, itinerary, reservation, park-order or automatic-plan change occurred, and `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
 
+Section 5C closeout evidence:
+
+- backend PR #48 was squash-merged at `d8b7fa630cbd2a20a77044b04c5d1f3ae9565918`, and Railway succeeded;
+- frontend PR #40 was squash-merged at `283b0da71b4a540c74e09360d5b599b8ecc57086`, and the real `castlewatch-frontend` Vercel production deployment succeeded;
+- exact-head Python 3.12.14 CI passed clean dependency installation, all 82 backend contracts and production-module compilation;
+- exact-head Node 22 CI passed clean dependency installation, all 99 frontend contracts, the production build and mobile browser smoke;
+- normal shared-plan read, history, history-version, write, restore and Operations routes now enforce the exact Owner/Editor/Viewer device-role matrix while retaining explicit family-key recovery;
+- no production owner-device record, schema/data, dependency/runtime, itinerary, reservation, park-order, legacy-key flag, pepper or last-owner change occurred, and `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
+
 The historical design in `accounts_device_model.md`, the approval history in `accounts_authorization_gates.md`, and the recovery plan in `accounts_recovery_rollback.md` remain supporting references. This contract governs the remaining Section 5 work when their old future-tense wording conflicts with deployed code.
 
 ## Section 5 goal
@@ -53,6 +62,9 @@ Completing Section 5 does **not** authorize family-key retirement. `CASTLEWATCH_
 - explicit family-key-only owner bootstrap tied to the seeded owner member with active-owner conflict protection and revoked-owner replacement;
 - non-cacheable bootstrap and invite-acceptance one-time credential responses;
 - immediate rejection of revoked device tokens on device-management routes;
+- normal shared-plan read, history, history-version, write, restore and Operations authorization through the common family-key/device-token layer;
+- exact Owner/Editor/Viewer permission enforcement inside the existing shared-plan transaction boundary;
+- rejection of ambiguous two-credential requests and devices outside the fixed `family` workspace;
 - current family-key owner compatibility;
 - focused helper, route, atomicity and credential-safety contracts.
 
@@ -64,6 +76,8 @@ Completing Section 5 does **not** authorize family-key retirement. `CASTLEWATCH_
 - one-time invite/bootstrap credentials stripped before setup responses reach browser JavaScript;
 - acknowledged migration from the legacy `castlewatch.family-device-access.v1` raw-token record, with safe display metadata retained and the raw token removed only after success;
 - explicit family-key, protected-device and revoked-device access-state presentation without silent fallback;
+- one typed authorization abstraction across manual sync, guarded autosave, history/version/restore and Operations;
+- role-aware controls that keep Viewer sessions read/history-only while Owner and Editor sessions may write, restore and use Operations;
 - strict same-origin JSON validation plus device-token and token-hash response scrubbing;
 - migration guidance, credential-state diagnostics and a production proxy smoke;
 - partial production verification recorded in frontend issue #25.
@@ -71,33 +85,32 @@ Completing Section 5 does **not** authorize family-key retirement. `CASTLEWATCH_
 ## Verified current gaps
 
 1. **No production owner device has been created or manually verified.** The explicit family-key-only bootstrap path now exists and ties the device to the seeded owner member, but 5B did not invoke it against production. Real owner-device creation and verification remain 5E work.
-2. **Normal shared-plan operations are still family-key-only.** Backend read, write, history, history-version, restore and operations handlers use `family_trip._authorization_error`; they do not call the device authorization layer.
-3. **The frontend enforces the same legacy-only boundary.** The shared proxy's `legacyKeyOnly` guard rejects device credentials for read/write/history/restore/operations, and sync/history/autosave/operations clients accept a family-key string rather than an authorization object.
-4. **Role helpers are not enforced on normal shared-plan operations.** Existing tests prove helper behavior and device-management restrictions, but not the Owner/Editor/Viewer matrix across normal read, write, history, restore and operations routes.
-5. **`legacy_family_key_enabled` is stored but not authoritative.** No production authorization path reads the database flag. Section 5 must make its meaning testable while leaving its production value `TRUE`.
-6. **Token-pepper continuity is not explicit.** The backend uses `CASTLEWATCH_DEVICE_TOKEN_PEPPER` when configured and otherwise falls back to `CASTLEWATCH_FAMILY_KEY`; changing that source can invalidate existing device tokens. No secret value belongs in documentation or test output, but the configuration state and rotation procedure must be resolved before retirement can be considered.
-7. **Last-owner safety is not complete.** Bootstrap prevents a second active owner device and permits replacement after revocation, but 5D still owns the final owner/recovery and last-owner invariants across revocation paths.
-8. **Production verification is incomplete.** Issue #25 confirms several family-key, invite, rename, revoke and UI paths, but protected owner bootstrap, clean revoked-token-only rejection, device-authorized normal sync and the full role matrix have not passed on real devices.
-9. **A legacy direct frontend proxy remains key-only.** `app/api/family-trip/route.ts` has no current in-repository caller and should not be silently promoted or removed during migration work; later implementation must either keep it safely compatible or explicitly classify it as cleanup.
+2. **`legacy_family_key_enabled` is stored but not authoritative.** No production authorization path reads the database flag. Section 5 must make its meaning testable while leaving its production value `TRUE`.
+3. **Token-pepper continuity is not explicit.** The backend uses `CASTLEWATCH_DEVICE_TOKEN_PEPPER` when configured and otherwise falls back to `CASTLEWATCH_FAMILY_KEY`; changing that source can invalidate existing device tokens. No secret value belongs in documentation or test output, but the configuration state and rotation procedure must be resolved before retirement can be considered.
+4. **Last-owner safety is not complete.** Bootstrap prevents a second active owner device and permits replacement after revocation, but 5D still owns the final owner/recovery and last-owner invariants across revocation paths.
+5. **Production verification is incomplete.** Issue #25 confirms several family-key, invite, rename, revoke and UI paths, but protected owner bootstrap, clean revoked-token-only rejection, device-authorized normal sync and the full role matrix have not passed on real devices.
+6. **A legacy direct frontend proxy remains key-only.** `app/api/family-trip/route.ts` has no current in-repository caller and should not be silently promoted or removed during migration work; later implementation must either keep it safely compatible or explicitly classify it as cleanup.
 
 Section 5B closed the prior credential-selection and JavaScript-readable long-term device-token gaps: device-management requests now select one explicit credential, and acknowledged device credentials are held by the narrow protected proxy cookie. A failed legacy migration deliberately retains its raw local token for explicit recovery rather than silently losing access.
+
+Section 5C closed the normal-route dual-authorization and role-enforcement gaps: the backend authorizes the selected credential inside existing shared-plan transactions, and the frontend uses one explicit typed credential selection across normal family flows. Browser role metadata remains display-only and the server-side device record remains authoritative.
 
 ## Current and target authorization matrix
 
 | Operation | Current family key | Current device token | Section 5 target |
 | --- | --- | --- | --- |
-| Read shared plan | Owner-equivalent | Not accepted | Owner, Editor, Viewer |
-| Read history/version | Owner-equivalent | Not accepted | Owner, Editor, Viewer |
-| Write shared plan | Owner-equivalent | Not accepted | Owner, Editor |
-| Restore history | Owner-equivalent | Not accepted | Owner, Editor |
-| Read Operations | Owner-equivalent | Not accepted | Owner, Editor |
+| Read shared plan | Owner-equivalent | Owner, Editor, Viewer | Preserve |
+| Read history/version | Owner-equivalent | Owner, Editor, Viewer | Preserve |
+| Write shared plan | Owner-equivalent | Owner, Editor | Preserve |
+| Restore history | Owner-equivalent | Owner, Editor | Preserve |
+| Read Operations | Owner-equivalent | Owner, Editor | Preserve |
 | Check device access | Owner | Any active device; revoked state is explicit | Preserve |
 | List devices | Owner | Owner only | Preserve |
 | Create invite | Owner | Owner only | Preserve; Editor/Viewer invites only |
 | Rename device | Owner-equivalent; may rename any device | Current active device; Owner may rename others | Preserve |
 | Revoke device | Owner | Owner only; current device cannot revoke itself | Preserve and add last-owner safety |
 | Accept invite | Invite token | Invite token | Preserve atomic one-time use |
-| Bootstrap owner device | No route | No route | Explicit family-key recovery path only |
+| Bootstrap owner device | Explicit recovery path | Not accepted | Preserve |
 
 The role assigned by the verified server record is authoritative. Browser-stored role/name metadata is display-only and must never grant permission.
 
@@ -128,9 +141,9 @@ Section 5B implements this bootstrap contract. It deployed the path but did not 
 
 ### Shared-plan authorization
 
-Backend normal shared-plan handlers must use the common authorization layer inside the existing transaction boundary with the permission shown in the target matrix. Existing version locking, optimistic conflicts, history retention, payload limits and restore-as-new-version behavior must remain unchanged.
+Backend normal shared-plan handlers use the common authorization layer inside the existing transaction boundary with the permission shown in the target matrix. Existing version locking, optimistic conflicts, history retention, payload limits and restore-as-new-version behavior remain unchanged.
 
-Frontend sync, history, autosave and operations clients must use one typed authorization abstraction. Viewer sessions must not offer or attempt write, restore, or operations actions. Server enforcement remains mandatory even when the UI hides a control.
+Frontend sync, history, autosave and operations clients use one typed authorization abstraction. Viewer sessions do not offer or attempt write, restore, or Operations actions. Server enforcement remains mandatory even when the UI hides a control.
 
 ### Legacy-key flag and recovery
 
@@ -176,7 +189,7 @@ Completion evidence:
 
 ### 5C — Normal shared-plan dual authorization and role enforcement
 
-Status: **Next — not started.**
+Status: **Complete — merged and production-deployed August 24, 2026.**
 
 Deliverables:
 
@@ -186,7 +199,16 @@ Deliverables:
 - regression proof that existing family-key behavior and trip version/conflict/history semantics remain unchanged;
 - no legacy-key disablement.
 
+Completion evidence:
+
+- backend PR #48 merged at `d8b7fa630cbd2a20a77044b04c5d1f3ae9565918`; Python 3.12.14 CI passed all 82 contracts and compilation, and Railway succeeded;
+- frontend PR #40 merged at `283b0da71b4a540c74e09360d5b599b8ecc57086`; Node 22 CI passed all 99 contracts, production build and mobile browser smoke, and the real frontend Vercel production deployment succeeded;
+- family-key behavior, optimistic conflicts, history retention, payload limits and restore-as-new-version behavior remain protected;
+- 5D legacy-gate, pepper, recovery and last-owner work and 5E production device verification remain separate.
+
 ### 5D — Revocation, recovery and legacy-gate hardening
+
+Status: **Next — not started.**
 
 Deliverables:
 
@@ -198,6 +220,8 @@ Deliverables:
 - no retirement UI or flag change.
 
 ### 5E — Production two-device verification and Section 5 closeout
+
+Status: **Not started.**
 
 Deliverables:
 

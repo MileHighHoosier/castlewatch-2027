@@ -82,7 +82,7 @@ Implemented behavior includes:
 - guarded upload/download behavior,
 - operations/usage support.
 
-The legacy `CASTLEWATCH_FAMILY_KEY` remains the established credential for normal shared-plan read/write/history/restore operations.
+Normal shared-plan read/write/history/restore and Operations paths accept one explicitly selected family key or protected device credential. The family key retains owner-equivalent recovery behavior; verified device roles enforce Owner/Editor write, restore and Operations access and Viewer read/history-only access.
 
 ## Accounts, invitations and device management
 
@@ -103,6 +103,10 @@ Implemented:
 - proxy-managed `Secure`, `HttpOnly`, `SameSite=Strict` device credentials scoped to the shared-family proxy path,
 - acknowledged one-time migration from legacy raw device-token storage to the protected cookie,
 - explicit family-key/device-cookie selection for device management without silent fallback,
+- dual family-key/device authorization for normal shared-plan read, write, history, history-version, restore and Operations paths,
+- exact server-enforced Owner/Editor/Viewer permissions across those normal routes,
+- one typed frontend authorization abstraction across manual sync, guarded autosave, history/restore and Operations,
+- Viewer read/history-only controls with no attempted autosave, restore or Operations access,
 - one-time bootstrap/invite credentials removed before setup responses reach browser JavaScript,
 - bounded validation for persisted/returned device and invite credentials,
 - credential-management errors no longer append raw backend response bodies,
@@ -112,15 +116,17 @@ Implemented:
 
 Not complete:
 
-- device-token authorization has not fully replaced the family key for normal shared-plan read/write/history/restore/operations paths,
 - no production owner device has yet been created and manually verified through the new bootstrap path,
 - `legacy_family_key_enabled` is not yet the authoritative gate for legacy-key access,
+- token-pepper continuity and final owner/last-owner recovery protections remain open,
 - production two-device verification remains open,
 - family-key retirement must not occur yet.
 
 Section 5A finalized the authoritative remaining-work contract in `docs/accounts_migration_contract.md`. The audit reconciled both deployed repositories, recorded the current authorization matrix and ten migration gaps, and divided the remaining implementation into separately approved 5B–5E batches. It did not change account state or production authorization.
 
 Section 5B finalized the owner-bootstrap and protected-credential foundation. It did not enable device credentials for normal shared-plan operations, create a production owner-device record, or disable the family key.
+
+Section 5C finalized normal shared-plan dual authorization and the exact Owner/Editor/Viewer role matrix. It preserved family-key recovery, version conflicts, history retention, payload limits and restore-as-new-version behavior; it did not create a production device or pull 5D hardening or 5E production verification forward.
 
 ### Current account migration rule
 
@@ -450,7 +456,26 @@ Implemented and verified:
 
 No production owner-device record was created, no existing account/shared-trip/history data or schema changed, and no dependency/runtime, itinerary, reservation, park-order or automatic-plan change was included. `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
 
-**Section 5 remains in progress. Section 5C - normal shared-plan dual authorization and role enforcement - is next but has not started.**
+#### Section 5C - Normal shared-plan dual authorization and role enforcement
+
+**Complete, merged and production-deployed on August 24, 2026.**
+
+Implemented and verified:
+
+- normal shared-plan read, history, history-version, write, restore and Operations routes accept exactly one explicitly selected family key or protected device credential;
+- backend authorization runs inside the existing shared-plan transaction and enforces Owner/Editor read-write-restore-Operations access plus Viewer read/history-only access from the verified server record;
+- requests with both credential types, malformed or revoked credentials, or a device outside the fixed `family` workspace are rejected without family-key fallback;
+- one typed frontend authorization abstraction now governs manual sync, guarded autosave, history/version/restore and Operations;
+- Viewer UI remains read/history-only and does not offer or attempt upload, autosave, restore or Operations actions, while server enforcement remains authoritative;
+- family-key recovery, optimistic version conflicts, history retention, payload limits and restore-as-new-version behavior remain regression-protected;
+- exact-head Python 3.12.14 GitHub Actions completed clean installation, passed all 82 backend contracts and compiled the production modules;
+- exact-head Node 22 GitHub Actions completed clean installation, passed all 99 frontend contracts, built the production application and passed the mobile browser smoke;
+- backend PR #48 was squash-merged at `d8b7fa630cbd2a20a77044b04c5d1f3ae9565918`, and Railway succeeded;
+- frontend PR #40 was squash-merged at `283b0da71b4a540c74e09360d5b599b8ecc57086`, and the real `castlewatch-frontend` Vercel production deployment succeeded.
+
+No production owner-device record was created, no existing account/shared-trip/history data or schema changed, and no dependency/runtime, itinerary, reservation, park-order, legacy-key flag, pepper, last-owner or automatic-plan change was included. `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
+
+**Section 5 remains in progress. Section 5D - revocation, recovery and legacy-gate hardening - is next but has not started.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -477,11 +502,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **CastleWatch Rebaseline & Stabilization - Section 5 in progress**
 
-Sections 1-4 and Sections 5A–5B are complete. Section 5C - normal shared-plan dual authorization and role enforcement - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` compatibility unchanged until the documented authorization, owner-device, permission, revocation/recovery and production-verification gates pass and the user separately and explicitly approves any future retirement.
+Sections 1-4 and Sections 5A–5C are complete. Section 5D - revocation, recovery and legacy-gate hardening - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` compatibility unchanged until the documented authorization, owner-device, permission, revocation/recovery and production-verification gates pass and the user separately and explicitly approves any future retirement.
 
 ## Exact next priorities
 
-1. **Section 5C - add normal shared-plan dual authorization and enforce the exact Owner/Editor/Viewer matrix without disabling the family key.**
+1. **Section 5D - enforce revocation everywhere, make the still-enabled legacy gate authoritative, and harden recovery, pepper continuity and last-owner safety without adding family-key retirement.**
 2. Section 6 - production smoke verification.
 3. Section 7 - establish a lightweight project/task tracker.
 4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
