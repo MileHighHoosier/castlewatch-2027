@@ -4,7 +4,7 @@
 
 **Historical design baseline; partially implemented.** This document records the original migration design and therefore still uses terms such as "proposed" and step-by-step future language. Since it was written, CastleWatch has implemented the additive account/device schema, authorization helpers, device/invite endpoints, frontend plumbing and a minimal device-management GUI. The migration is **not complete**: normal shared-plan actions still rely on the legacy family key in important paths, owner-device bootstrap/verification is incomplete, production two-device verification remains open, and family-key retirement is not allowed yet.
 
-For authoritative current status, read root `PROJECT_STATE.md`, `ARCHITECTURE.md`, and `ROADMAP.md` before using this document to plan new work. The design below remains useful as historical intent, but current code wins when it conflicts with the original proposal.
+For authoritative current status, read root `PROJECT_STATE.md`, `ARCHITECTURE.md`, `ROADMAP.md`, and `docs/accounts_migration_contract.md` before using this document to plan new work. The design below remains useful as historical intent, but current code and the Section 5 migration contract win when they conflict with the original proposal.
 
 ## Goals
 
@@ -305,9 +305,11 @@ Request:
 - Add device management under Shared Family Plan.
 - Keep it visually consistent with the existing panel.
 
-### Step 8: legacy key retirement option
+### Step 8: legacy key retirement option (historical proposal; not authorized)
 
 - Allow the owner to disable legacy family-key access only after at least one active owner device exists.
+
+Section 5 does not implement this historical step. The current non-retirement gate and separate explicit-approval requirement are defined in `accounts_migration_contract.md`.
 
 ## Railway and cost controls
 
