@@ -227,6 +227,10 @@ The device-management API can authorize device tokens, but normal shared-plan pr
 
 `CASTLEWATCH_FAMILY_KEY` remains required for recovery and current shared-plan behavior until the migration's acceptance gates are explicitly satisfied.
 
+The authoritative remaining-work boundary is `docs/accounts_migration_contract.md`. Section 5A confirmed that no product route currently creates an owner device, normal shared-plan/history/restore/operations actions remain family-key-only, browser credential selection can mask device-only state, `legacy_family_key_enabled` is not yet an authoritative production gate, and raw device credentials still live in JavaScript-readable `localStorage`.
+
+Before device credentials gain normal shared-plan authority, the protected Vercel proxy must move the raw token into a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie, retain strict same-origin request validation, and select exactly one credential without silently falling back from a rejected/revoked device to the family key. This is the planned Section 5B boundary, not current deployed behavior. Owner bootstrap must remain an explicit family-key recovery action and must not disable the legacy-key flag.
+
 ## Frontend/backend proxy boundary
 
 The browser uses Next.js API routes for protected family operations so Vercel can proxy requests to Railway. The main proxy is `app/api/castlewatch-family-sync/route.ts`.
