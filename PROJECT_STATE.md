@@ -282,7 +282,7 @@ Implemented and verified:
 
 ### Section 4 - Automated quality-control expansion
 
-**In progress as of August 23, 2026.**
+**In progress as of August 24, 2026.**
 
 #### Section 4A - QC inventory and Trip Week core decision contracts
 
@@ -324,7 +324,27 @@ Implemented and verified:
 
 No frontend, itinerary, account/family-key, dependency, runtime or database-schema change was included in 4B.
 
-**Next Section 4 batch: 4C - transportation/reservation and Lightning Lane contracts.**
+#### Section 4C - Transportation/reservation and Lightning Lane contracts
+
+**Complete, merged and production-deployed on August 24, 2026.**
+
+Implemented and verified:
+
+- 14 focused frontend contracts now protect the approved October 9-16, 2027 family profile and value resort → Beach Club → AKL split stay;
+- default overnight assignments correctly use Beach Club for October 12-14;
+- reservation transportation selects the correct overnight/same-day resort and retains conservative leave-by guidance;
+- Getting There leave-by and bus-arrival projections use worst-case travel time plus the intended buffers;
+- no-park-hopping park conflicts, multi-park days, overlaps, insufficient transfers and exact transfer boundaries remain distinguishable;
+- malformed or reversed saved Lightning Lane windows degrade safely;
+- Lightning Lane status, urgency, next-hour conflict guidance and next-selection hints remain deterministic under a controlled clock;
+- saved/user-entered Lightning Lane ride names render as text rather than dynamic HTML;
+- exact-head GitHub Actions passed Node 22 setup, clean dependency installation, all 51 frontend tests and the production Next.js build;
+- frontend PR #35 was squash-merged at `94e3f4aa944c6ecde6aac5c0667c78df45ec8721`;
+- the real `castlewatch-frontend` production Vercel deployment succeeded.
+
+No backend, dependency, account/family-key, park-order or automatic itinerary change was included in 4C.
+
+**Next Section 4 batch: 4D - Park Command Center, Live Plan and emergency-mode contracts.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -351,11 +371,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **CastleWatch Rebaseline & Stabilization - Section 4 in progress**
 
-Sections 4A and 4B are complete. Section 4C is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work improves automated regression coverage and the account/device migration direction is resolved.
+Sections 4A, 4B and 4C are complete. Section 4D is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work improves automated regression coverage and the account/device migration direction is resolved.
 
 ## Exact next priorities
 
-1. **Section 4C - add transportation/reservation and Lightning Lane regression contracts.**
+1. **Section 4D - add Park Command Center, Live Plan and emergency-mode regression contracts.**
 2. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
 3. Production smoke verification.
 4. Establish a lightweight project/task tracker.
