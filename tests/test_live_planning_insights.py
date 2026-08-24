@@ -1,6 +1,7 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timezone
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from live_planning_insights import get_live_planning_insights
 
@@ -118,6 +119,22 @@ class LivePlanningInsightsTests(unittest.TestCase):
         self.assertEqual(30, result["historical_entries_analyzed"])
         self.assertEqual([], result["best_now"])
         self.assertEqual([], result["reliable_low_wait"])
+
+    def test_generated_timestamp_and_query_hour_share_one_utc_instant(self):
+        connection = FakeConnection([])
+        fixed_now = datetime(2026, 8, 24, 23, 59, 59, tzinfo=timezone.utc)
+
+        with patch("live_planning_insights.datetime") as datetime_mock:
+            datetime_mock.now.return_value = fixed_now
+            result = get_live_planning_insights(
+                FakeEngine(connection),
+                "Animal Kingdom",
+                include_attraction,
+            )
+
+        self.assertEqual("2026-08-24T23:59:59Z", result["generated_at"])
+        self.assertEqual(23, result["current_hour_utc"])
+        datetime_mock.now.assert_called_once_with(timezone.utc)
 
 
 if __name__ == "__main__":
