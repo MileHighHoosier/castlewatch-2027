@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import text
 
@@ -10,7 +10,8 @@ def get_live_planning_insights(engine, park, should_include_attraction):
     comparisons. Tomorrow forecasting is a separate planning concern and should
     not be allowed to make the live dashboard's History stat disappear.
     """
-    current_hour = datetime.utcnow().hour
+    generated_at = datetime.now(timezone.utc)
+    current_hour = generated_at.hour
 
     with engine.connect() as connection:
         historical_rows = connection.execute(text("""
@@ -156,7 +157,7 @@ def get_live_planning_insights(engine, park, should_include_attraction):
 
     return {
         "park": park,
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": generated_at.isoformat().replace("+00:00", "Z"),
         "current_hour_utc": current_hour,
         "historical_entries_analyzed": sum(ride["samples"] for ride in rides),
         "rides_analyzed": len(rides),
