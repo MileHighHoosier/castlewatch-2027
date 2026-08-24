@@ -344,7 +344,23 @@ Implemented and verified:
 
 No backend, dependency, account/family-key, park-order or automatic itinerary change was included in 4C.
 
-**Next Section 4 batch: 4D - Park Command Center, Live Plan and emergency-mode contracts.**
+#### Section 4D - Park Command Center, Live Plan and emergency-mode contracts
+
+**Complete, merged and production-deployed on August 24, 2026.**
+
+Implemented and verified:
+
+- 19 focused frontend contracts protect Park Command Center normalization, live/closed/non-ride behavior, heat pressure and rope-drop ordering;
+- Live Plan Max rides, Low-stress and Cool down recommendations, wait-cap fallback, historical-signal safety, completed-ride filtering and replacement explanations;
+- all four park emergency plans, conservative fallback, weather precedence and explicit activation;
+- the active emergency overlay now refreshes on park or heat/storm changes so stale guidance does not persist;
+- exact-head GitHub Actions passed Node 22 setup, clean dependency installation, all 70 frontend tests and the production Next.js build;
+- frontend PR #36 was squash-merged at `8ad963a61c65e0f9f90e9635ecf5406ac7e41491`;
+- the real `castlewatch-frontend` production Vercel deployment succeeded.
+
+No backend, itinerary, dependency/runtime, account/family-key, reservation, park-order, shows/activities/characters or 4E E2E work was included in 4D.
+
+**Next Section 4 batch: 4E - shows/activities/characters plus the smallest practical mobile browser/E2E suite.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -371,11 +387,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **CastleWatch Rebaseline & Stabilization - Section 4 in progress**
 
-Sections 4A, 4B and 4C are complete. Section 4D is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work improves automated regression coverage and the account/device migration direction is resolved.
+Sections 4A, 4B, 4C and 4D are complete. Section 4E is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work improves automated regression coverage and the account/device migration direction is resolved.
 
 ## Exact next priorities
 
-1. **Section 4D - add Park Command Center, Live Plan and emergency-mode regression contracts.**
+1. **Section 4E - add shows/activities/characters contracts plus the smallest practical mobile browser/E2E suite.**
 2. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
 3. Production smoke verification.
 4. Establish a lightweight project/task tracker.
