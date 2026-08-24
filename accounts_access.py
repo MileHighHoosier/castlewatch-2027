@@ -12,6 +12,7 @@ from accounts_auth import (
     can_read_shared_plan,
     can_view_operations,
     can_write_shared_plan,
+    hash_access_token,
     parse_access_token,
     verify_access_token,
 )
@@ -19,6 +20,7 @@ from accounts_schema import FAMILY_WORKSPACE_ID
 
 FAMILY_KEY_HEADER = "X-CastleWatch-Key"
 DEVICE_TOKEN_HEADER = "X-CastleWatch-Device-Token"
+_PREAUTHORIZATION_UNSET = object()
 
 
 @dataclass(frozen=True)
@@ -47,11 +49,37 @@ def _expected_family_key() -> str:
     return os.getenv("CASTLEWATCH_FAMILY_KEY", "").strip()
 
 
-def _token_pepper() -> str:
+def token_pepper_for_new_credentials() -> str:
     return (
         os.getenv("CASTLEWATCH_DEVICE_TOKEN_PEPPER", "").strip()
         or _expected_family_key()
     )
+
+
+def token_peppers_for_verification() -> tuple[str, ...]:
+    """Return current and transition peppers without exposing them to callers."""
+    candidates = (
+        token_pepper_for_new_credentials(),
+        os.getenv("CASTLEWATCH_DEVICE_TOKEN_PREVIOUS_PEPPER", "").strip(),
+        _expected_family_key(),
+    )
+    peppers = []
+    for candidate in candidates:
+        if candidate and candidate not in peppers:
+            peppers.append(candidate)
+    return tuple(peppers)
+
+
+def matching_access_token_pepper(token, stored_hash, expected_kind):
+    for pepper in token_peppers_for_verification():
+        if verify_access_token(token, stored_hash, pepper, expected_kind=expected_kind):
+            return pepper
+    return None
+
+
+def _token_pepper() -> str:
+    """Backward-compatible private alias for the new-credential pepper."""
+    return token_pepper_for_new_credentials()
 
 
 def _permission_allowed(role: str, permission: str) -> bool:
@@ -72,6 +100,31 @@ def _permission_error(permission: str):
         f"This device is not allowed to perform the requested {permission} action.",
         403,
     )
+
+
+def _authorize_legacy_actor(connection, authorization: AuthorizationResult) -> AuthorizationResult:
+    actor = authorization.actor
+    if actor is None or actor.auth_type != "legacy_key":
+        return authorization
+
+    family = connection.execute(text("""
+        SELECT legacy_family_key_enabled
+        FROM castlewatch_families
+        WHERE id = :family_id
+    """), {"family_id": actor.family_id}).mappings().first()
+    if family is None:
+        return _authorization_error(
+            "not_configured",
+            "Family-key authorization is unavailable for this workspace.",
+            503,
+        )
+    if not family.get("legacy_family_key_enabled"):
+        return _authorization_error(
+            "legacy_key_disabled",
+            "Family-key recovery is disabled for this workspace. Use an active owner device or restore the recovery flag through the documented rollback procedure.",
+            403,
+        )
+    return authorization
 
 
 def preauthorize_legacy_request(permission: str = "read") -> AuthorizationResult | None:
@@ -130,8 +183,8 @@ def authorize_device_request(connection, permission: str = "read") -> Authorizat
             401,
         )
 
-    pepper = _token_pepper()
-    if not pepper:
+    verification_peppers = token_peppers_for_verification()
+    if not verification_peppers:
         return _authorization_error(
             "not_configured",
             "Device authorization is disabled until a token pepper or family key is configured.",
@@ -155,11 +208,17 @@ def authorize_device_request(connection, permission: str = "read") -> Authorizat
     """), {"token_prefix": parsed.lookup_prefix}).mappings().all()
 
     actor = None
+    matched_pepper = None
     for row in rows:
         member_status = row.get("member_status")
         if member_status is not None and member_status != "active":
             continue
-        if verify_access_token(token, row["token_hash"], pepper, expected_kind=DEVICE_TOKEN_KIND):
+        candidate_pepper = matching_access_token_pepper(
+            token,
+            row["token_hash"],
+            expected_kind=DEVICE_TOKEN_KIND,
+        )
+        if candidate_pepper:
             actor = AccessActor(
                 family_id=row["family_id"],
                 role=row["role"],
@@ -167,6 +226,7 @@ def authorize_device_request(connection, permission: str = "read") -> Authorizat
                 member_id=row.get("member_id"),
                 device_id=row["id"],
             )
+            matched_pepper = candidate_pepper
             break
 
     if actor is None:
@@ -185,18 +245,35 @@ def authorize_device_request(connection, permission: str = "read") -> Authorizat
     elif permission == "write":
         timestamp_columns.append("last_write_at")
 
-    set_clause = ", ".join(f"{column} = NOW()" for column in timestamp_columns)
+    set_values = [f"{column} = NOW()" for column in timestamp_columns]
+    update_parameters = {"device_id": actor.device_id}
+    primary_pepper = token_pepper_for_new_credentials()
+    if primary_pepper and matched_pepper != primary_pepper:
+        set_values.append("token_hash = :token_hash")
+        update_parameters["token_hash"] = hash_access_token(token, primary_pepper)
+
+    set_clause = ", ".join(set_values)
     connection.execute(text(f"""
         UPDATE castlewatch_devices
         SET {set_clause}
         WHERE id = CAST(:device_id AS UUID)
-    """), {"device_id": actor.device_id})
+    """), update_parameters)
 
     return AuthorizationResult(actor=actor)
 
 
-def authorize_request(connection, permission: str = "read") -> AuthorizationResult:
-    legacy = preauthorize_legacy_request(permission)
-    if legacy is not None:
-        return legacy
-    return authorize_device_request(connection, permission)
+def authorize_request(
+    connection,
+    permission: str = "read",
+    preauthorization=_PREAUTHORIZATION_UNSET,
+) -> AuthorizationResult:
+    authorization = (
+        preauthorize_legacy_request(permission)
+        if preauthorization is _PREAUTHORIZATION_UNSET
+        else preauthorization
+    )
+    if authorization is None:
+        return authorize_device_request(connection, permission)
+    if authorization.error:
+        return authorization
+    return _authorize_legacy_actor(connection, authorization)

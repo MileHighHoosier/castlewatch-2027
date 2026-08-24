@@ -89,6 +89,10 @@ class FakeConnection:
             })
             return FakeResult()
 
+        if sql.startswith("select legacy_family_key_enabled"):
+            family = self.engine.families.get(parameters["family_id"])
+            return FakeResult([dict(family)] if family else [])
+
         if "from castlewatch_devices d" in sql and "where d.token_prefix" in sql:
             active_only = "and d.status = 'active'" in sql
             rows = []
@@ -140,7 +144,12 @@ class FakeConnection:
 
         if sql.startswith("select") and "from castlewatch_devices" in sql and "id = cast(:device_id as uuid)" in sql:
             device = self.engine.devices.get(parameters["device_id"])
-            if device and device["family_id"] == parameters["family_id"]:
+            active_only = "status = 'active'" in sql
+            if (
+                device
+                and device["family_id"] == parameters["family_id"]
+                and (not active_only or device["status"] == "active")
+            ):
                 return FakeResult([dict(device)])
             return FakeResult()
 
@@ -153,6 +162,8 @@ class FakeConnection:
                     device["last_read_at"] = now
                 if "last_write_at" in sql:
                     device["last_write_at"] = now
+                if "token_hash" in parameters:
+                    device["token_hash"] = parameters["token_hash"]
             return FakeResult()
 
         if sql.startswith("select") and "from castlewatch_devices" in sql and "where family_id" in sql:
@@ -250,7 +261,11 @@ class AccountRouteTests(unittest.TestCase):
     def setUp(self):
         self.app = Flask(__name__)
         self.engine = FakeEngine()
-        self.environment = patch.dict(os.environ, {"CASTLEWATCH_FAMILY_KEY": self.key}, clear=False)
+        self.environment = patch.dict(os.environ, {
+            "CASTLEWATCH_FAMILY_KEY": self.key,
+            "CASTLEWATCH_DEVICE_TOKEN_PEPPER": "",
+            "CASTLEWATCH_DEVICE_TOKEN_PREVIOUS_PEPPER": "",
+        }, clear=False)
         self.environment.start()
         self.addCleanup(self.environment.stop)
 
@@ -284,23 +299,26 @@ class AccountRouteTests(unittest.TestCase):
         )
 
     def seed_owner_device(self):
+        return self.seed_device("owner", device_id="00000000-0000-0000-0000-000000000299")
+
+    def seed_device(self, role="editor", status="active", pepper=None, device_id=None):
         token = generate_access_token(DEVICE_TOKEN_KIND)
         parsed = parse_access_token(token, expected_kind=DEVICE_TOKEN_KIND)
-        device_id = "00000000-0000-0000-0000-000000000299"
+        device_id = device_id or f"00000000-0000-0000-0000-0000000003{len(self.engine.devices) + 1:02d}"
         self.engine.devices[device_id] = {
             "id": device_id,
             "family_id": FAMILY_WORKSPACE_ID,
             "member_id": None,
-            "display_name": "Ryan iPhone",
-            "token_hash": hash_access_token(token, self.key),
+            "display_name": "Ryan iPhone" if role == "owner" else "Family device",
+            "token_hash": hash_access_token(token, pepper or self.key),
             "token_prefix": parsed.lookup_prefix,
-            "role": "owner",
-            "status": "active",
+            "role": role,
+            "status": status,
             "created_at": datetime.now(timezone.utc),
             "last_seen_at": None,
             "last_read_at": None,
             "last_write_at": None,
-            "revoked_at": None,
+            "revoked_at": datetime.now(timezone.utc) if status == "revoked" else None,
         }
         return token, device_id
 
@@ -561,6 +579,184 @@ class AccountRouteTests(unittest.TestCase):
         self.assertEqual(status, 410)
         self.assertEqual(result["status"], "expired")
         self.assertEqual(self.engine.invites[invite_id]["status"], "expired")
+
+    def test_enabled_legacy_flag_is_authoritative_without_disabling_device_access(self):
+        owner_token, owner_id = self.seed_owner_device()
+        status, initial = self.invoke(check_family_device_access)
+        self.assertEqual(status, 200)
+        self.assertEqual(initial["authState"], "family_key")
+
+        self.engine.families[FAMILY_WORKSPACE_ID]["legacy_family_key_enabled"] = False
+        blocked_calls = (
+            (check_family_device_access, "GET", None),
+            (list_family_devices, "GET", None),
+            (create_family_invite, "POST", {"role": "editor", "label": "Blocked invite"}),
+            (rename_family_device, "POST", {"deviceId": owner_id, "displayName": "Blocked rename"}),
+            (revoke_family_device, "POST", {"deviceId": owner_id}),
+            (bootstrap_family_owner_device, "POST", {"deviceName": "Blocked bootstrap"}),
+        )
+        for handler, method, body in blocked_calls:
+            status, result = self.invoke(handler, method=method, body=body)
+            self.assertEqual(status, 403, handler.__name__)
+            self.assertEqual(result["status"], "legacy_key_disabled", handler.__name__)
+
+        self.assertEqual(self.engine.devices[owner_id]["display_name"], "Ryan iPhone")
+        self.assertEqual(self.engine.devices[owner_id]["status"], "active")
+        self.assertEqual(self.engine.invites, {})
+        self.assertFalse(self.engine.families[FAMILY_WORKSPACE_ID]["legacy_family_key_enabled"])
+
+        status, device_access = self.invoke(
+            check_family_device_access,
+            headers={DEVICE_TOKEN_HEADER: owner_token},
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(device_access["authState"], "device_token")
+        status, listed = self.invoke(
+            list_family_devices,
+            headers={DEVICE_TOKEN_HEADER: owner_token},
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual([device["id"] for device in listed["devices"]], [owner_id])
+
+    def test_revoked_device_is_denied_across_every_protected_device_route(self):
+        revoked_token, revoked_id = self.seed_device("owner", status="revoked")
+        _, target_id = self.seed_device("editor")
+        original_target = dict(self.engine.devices[target_id])
+
+        status, access = self.invoke(
+            check_family_device_access,
+            headers={DEVICE_TOKEN_HEADER: revoked_token},
+        )
+        self.assertEqual(status, 401)
+        self.assertEqual(access["authState"], "revoked_device_token")
+        self.assertEqual(access["device"]["id"], revoked_id)
+
+        blocked_calls = (
+            (list_family_devices, "GET", None),
+            (create_family_invite, "POST", {"role": "editor", "label": "Blocked invite"}),
+            (rename_family_device, "POST", {"deviceId": target_id, "displayName": "Blocked rename"}),
+            (revoke_family_device, "POST", {"deviceId": target_id}),
+            (bootstrap_family_owner_device, "POST", {"deviceName": "Blocked bootstrap"}),
+        )
+        for handler, method, body in blocked_calls:
+            status, result = self.invoke(
+                handler,
+                method=method,
+                body=body,
+                headers={DEVICE_TOKEN_HEADER: revoked_token},
+            )
+            self.assertEqual(status, 401, handler.__name__)
+            self.assertEqual(result["status"], "unauthorized", handler.__name__)
+
+        self.assertEqual(self.engine.invites, {})
+        self.assertEqual(self.engine.devices[target_id], original_target)
+
+    def test_device_token_is_rehashed_when_a_stable_pepper_is_introduced(self):
+        token, device_id = self.seed_device("owner", pepper=self.key)
+        legacy_hash = self.engine.devices[device_id]["token_hash"]
+
+        with patch.dict(os.environ, {"CASTLEWATCH_DEVICE_TOKEN_PEPPER": "stable-device-pepper"}):
+            status, result = self.invoke(
+                check_family_device_access,
+                headers={DEVICE_TOKEN_HEADER: token},
+            )
+
+        self.assertEqual(status, 200)
+        self.assertEqual(result["authState"], "device_token")
+        self.assertNotEqual(self.engine.devices[device_id]["token_hash"], legacy_hash)
+        self.assertEqual(
+            self.engine.devices[device_id]["token_hash"],
+            hash_access_token(token, "stable-device-pepper"),
+        )
+
+    def test_pepper_rotation_and_rollback_rehash_active_tokens(self):
+        token, device_id = self.seed_device("owner", pepper="old-device-pepper")
+
+        with patch.dict(os.environ, {
+            "CASTLEWATCH_DEVICE_TOKEN_PEPPER": "new-device-pepper",
+            "CASTLEWATCH_DEVICE_TOKEN_PREVIOUS_PEPPER": "old-device-pepper",
+        }):
+            status, _ = self.invoke(
+                list_family_devices,
+                headers={DEVICE_TOKEN_HEADER: token},
+            )
+        self.assertEqual(status, 200)
+        self.assertEqual(
+            self.engine.devices[device_id]["token_hash"],
+            hash_access_token(token, "new-device-pepper"),
+        )
+
+        with patch.dict(os.environ, {
+            "CASTLEWATCH_DEVICE_TOKEN_PEPPER": "old-device-pepper",
+            "CASTLEWATCH_DEVICE_TOKEN_PREVIOUS_PEPPER": "new-device-pepper",
+        }):
+            status, _ = self.invoke(
+                check_family_device_access,
+                headers={DEVICE_TOKEN_HEADER: token},
+            )
+        self.assertEqual(status, 200)
+        self.assertEqual(
+            self.engine.devices[device_id]["token_hash"],
+            hash_access_token(token, "old-device-pepper"),
+        )
+
+    def test_open_invite_survives_pepper_rotation_and_new_device_uses_primary(self):
+        with patch.dict(os.environ, {"CASTLEWATCH_DEVICE_TOKEN_PEPPER": "old-device-pepper"}):
+            status, invite = self.create_invite(role="viewer", label="Rotation invite")
+        self.assertEqual(status, 200)
+
+        with patch.dict(os.environ, {
+            "CASTLEWATCH_DEVICE_TOKEN_PEPPER": "new-device-pepper",
+            "CASTLEWATCH_DEVICE_TOKEN_PREVIOUS_PEPPER": "old-device-pepper",
+        }):
+            status, accepted = self.accept_invite(invite["inviteToken"], "Rotated device")
+
+        self.assertEqual(status, 200)
+        created = self.engine.devices[accepted["device"]["id"]]
+        self.assertEqual(
+            created["token_hash"],
+            hash_access_token(accepted["deviceToken"], "new-device-pepper"),
+        )
+
+    def test_owner_revocation_requires_family_key_recovery_and_preserves_bootstrap(self):
+        first_token, first_id = self.seed_owner_device()
+        second_token, second_id = self.seed_device("owner")
+
+        status, self_revoke = self.invoke(
+            revoke_family_device,
+            method="POST",
+            body={"deviceId": first_id},
+            headers={DEVICE_TOKEN_HEADER: first_token},
+        )
+        self.assertEqual(status, 400)
+        self.assertEqual(self_revoke["status"], "invalid_request")
+
+        status, peer_revoke = self.invoke(
+            revoke_family_device,
+            method="POST",
+            body={"deviceId": first_id},
+            headers={DEVICE_TOKEN_HEADER: second_token},
+        )
+        self.assertEqual(status, 409)
+        self.assertEqual(peer_revoke["status"], "owner_recovery_required")
+        self.assertEqual(self.engine.devices[first_id]["status"], "active")
+
+        self.engine.devices[second_id]["status"] = "revoked"
+        status, recovered = self.invoke(
+            revoke_family_device,
+            method="POST",
+            body={"deviceId": first_id},
+        )
+        self.assertEqual(status, 200)
+        self.assertTrue(recovered["recoveryRequired"])
+        self.assertEqual(recovered["device"]["status"], "revoked")
+        self.assertEqual(self.engine.members[DEFAULT_OWNER_MEMBER_ID]["status"], "active")
+        self.assertTrue(self.engine.families[FAMILY_WORKSPACE_ID]["legacy_family_key_enabled"])
+
+        status, replacement = self.bootstrap_owner("Replacement owner")
+        self.assertEqual(status, 200)
+        self.assertEqual(replacement["device"]["role"], "owner")
+        self.assertNotEqual(replacement["device"]["id"], first_id)
 
 
 if __name__ == "__main__":
