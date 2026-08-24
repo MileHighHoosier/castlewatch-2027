@@ -35,6 +35,7 @@ class DependencyPolicyTests(unittest.TestCase):
             ROOT / ".github" / "workflows" / "family-sync-tests.yml"
         ).read_text()
         self.assertIn(f'python-version: "{EXPECTED_PYTHON}"', workflow)
+        self.assertIn("python -m py_compile *.py", workflow)
 
 
 if __name__ == "__main__":
