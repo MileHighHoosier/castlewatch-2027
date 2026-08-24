@@ -84,9 +84,17 @@ Implementation batches:
 
 ### Section 5 - Accounts / invitations / device migration completion
 
-Status: **Next - not started**
+Status: **In progress - 5A complete; 5B next**
 
 Current recommendation: **finish the migration rather than abandon it**, because much of the foundation already exists.
+
+Implementation batches:
+
+- **5A - architecture audit and migration contract: Complete and production-deployed August 24, 2026.** The deployed backend/frontend foundation was reconciled with backend issue #10 and frontend issue #25; already-completed account gates were inventoried; ten remaining migration gaps and the target authorization matrix were recorded; and owner-bootstrap, protected credential, role, recovery, pepper-continuity and non-retirement boundaries were fixed in `docs/accounts_migration_contract.md`. Exact-head Python 3.12.14 CI passed clean installation, all 69 backend contracts and full production-module compilation; the audited frontend head passed all 82 contracts and its production build. Backend PR #44 was squash-merged at `8d970cfff75d6b859e3b242f5d0b0d312d0151c5`, and Railway succeeded. No production code, schema, data, credential, dependency, runtime, itinerary, account state or frontend behavior changed.
+- **5B - owner-device bootstrap and protected credential foundation: Next - not started.** Add explicit family-key-authorized owner bootstrap and a narrow proxy-managed protected device credential, including safe one-time migration away from raw device-token `localStorage`. Preserve family-key recovery, select one credential per request and do not yet enable normal device-authorized shared-plan operations.
+- **5C - normal shared-plan dual authorization and role enforcement: Not started.** Add device-token authorization for normal read/write/history/version/restore/operations paths with the exact Owner/Editor/Viewer server and UI matrix while preserving version/conflict/history behavior.
+- **5D - revocation, recovery and legacy-gate hardening: Not started.** Enforce revoked-token denial everywhere without silent fallback, make the enabled legacy flag authoritative, add owner/last-owner and pepper-continuity protections, and verify recovery/rollback without adding retirement behavior.
+- **5E - production two-device verification and Section 5 closeout: Not started.** Complete frontend issue #25 against the finished model on real devices, verify Railway and the real frontend Vercel project, and close Section 5 while leaving the family key enabled.
 
 Required before legacy family-key retirement can even be considered:
 
