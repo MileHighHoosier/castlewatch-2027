@@ -1,5 +1,11 @@
 # Accounts phase authorization gates
 
+## Current status
+
+Gates 0–4 below are a historical record and are already implemented. They must not be repeated. The active remaining-work contract is `accounts_migration_contract.md`, which divides Section 5 into 5A–5E and keeps the legacy family key enabled through Section 5 closeout.
+
+Gate 5 remains blocked and is not part of Section 5 implementation. No **Start Section 5x** or **Finalize Section 5x** instruction authorizes a family-key retirement option.
+
 This file defines when explicit user authorization is required during the Accounts, Invitations and Device Management phase.
 
 The default rule is conservative: if a change affects production data, production routes, visible GUI, or the legacy family-key workflow, stop and ask for explicit authorization first.
@@ -146,8 +152,16 @@ Authorization wording should be clear, for example:
 
 Important: the first implementation should add only an owner-controlled option. It should not automatically remove or disable the family key.
 
-## Recommendation for the current next authorization
+## Current remaining-work authorization
 
-The next risky gate is Gate 1: additive production schema setup.
+The old Gate 1 recommendation is complete: the additive schema, device/invite routes, typed clients and minimal GUI are already deployed.
 
-Before that gate, the assistant should summarize exactly which tables and indexes will be created and ask the user to authorize it explicitly. A generic instruction like "continue" should not be treated as permission to change production schema.
+The current sequence is:
+
+1. **5A:** architecture audit and migration contract;
+2. **5B:** owner-device bootstrap and protected credential foundation;
+3. **5C:** normal shared-plan dual authorization and role enforcement;
+4. **5D:** revocation, recovery and legacy-gate hardening;
+5. **5E:** production two-device verification and Section 5 closeout.
+
+Each batch requires its own explicit Start/Finalize checkpoint. Family-key retirement remains a separate later decision even after 5E.
