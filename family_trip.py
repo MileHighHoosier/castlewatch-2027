@@ -1,15 +1,17 @@
-import hmac
 import json
-import os
 from datetime import datetime, timezone
 
 from flask import jsonify, request
 from sqlalchemy import text
 
+from accounts_access import (
+    FAMILY_KEY_HEADER,
+    authorize_device_request,
+    preauthorize_legacy_request,
+)
 from accounts_schema import setup_accounts_database
 
 FAMILY_TRIP_ID = "family"
-FAMILY_KEY_HEADER = "X-CastleWatch-Key"
 MAX_PAYLOAD_BYTES = 500_000
 WRITE_LOCK_KEY = "castlewatch_family_trip"
 HISTORY_LIMIT = 25
@@ -58,21 +60,26 @@ def setup_family_trip_database(connection):
     setup_accounts_database(connection)
 
 
-def _authorization_error():
-    expected_key = os.getenv("CASTLEWATCH_FAMILY_KEY", "").strip()
-    if not expected_key:
-        return jsonify({
-            "status": "not_configured",
-            "message": "Shared family storage is disabled until CASTLEWATCH_FAMILY_KEY is configured.",
-        }), 503
+def _preauthorize_family_trip(permission):
+    """Reject invalid legacy credentials before storage and defer device lookup."""
+    authorization = preauthorize_legacy_request(permission=permission)
+    if authorization is not None and authorization.error:
+        return None, authorization.error
+    return authorization, None
 
-    provided_key = request.headers.get(FAMILY_KEY_HEADER, "")
-    if not provided_key or not hmac.compare_digest(provided_key, expected_key):
-        return jsonify({
-            "status": "unauthorized",
-            "message": "The CastleWatch family key is missing or incorrect.",
-        }), 401
 
+def _authorize_family_trip_connection(connection, permission, preauthorization):
+    """Authorize the selected credential inside the shared-plan transaction."""
+    authorization = preauthorization
+    if authorization is None:
+        authorization = authorize_device_request(connection, permission=permission)
+    if authorization.error:
+        return authorization.error
+    if authorization.actor is None or authorization.actor.family_id != FAMILY_TRIP_ID:
+        return jsonify({
+            "status": "forbidden",
+            "message": "This credential cannot access the CastleWatch family workspace.",
+        }), 403
     return None
 
 
@@ -171,12 +178,19 @@ def _version_conflict_response(current):
 
 
 def get_family_trip(engine):
-    authorization_error = _authorization_error()
+    preauthorization, authorization_error = _preauthorize_family_trip("read")
     if authorization_error:
         return authorization_error
 
     with engine.begin() as connection:
         setup_family_trip_database(connection)
+        authorization_error = _authorize_family_trip_connection(
+            connection,
+            "read",
+            preauthorization,
+        )
+        if authorization_error:
+            return authorization_error
         row = connection.execute(text("""
             SELECT payload, version, updated_at
             FROM family_trip_state
@@ -187,12 +201,19 @@ def get_family_trip(engine):
 
 
 def get_family_trip_history(engine):
-    authorization_error = _authorization_error()
+    preauthorization, authorization_error = _preauthorize_family_trip("read")
     if authorization_error:
         return authorization_error
 
     with engine.begin() as connection:
         setup_family_trip_database(connection)
+        authorization_error = _authorize_family_trip_connection(
+            connection,
+            "read",
+            preauthorization,
+        )
+        if authorization_error:
+            return authorization_error
         current = connection.execute(text("""
             SELECT version
             FROM family_trip_state
@@ -219,7 +240,7 @@ def get_family_trip_history(engine):
 
 
 def get_family_trip_history_version(engine, version):
-    authorization_error = _authorization_error()
+    preauthorization, authorization_error = _preauthorize_family_trip("read")
     if authorization_error:
         return authorization_error
 
@@ -231,6 +252,13 @@ def get_family_trip_history_version(engine, version):
 
     with engine.begin() as connection:
         setup_family_trip_database(connection)
+        authorization_error = _authorize_family_trip_connection(
+            connection,
+            "read",
+            preauthorization,
+        )
+        if authorization_error:
+            return authorization_error
         row = connection.execute(text("""
             SELECT version, payload, created_at, restored_from_version
             FROM family_trip_history
@@ -258,7 +286,7 @@ def get_family_trip_history_version(engine, version):
 
 
 def put_family_trip(engine):
-    authorization_error = _authorization_error()
+    preauthorization, authorization_error = _preauthorize_family_trip("write")
     if authorization_error:
         return authorization_error
 
@@ -284,6 +312,13 @@ def put_family_trip(engine):
 
     with engine.begin() as connection:
         setup_family_trip_database(connection)
+        authorization_error = _authorize_family_trip_connection(
+            connection,
+            "write",
+            preauthorization,
+        )
+        if authorization_error:
+            return authorization_error
         connection.execute(text("""
             SELECT pg_advisory_xact_lock(hashtext(:lock_key))
         """), {"lock_key": WRITE_LOCK_KEY})
@@ -344,7 +379,7 @@ def put_family_trip(engine):
 
 
 def restore_family_trip_version(engine):
-    authorization_error = _authorization_error()
+    preauthorization, authorization_error = _preauthorize_family_trip("write")
     if authorization_error:
         return authorization_error
 
@@ -370,6 +405,13 @@ def restore_family_trip_version(engine):
 
     with engine.begin() as connection:
         setup_family_trip_database(connection)
+        authorization_error = _authorize_family_trip_connection(
+            connection,
+            "write",
+            preauthorization,
+        )
+        if authorization_error:
+            return authorization_error
         connection.execute(text("""
             SELECT pg_advisory_xact_lock(hashtext(:lock_key))
         """), {"lock_key": WRITE_LOCK_KEY})
