@@ -11,6 +11,7 @@ from sqlalchemy import text
 
 from core_app import *  # noqa: F401,F403
 from accounts_routes import (
+    bootstrap_family_owner_device,
     check_family_device_access,
     create_family_invite,
     list_family_devices,
@@ -197,6 +198,14 @@ def api_check_family_device_access():
         return check_family_device_access(engine)
     except Exception as error:
         return _internal_error("family device access check", error)
+
+
+@app.route("/api/family-trip/devices/bootstrap-owner", methods=["POST"])
+def api_bootstrap_family_owner_device():
+    try:
+        return bootstrap_family_owner_device(engine)
+    except Exception as error:
+        return _internal_error("family owner device bootstrap", error)
 
 
 @app.route("/api/family-trip/devices", methods=["GET"])

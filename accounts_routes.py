@@ -3,7 +3,13 @@ from datetime import datetime, timedelta, timezone
 from flask import jsonify, request
 from sqlalchemy import text
 
-from accounts_access import DEVICE_TOKEN_HEADER, _token_pepper, authorize_request
+from accounts_access import (
+    DEVICE_TOKEN_HEADER,
+    FAMILY_KEY_HEADER,
+    _token_pepper,
+    authorize_request,
+    preauthorize_legacy_request,
+)
 from accounts_auth import (
     DEVICE_TOKEN_KIND,
     INVITE_TOKEN_KIND,
@@ -18,7 +24,11 @@ from accounts_auth import (
     safe_invite_record,
     verify_access_token,
 )
-from accounts_schema import setup_accounts_database
+from accounts_schema import (
+    DEFAULT_OWNER_MEMBER_ID,
+    FAMILY_WORKSPACE_ID,
+    setup_accounts_database,
+)
 
 INVITE_EXPIRATION_DAYS = 7
 
@@ -157,6 +167,145 @@ def check_family_device_access(engine):
             "migrationRecommended": False,
             "message": "This browser is connected with a device token.",
         })
+
+
+def bootstrap_family_owner_device(engine):
+    """Create the first owner device through the explicit family-key recovery path."""
+    body = _json_body()
+    if body is None:
+        return _error("invalid_request", "The request body must be a JSON object.", 400)
+
+    if request.headers.get(DEVICE_TOKEN_HEADER, "").strip():
+        if not request.headers.get(FAMILY_KEY_HEADER, ""):
+            return _error(
+                "unauthorized",
+                "Owner bootstrap requires the CastleWatch family key.",
+                401,
+            )
+        return _error(
+            "invalid_request",
+            "Owner bootstrap accepts the family key only, not multiple credentials.",
+            400,
+        )
+
+    device_name = normalize_display_name(body.get("deviceName"), fallback="Owner device")
+    pepper = _token_pepper()
+    if not pepper:
+        return _error(
+            "not_configured",
+            "Device authorization is disabled until a token pepper or family key is configured.",
+            503,
+        )
+
+    with engine.begin() as connection:
+        setup_accounts_database(connection)
+        authorization = preauthorize_legacy_request(permission="manage")
+        if authorization is None or authorization.error:
+            if authorization is not None:
+                return authorization.error
+            return _error(
+                "unauthorized",
+                "Owner bootstrap requires the CastleWatch family key.",
+                401,
+            )
+
+        owner_member = connection.execute(text("""
+            SELECT
+                id::text AS id,
+                family_id,
+                role,
+                status
+            FROM castlewatch_members
+            WHERE id = CAST(:member_id AS UUID)
+              AND family_id = :family_id
+              AND role = 'owner'
+              AND status = 'active'
+            FOR UPDATE
+        """), {
+            "member_id": DEFAULT_OWNER_MEMBER_ID,
+            "family_id": FAMILY_WORKSPACE_ID,
+        }).mappings().first()
+        if owner_member is None:
+            return _error(
+                "bootstrap_unavailable",
+                "The seeded family owner is unavailable for device bootstrap.",
+                409,
+            )
+
+        existing_owner = connection.execute(text("""
+            SELECT
+                id::text AS id,
+                display_name,
+                role,
+                status,
+                token_prefix,
+                created_at,
+                last_seen_at,
+                last_read_at,
+                last_write_at,
+                revoked_at
+            FROM castlewatch_devices
+            WHERE family_id = :family_id
+              AND role = 'owner'
+              AND status = 'active'
+            ORDER BY created_at ASC
+            LIMIT 1
+        """), {"family_id": FAMILY_WORKSPACE_ID}).mappings().first()
+        if existing_owner is not None:
+            return jsonify({
+                "status": "owner_device_exists",
+                "message": "An active owner device already exists. Revoke it through the family-key recovery path before bootstrapping a replacement.",
+                "device": _safe_device(existing_owner),
+            }), 409
+
+        device_token = generate_access_token(DEVICE_TOKEN_KIND)
+        device_prefix = _prefix_for(device_token)
+        device_hash = hash_access_token(device_token, pepper)
+        device = connection.execute(text("""
+            INSERT INTO castlewatch_devices (
+                family_id,
+                member_id,
+                display_name,
+                token_hash,
+                token_prefix,
+                role,
+                last_seen_at
+            )
+            VALUES (
+                :family_id,
+                CAST(:member_id AS UUID),
+                :display_name,
+                :token_hash,
+                :token_prefix,
+                'owner',
+                NOW()
+            )
+            RETURNING
+                id::text AS id,
+                display_name,
+                role,
+                status,
+                token_prefix,
+                created_at,
+                last_seen_at,
+                last_read_at,
+                last_write_at,
+                revoked_at
+        """), {
+            "family_id": FAMILY_WORKSPACE_ID,
+            "member_id": owner_member["id"],
+            "display_name": device_name,
+            "token_hash": device_hash,
+            "token_prefix": device_prefix,
+        }).mappings().first()
+
+    response = jsonify({
+        "status": "ok",
+        "deviceToken": device_token,
+        "device": _safe_device(device),
+    })
+    response.headers["Cache-Control"] = "no-store, max-age=0"
+    return response
 
 
 def list_family_devices(engine):
@@ -361,11 +510,13 @@ def accept_family_invite(engine):
             "invite_id": invite["id"],
         })
 
-    return jsonify({
+    response = jsonify({
         "status": "ok",
         "deviceToken": device_token,
         "device": _safe_device(device),
     })
+    response.headers["Cache-Control"] = "no-store, max-age=0"
+    return response
 
 
 def rename_family_device(engine):
