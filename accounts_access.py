@@ -76,8 +76,15 @@ def _permission_error(permission: str):
 
 def preauthorize_legacy_request(permission: str = "read") -> AuthorizationResult | None:
     expected_key = _expected_family_key()
-    provided_key = request.headers.get(FAMILY_KEY_HEADER, "")
-    provided_device_token = request.headers.get(DEVICE_TOKEN_HEADER, "")
+    provided_key = request.headers.get(FAMILY_KEY_HEADER, "").strip()
+    provided_device_token = request.headers.get(DEVICE_TOKEN_HEADER, "").strip()
+
+    if provided_key and provided_device_token:
+        return _authorization_error(
+            "invalid_request",
+            "Select exactly one CastleWatch credential per request.",
+            400,
+        )
 
     if provided_key:
         if not expected_key:

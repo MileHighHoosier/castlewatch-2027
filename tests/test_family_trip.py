@@ -8,6 +8,14 @@ from flask import Flask
 
 import accounts_schema
 import family_trip
+import operations
+from accounts_access import DEVICE_TOKEN_HEADER
+from accounts_auth import (
+    DEVICE_TOKEN_KIND,
+    generate_access_token,
+    hash_access_token,
+    parse_access_token,
+)
 
 
 class FakeResult:
@@ -41,6 +49,7 @@ class FakeEngine:
         self.history = {}
         self.account_families = {}
         self.account_members = {}
+        self.account_devices = {}
         self.schema_statements = []
 
     def begin(self):
@@ -95,6 +104,29 @@ class FakeConnection:
                 }
             return FakeResult()
 
+        if "from castlewatch_devices d" in sql and "where d.token_prefix" in sql:
+            rows = [
+                {
+                    **device,
+                    "member_status": None,
+                }
+                for device in self.engine.account_devices.values()
+                if device["token_prefix"] == parameters["token_prefix"]
+                and device["status"] == "active"
+            ]
+            return FakeResult(rows)
+
+        if sql.startswith("update castlewatch_devices") and "set last_seen_at" in sql:
+            device = self.engine.account_devices.get(parameters["device_id"])
+            if device:
+                now = datetime.now(timezone.utc)
+                device["last_seen_at"] = now
+                if "last_read_at" in sql:
+                    device["last_read_at"] = now
+                if "last_write_at" in sql:
+                    device["last_write_at"] = now
+            return FakeResult()
+
         if "select pg_advisory_xact_lock" in sql:
             return FakeResult()
 
@@ -127,6 +159,14 @@ class FakeConnection:
             "select version, payload, created_at, restored_from_version" in sql
             and "from family_trip_history" in sql
         ):
+            rows = [
+                dict(self.engine.history[version])
+                for version in sorted(self.engine.history, reverse=True)
+            ]
+            limit = parameters.get("history_limit", family_trip.HISTORY_LIMIT)
+            return FakeResult(rows[:limit])
+
+        if "select version, payload, created_at" in sql and "from family_trip_history" in sql:
             rows = [
                 dict(self.engine.history[version])
                 for version in sorted(self.engine.history, reverse=True)
@@ -195,12 +235,12 @@ class FamilyTripContractTests(unittest.TestCase):
             "approval": {"activeScenario": "base", "locked": False},
         }
 
-    def invoke(self, handler, method="GET", path="/api/family-trip", body=None):
+    def invoke(self, handler, method="GET", path="/api/family-trip", body=None, headers=None):
         with self.app.test_request_context(
             path,
             method=method,
             json=body,
-            headers={family_trip.FAMILY_KEY_HEADER: self.key},
+            headers=headers or {family_trip.FAMILY_KEY_HEADER: self.key},
         ):
             result = handler(self.engine)
 
@@ -216,6 +256,27 @@ class FamilyTripContractTests(unittest.TestCase):
             method="PUT",
             body={"expectedVersion": expected_version, "payload": payload},
         )
+
+    def seed_device(self, role, status="active", family_id=accounts_schema.FAMILY_WORKSPACE_ID):
+        token = generate_access_token(DEVICE_TOKEN_KIND)
+        parsed = parse_access_token(token, expected_kind=DEVICE_TOKEN_KIND)
+        device_id = f"00000000-0000-0000-0000-000000000{len(self.engine.account_devices) + 101:03d}"
+        self.engine.account_devices[device_id] = {
+            "id": device_id,
+            "family_id": family_id,
+            "member_id": None,
+            "role": role,
+            "status": status,
+            "token_hash": hash_access_token(token, self.key),
+            "token_prefix": parsed.lookup_prefix,
+            "last_seen_at": None,
+            "last_read_at": None,
+            "last_write_at": None,
+        }
+        return token, device_id
+
+    def device_headers(self, token):
+        return {DEVICE_TOKEN_HEADER: token}
 
     def test_additive_account_schema_setup_preserves_empty_shared_plan(self):
         status, downloaded = self.invoke(family_trip.get_family_trip)
@@ -332,6 +393,185 @@ class FamilyTripContractTests(unittest.TestCase):
         self.assertIsNone(self.engine.state)
         self.assertEqual(self.engine.account_families, {})
         self.assertEqual(self.engine.account_members, {})
+
+    def test_device_roles_enforce_the_shared_plan_permission_matrix(self):
+        first = self.payload("Version one")
+        second = self.payload("Version two")
+        self.write(0, first)
+        self.write(1, second)
+        owner_token, owner_id = self.seed_device("owner")
+        editor_token, editor_id = self.seed_device("editor")
+        viewer_token, viewer_id = self.seed_device("viewer")
+
+        for token, device_id in (
+            (owner_token, owner_id),
+            (editor_token, editor_id),
+            (viewer_token, viewer_id),
+        ):
+            headers = self.device_headers(token)
+            status, document = self.invoke(family_trip.get_family_trip, headers=headers)
+            self.assertEqual(status, 200)
+            self.assertEqual(document["version"], 2)
+            status, history = self.invoke(
+                family_trip.get_family_trip_history,
+                path="/api/family-trip/history",
+                headers=headers,
+            )
+            self.assertEqual(status, 200)
+            self.assertEqual(history["currentVersion"], 2)
+            status, snapshot = self.invoke(
+                lambda engine: family_trip.get_family_trip_history_version(engine, 1),
+                path="/api/family-trip/history/1",
+                headers=headers,
+            )
+            self.assertEqual(status, 200)
+            self.assertEqual(snapshot["version"], 1)
+            self.assertIsNotNone(self.engine.account_devices[device_id]["last_read_at"])
+
+        status, owner_saved = self.invoke(
+            family_trip.put_family_trip,
+            method="PUT",
+            body={"expectedVersion": 2, "payload": self.payload("Owner edit")},
+            headers=self.device_headers(owner_token),
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(owner_saved["version"], 3)
+        self.assertIsNotNone(self.engine.account_devices[owner_id]["last_write_at"])
+
+        status, editor_saved = self.invoke(
+            family_trip.put_family_trip,
+            method="PUT",
+            body={"expectedVersion": 3, "payload": self.payload("Editor edit")},
+            headers=self.device_headers(editor_token),
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(editor_saved["version"], 4)
+        self.assertIsNotNone(self.engine.account_devices[editor_id]["last_write_at"])
+
+        status, viewer_write = self.invoke(
+            family_trip.put_family_trip,
+            method="PUT",
+            body={"expectedVersion": 4, "payload": self.payload("Viewer edit")},
+            headers=self.device_headers(viewer_token),
+        )
+        self.assertEqual(status, 403)
+        self.assertEqual(viewer_write["status"], "forbidden")
+        self.assertEqual(self.engine.state["version"], 4)
+        self.assertIsNone(self.engine.account_devices[viewer_id]["last_write_at"])
+
+        status, owner_restored = self.invoke(
+            family_trip.restore_family_trip_version,
+            method="POST",
+            path="/api/family-trip/restore",
+            body={"expectedVersion": 4, "sourceVersion": 1},
+            headers=self.device_headers(owner_token),
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(owner_restored["version"], 5)
+
+        status, editor_restored = self.invoke(
+            family_trip.restore_family_trip_version,
+            method="POST",
+            path="/api/family-trip/restore",
+            body={"expectedVersion": 5, "sourceVersion": 2},
+            headers=self.device_headers(editor_token),
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(editor_restored["version"], 6)
+
+        status, viewer_restore = self.invoke(
+            family_trip.restore_family_trip_version,
+            method="POST",
+            path="/api/family-trip/restore",
+            body={"expectedVersion": 6, "sourceVersion": 1},
+            headers=self.device_headers(viewer_token),
+        )
+        self.assertEqual(status, 403)
+        self.assertEqual(viewer_restore["status"], "forbidden")
+        self.assertEqual(self.engine.state["version"], 6)
+
+        for token in (owner_token, editor_token):
+            status, report = self.invoke(
+                operations.get_family_trip_operations,
+                path="/api/family-trip/operations",
+                headers=self.device_headers(token),
+            )
+            self.assertEqual(status, 200)
+            self.assertEqual(report["status"], "ok")
+
+        status, viewer_operations = self.invoke(
+            operations.get_family_trip_operations,
+            path="/api/family-trip/operations",
+            headers=self.device_headers(viewer_token),
+        )
+        self.assertEqual(status, 403)
+        self.assertEqual(viewer_operations["status"], "forbidden")
+
+    def test_device_credentials_reject_revoked_malformed_and_ambiguous_requests(self):
+        active_token, _ = self.seed_device("owner")
+        revoked_token, _ = self.seed_device("editor", status="revoked")
+        other_family_token, _ = self.seed_device("owner", family_id="other-family")
+
+        for token in (revoked_token, "cwdev_not-valid"):
+            status, result = self.invoke(
+                family_trip.get_family_trip,
+                headers=self.device_headers(token),
+            )
+            self.assertEqual(status, 401)
+            self.assertEqual(result["status"], "unauthorized")
+
+        status, ambiguous = self.invoke(
+            family_trip.get_family_trip,
+            headers={
+                family_trip.FAMILY_KEY_HEADER: self.key,
+                DEVICE_TOKEN_HEADER: active_token,
+            },
+        )
+        self.assertEqual(status, 400)
+        self.assertEqual(ambiguous["status"], "invalid_request")
+
+        status, wrong_workspace = self.invoke(
+            family_trip.get_family_trip,
+            headers=self.device_headers(other_family_token),
+        )
+        self.assertEqual(status, 403)
+        self.assertEqual(wrong_workspace["status"], "forbidden")
+
+    def test_device_write_preserves_optimistic_conflict_and_history_contracts(self):
+        editor_token, _ = self.seed_device("editor")
+        headers = self.device_headers(editor_token)
+        first = self.payload("Device version one")
+        second = self.payload("Device version two")
+        stale = self.payload("Stale device write")
+
+        status, saved = self.invoke(
+            family_trip.put_family_trip,
+            method="PUT",
+            body={"expectedVersion": 0, "payload": first},
+            headers=headers,
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(saved["version"], 1)
+
+        status, saved = self.invoke(
+            family_trip.put_family_trip,
+            method="PUT",
+            body={"expectedVersion": 1, "payload": second},
+            headers=headers,
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(saved["version"], 2)
+
+        status, conflict = self.invoke(
+            family_trip.put_family_trip,
+            method="PUT",
+            body={"expectedVersion": 1, "payload": stale},
+            headers=headers,
+        )
+        self.assertEqual(status, 409)
+        self.assertEqual(conflict["status"], "version_conflict")
+        self.assertEqual(conflict["payload"], second)
+        self.assertEqual(sorted(self.engine.history), [1, 2])
 
 
 if __name__ == "__main__":

@@ -9,8 +9,9 @@ from family_trip import (
     FAMILY_TRIP_ID,
     HISTORY_LIMIT,
     MAX_PAYLOAD_BYTES,
-    _authorization_error,
+    _authorize_family_trip_connection,
     _json_value,
+    _preauthorize_family_trip,
     setup_family_trip_database,
 )
 
@@ -251,12 +252,19 @@ def build_family_operations_report(current, history_rows, now=None):
 
 
 def get_family_trip_operations(engine):
-    authorization_error = _authorization_error()
+    preauthorization, authorization_error = _preauthorize_family_trip("operations")
     if authorization_error:
         return authorization_error
 
     with engine.begin() as connection:
         setup_family_trip_database(connection)
+        authorization_error = _authorize_family_trip_connection(
+            connection,
+            "operations",
+            preauthorization,
+        )
+        if authorization_error:
+            return authorization_error
         current = connection.execute(text("""
             SELECT payload, version, updated_at
             FROM family_trip_state
