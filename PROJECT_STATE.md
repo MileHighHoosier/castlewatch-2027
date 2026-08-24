@@ -94,11 +94,16 @@ Implemented:
 - owner/editor/viewer role helpers,
 - hashed device and invite tokens,
 - device access checks,
+- explicit family-key-only owner-device bootstrap tied to the seeded owner member,
 - invite creation and atomic single-consumption acceptance,
 - device list,
 - rename,
 - revoke,
 - frontend device-management UI/plumbing,
+- proxy-managed `Secure`, `HttpOnly`, `SameSite=Strict` device credentials scoped to the shared-family proxy path,
+- acknowledged one-time migration from legacy raw device-token storage to the protected cookie,
+- explicit family-key/device-cookie selection for device management without silent fallback,
+- one-time bootstrap/invite credentials removed before setup responses reach browser JavaScript,
 - bounded validation for persisted/returned device and invite credentials,
 - credential-management errors no longer append raw backend response bodies,
 - credential-adjacent Family devices UI is regression-checked against dynamic HTML sinks,
@@ -108,12 +113,14 @@ Implemented:
 Not complete:
 
 - device-token authorization has not fully replaced the family key for normal shared-plan read/write/history/restore/operations paths,
-- owner-device bootstrap/verification is not complete,
+- no production owner device has yet been created and manually verified through the new bootstrap path,
 - `legacy_family_key_enabled` is not yet the authoritative gate for legacy-key access,
 - production two-device verification remains open,
 - family-key retirement must not occur yet.
 
 Section 5A finalized the authoritative remaining-work contract in `docs/accounts_migration_contract.md`. The audit reconciled both deployed repositories, recorded the current authorization matrix and ten migration gaps, and divided the remaining implementation into separately approved 5B–5E batches. It did not change account state or production authorization.
+
+Section 5B finalized the owner-bootstrap and protected-credential foundation. It did not enable device credentials for normal shared-plan operations, create a production owner-device record, or disable the family key.
 
 ### Current account migration rule
 
@@ -422,7 +429,28 @@ Implemented and verified:
 
 No production code, schema, data, credential, dependency, runtime, itinerary, account state or frontend behavior changed in 5A. `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
 
-**Section 5 remains in progress. Section 5B - owner-device bootstrap and protected credential foundation - is next but has not started.**
+#### Section 5B - Owner-device bootstrap and protected credential foundation
+
+**Complete, merged and production-deployed on August 24, 2026.**
+
+Implemented and verified:
+
+- backend owner bootstrap is an explicit family-key-only action tied to the seeded active owner member;
+- bootstrap locks the seeded owner, prevents a second active owner device, allows explicit replacement after revocation, returns only safe metadata outside the one-time setup response and leaves `legacy_family_key_enabled` unchanged;
+- bootstrap and invite-acceptance one-time credential responses are non-cacheable;
+- the Next.js proxy stores device credentials in a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie and removes raw credentials before setup responses reach browser JavaScript;
+- legacy raw local device credentials migrate only after server acknowledgment; failed migration remains recoverable, and browser-readable storage keeps safe display metadata only;
+- device-management requests select exactly one family-key or protected-cookie credential, with no silent fallback after a selected device credential is missing, rejected or revoked;
+- same-origin JSON validation, response scrubbing and credential-clearing contracts protect the proxy boundary;
+- normal shared-plan read/write/history/restore/operations actions remain family-key-only for the separately approved 5C batch;
+- exact-head Python 3.12.14 GitHub Actions completed clean installation, passed all 79 backend contracts and compiled the production modules;
+- exact-head Node 22 GitHub Actions completed clean installation, passed all 90 frontend contracts, built the production application and passed the mobile browser smoke;
+- backend PR #46 was squash-merged at `5456a272041f2d329b26ff7cd4b1a338e8960d51`, and Railway succeeded;
+- frontend PR #39 was squash-merged at `c7b2159d7774ce6d01682626f71da4a2f2dc5dfb`, and the real `castlewatch-frontend` Vercel production deployment succeeded.
+
+No production owner-device record was created, no existing account/shared-trip/history data or schema changed, and no dependency/runtime, itinerary, reservation, park-order or automatic-plan change was included. `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
+
+**Section 5 remains in progress. Section 5C - normal shared-plan dual authorization and role enforcement - is next but has not started.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -433,7 +461,7 @@ No production code, schema, data, credential, dependency, runtime, itinerary, ac
 
 ### Important hardening/maintainability
 
-- Long-lived family/device credentials currently live in browser `localStorage`; remaining dynamic `innerHTML` usage elsewhere still raises the impact of any XSS defect.
+- 5B moved acknowledged device credentials out of long-term browser `localStorage`; a legacy raw record is retained only until protected-cookie migration is acknowledged. Remaining dynamic `innerHTML` usage elsewhere is still general XSS/maintainability debt.
 - Frontend behavior relies in several places on imperative DOM patching and polling rather than shared React state.
 - Section 4 broadened automated regression coverage across core park-planning, trip-planning, safety, sync/account and mobile-browser behavior; production functional smoke verification and future feature-specific contracts remain separate work.
 - Legacy scaffold code remains beside production code and needs cleanup or explicit archiving.
@@ -449,11 +477,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **CastleWatch Rebaseline & Stabilization - Section 5 in progress**
 
-Sections 1-4 are complete. Section 5A is complete; Section 5B - owner-device bootstrap and protected credential foundation - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` compatibility unchanged until the documented authorization, owner-device, permission, revocation/recovery and production-verification gates pass and the user separately and explicitly approves any future retirement.
+Sections 1-4 and Sections 5A–5B are complete. Section 5C - normal shared-plan dual authorization and role enforcement - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` compatibility unchanged until the documented authorization, owner-device, permission, revocation/recovery and production-verification gates pass and the user separately and explicitly approves any future retirement.
 
 ## Exact next priorities
 
-1. **Section 5B - add the owner-device bootstrap and protected credential foundation without enabling normal device-authorized shared-plan operations or disabling the family key.**
+1. **Section 5C - add normal shared-plan dual authorization and enforce the exact Owner/Editor/Viewer matrix without disabling the family key.**
 2. Section 6 - production smoke verification.
 3. Section 7 - establish a lightweight project/task tracker.
 4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
