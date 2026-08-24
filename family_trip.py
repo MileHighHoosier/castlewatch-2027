@@ -6,7 +6,7 @@ from sqlalchemy import text
 
 from accounts_access import (
     FAMILY_KEY_HEADER,
-    authorize_device_request,
+    authorize_request,
     preauthorize_legacy_request,
 )
 from accounts_schema import setup_accounts_database
@@ -70,9 +70,11 @@ def _preauthorize_family_trip(permission):
 
 def _authorize_family_trip_connection(connection, permission, preauthorization):
     """Authorize the selected credential inside the shared-plan transaction."""
-    authorization = preauthorization
-    if authorization is None:
-        authorization = authorize_device_request(connection, permission=permission)
+    authorization = authorize_request(
+        connection,
+        permission=permission,
+        preauthorization=preauthorization,
+    )
     if authorization.error:
         return authorization.error
     if authorization.actor is None or authorization.actor.family_id != FAMILY_TRIP_ID:

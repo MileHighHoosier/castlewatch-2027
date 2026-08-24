@@ -1,6 +1,7 @@
 import json
 import os
 import unittest
+from copy import deepcopy
 from datetime import datetime, timezone
 from unittest.mock import patch
 
@@ -104,6 +105,10 @@ class FakeConnection:
                 }
             return FakeResult()
 
+        if sql.startswith("select legacy_family_key_enabled"):
+            family = self.engine.account_families.get(parameters["family_id"])
+            return FakeResult([dict(family)] if family else [])
+
         if "from castlewatch_devices d" in sql and "where d.token_prefix" in sql:
             rows = [
                 {
@@ -125,6 +130,8 @@ class FakeConnection:
                     device["last_read_at"] = now
                 if "last_write_at" in sql:
                     device["last_write_at"] = now
+                if "token_hash" in parameters:
+                    device["token_hash"] = parameters["token_hash"]
             return FakeResult()
 
         if "select pg_advisory_xact_lock" in sql:
@@ -216,7 +223,11 @@ class FamilyTripContractTests(unittest.TestCase):
         self.engine = FakeEngine()
         self.environment = patch.dict(
             os.environ,
-            {"CASTLEWATCH_FAMILY_KEY": self.key},
+            {
+                "CASTLEWATCH_FAMILY_KEY": self.key,
+                "CASTLEWATCH_DEVICE_TOKEN_PEPPER": "",
+                "CASTLEWATCH_DEVICE_TOKEN_PREVIOUS_PEPPER": "",
+            },
             clear=False,
         )
         self.environment.start()
@@ -572,6 +583,87 @@ class FamilyTripContractTests(unittest.TestCase):
         self.assertEqual(conflict["status"], "version_conflict")
         self.assertEqual(conflict["payload"], second)
         self.assertEqual(sorted(self.engine.history), [1, 2])
+
+    def test_legacy_key_flag_blocks_every_shared_plan_route_without_mutation(self):
+        self.write(0, self.payload("Version one"))
+        self.write(1, self.payload("Version two"))
+        self.engine.account_families[accounts_schema.FAMILY_WORKSPACE_ID]["legacy_family_key_enabled"] = False
+        state_before = deepcopy(self.engine.state)
+        history_before = deepcopy(self.engine.history)
+
+        blocked_calls = (
+            (family_trip.get_family_trip, "GET", "/api/family-trip", None),
+            (family_trip.get_family_trip_history, "GET", "/api/family-trip/history", None),
+            (lambda engine: family_trip.get_family_trip_history_version(engine, 1), "GET", "/api/family-trip/history/1", None),
+            (family_trip.put_family_trip, "PUT", "/api/family-trip", {
+                "expectedVersion": 2,
+                "payload": self.payload("Blocked write"),
+            }),
+            (family_trip.restore_family_trip_version, "POST", "/api/family-trip/restore", {
+                "expectedVersion": 2,
+                "sourceVersion": 1,
+            }),
+            (operations.get_family_trip_operations, "GET", "/api/family-trip/operations", None),
+        )
+        for handler, method, path, body in blocked_calls:
+            status, result = self.invoke(handler, method=method, path=path, body=body)
+            self.assertEqual(status, 403, path)
+            self.assertEqual(result["status"], "legacy_key_disabled", path)
+
+        self.assertEqual(self.engine.state, state_before)
+        self.assertEqual(self.engine.history, history_before)
+        self.assertFalse(
+            self.engine.account_families[accounts_schema.FAMILY_WORKSPACE_ID]["legacy_family_key_enabled"],
+        )
+
+        editor_token, _ = self.seed_device("editor")
+        status, result = self.invoke(
+            family_trip.put_family_trip,
+            method="PUT",
+            body={"expectedVersion": 2, "payload": self.payload("Device still works")},
+            headers=self.device_headers(editor_token),
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(result["version"], 3)
+
+    def test_revoked_device_is_denied_across_all_normal_routes_without_mutation(self):
+        self.write(0, self.payload("Version one"))
+        self.write(1, self.payload("Version two"))
+        revoked_token, revoked_id = self.seed_device("owner", status="revoked")
+        state_before = deepcopy(self.engine.state)
+        history_before = deepcopy(self.engine.history)
+        headers = self.device_headers(revoked_token)
+
+        blocked_calls = (
+            (family_trip.get_family_trip, "GET", "/api/family-trip", None),
+            (family_trip.get_family_trip_history, "GET", "/api/family-trip/history", None),
+            (lambda engine: family_trip.get_family_trip_history_version(engine, 1), "GET", "/api/family-trip/history/1", None),
+            (family_trip.put_family_trip, "PUT", "/api/family-trip", {
+                "expectedVersion": 2,
+                "payload": self.payload("Blocked write"),
+            }),
+            (family_trip.restore_family_trip_version, "POST", "/api/family-trip/restore", {
+                "expectedVersion": 2,
+                "sourceVersion": 1,
+            }),
+            (operations.get_family_trip_operations, "GET", "/api/family-trip/operations", None),
+        )
+        for handler, method, path, body in blocked_calls:
+            status, result = self.invoke(
+                handler,
+                method=method,
+                path=path,
+                body=body,
+                headers=headers,
+            )
+            self.assertEqual(status, 401, path)
+            self.assertEqual(result["status"], "unauthorized", path)
+
+        self.assertEqual(self.engine.state, state_before)
+        self.assertEqual(self.engine.history, history_before)
+        self.assertIsNone(self.engine.account_devices[revoked_id]["last_seen_at"])
+        self.assertIsNone(self.engine.account_devices[revoked_id]["last_read_at"])
+        self.assertIsNone(self.engine.account_devices[revoked_id]["last_write_at"])
 
 
 if __name__ == "__main__":
