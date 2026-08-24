@@ -360,7 +360,25 @@ Implemented and verified:
 
 No backend, itinerary, dependency/runtime, account/family-key, reservation, park-order, shows/activities/characters or 4E E2E work was included in 4D.
 
-**Next Section 4 batch: 4E - shows/activities/characters plus the smallest practical mobile browser/E2E suite.**
+#### Section 4E - Shows/activities/characters and mobile browser/E2E contracts
+
+**Complete, merged and production-deployed on August 24, 2026.**
+
+Implemented and verified:
+
+- 12 focused frontend contracts protect show schedule parsing/sorting/past-state, WDW source filtering, show/character separation, activity eligibility/badges/use cases/order and text-safe names;
+- true meet-and-greet classification is centralized, while character-themed activities such as Enchanted Tales with Belle remain under Activities unless they are true meets;
+- timed stage shows remain outside ride-demand planning and receive consistent Show/A/C guidance;
+- past-only shows no longer appear as upcoming and unrelated Orlando content fails closed;
+- the explicit device-width viewport and two-row, three-column mobile navigation preserve six primary controls with 44-pixel section touch targets;
+- a dependency-free Chrome smoke passed at 390×844 through primary navigation, Activities, mocked live showtimes, Characters, Epcot switching and zero horizontal overflow;
+- exact-head GitHub Actions passed Node 22 setup, clean dependency installation, all 82 frontend tests, the production Next.js build and the Chrome smoke;
+- frontend PR #37 was squash-merged at `53830cc16c33ebf4bdc4058fe994c15f290c80ae`;
+- the real `castlewatch-frontend` preview and merged production Vercel deployments succeeded.
+
+No backend product code, dependency/lockfile/runtime, itinerary, reservation, park-order, account/family-key, database or 4F work was included in 4E.
+
+**Next Section 4 batch: 4F - full regression/build review and Section 4 closeout.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -387,11 +405,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **CastleWatch Rebaseline & Stabilization - Section 4 in progress**
 
-Sections 4A, 4B, 4C and 4D are complete. Section 4E is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work improves automated regression coverage and the account/device migration direction is resolved.
+Sections 4A, 4B, 4C, 4D and 4E are complete. Section 4F is next. Do not add major new product features until the remaining rebaseline/stabilization quality-control work completes its full regression/build review and the account/device migration direction is resolved.
 
 ## Exact next priorities
 
-1. **Section 4E - add shows/activities/characters contracts plus the smallest practical mobile browser/E2E suite.**
+1. **Section 4F - run the full cross-repository regression/build review and close out Section 4.**
 2. Finish or deliberately freeze the Accounts/Device migration; current recommendation is to finish it.
 3. Production smoke verification.
 4. Establish a lightweight project/task tracker.
