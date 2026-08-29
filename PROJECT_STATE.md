@@ -26,7 +26,7 @@ The original feature roadmap is mostly implemented, but CastleWatch is not yet p
 - Trip-week planning and decision support: substantial, but the unified recommendation engine is incomplete.
 - Historical prediction: useful directional signal, not a precise 2027 crowd model.
 - Shared family sync/history: substantial implementation.
-- Account/device migration: implementation through Section 5D is production-deployed; real-device verification remains open and family-key retirement is not authorized.
+- Account/device migration: Section 5 is complete and production-verified; family-key recovery remains enabled and retirement is not authorized.
 - Automated quality control: broad regression protection now covers the core planning, live-operations, sync/account, safety and mobile-browser paths reviewed in Section 4.
 - Documentation and handoff quality: rebaselined in Section 1 and maintained as repository source of truth.
 
@@ -86,7 +86,7 @@ Normal shared-plan read/write/history/restore and Operations paths accept one ex
 
 ## Accounts, invitations and device management
 
-The account/device migration implementation is **complete through Section 5D**, but production owner/two-device verification remains open.
+The account/device migration is **complete through Section 5** and passed production Owner/two-device verification on August 29, 2026.
 
 Implemented:
 
@@ -117,14 +117,13 @@ Implemented:
 - credential-management errors no longer append raw backend response bodies,
 - credential-adjacent Family devices UI is regression-checked against dynamic HTML sinks,
 - automated tests for much of the newer account behavior,
-- production verification documentation.
+- completed production verification documentation.
 
-Not complete:
+Remaining boundaries:
 
-- no production owner device has yet been created and manually verified through the new bootstrap path,
-- production two-device verification remains open,
 - the legacy direct frontend proxy remains key-only and has no current in-repository caller,
-- family-key retirement must not occur yet.
+- family-key recovery remains configured and enabled,
+- family-key retirement is a separate future decision and is not authorized.
 
 Section 5A finalized the authoritative remaining-work contract in `docs/accounts_migration_contract.md`. The audit reconciled both deployed repositories, recorded the current authorization matrix and ten migration gaps, and divided the remaining implementation into separately approved 5B–5E batches. It did not change account state or production authorization.
 
@@ -133,6 +132,8 @@ Section 5B finalized the owner-bootstrap and protected-credential foundation. It
 Section 5C finalized normal shared-plan dual authorization and the exact Owner/Editor/Viewer role matrix. It preserved family-key recovery, version conflicts, history retention, payload limits and restore-as-new-version behavior; it did not create a production device or pull 5D hardening or 5E production verification forward.
 
 Section 5D finalized revoked-credential denial, the still-enabled authoritative legacy-key gate, owner recovery, pepper continuity and protected-cookie failure cleanup. It did not create a production device, alter a secret or pepper environment value, change the production legacy-key flag value, retire the family key or pull 5E real-device verification forward.
+
+Section 5E completed the live production run. A protected Owner was bootstrapped and persisted; a second device passed Editor and Viewer role boundaries, self-rename, Owner-managed revocation and clean revoked-cookie-only denial without family-key fallback. Family-key recovery was explicitly reverified, the final shared plan reached version 17 with history intact, and the October 9–16, 2027 trip profile and manual recommendation control remained unchanged. Temporary Editor/Viewer devices were revoked, the tested Owner remains active, and Railway plus the authoritative frontend Vercel deployment remained green.
 
 ### Current account migration rule
 
@@ -422,7 +423,7 @@ No dependency/runtime version, lockfile, itinerary, reservation, park-order, acc
 
 ### Section 5 - Accounts / invitations / device migration completion
 
-**In progress.**
+**Complete and production-verified on August 29, 2026.**
 
 #### Section 5A - Architecture audit and migration contract
 
@@ -500,13 +501,29 @@ Implemented and verified:
 
 No production owner-device record was created, no secret or pepper environment value or legacy-key flag value changed, and no existing account/shared-trip/history data, schema, dependency/runtime, itinerary, reservation, park-order, automatic-plan or family-key retirement change was included. `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
 
-**Section 5 remains in progress. Section 5E - production two-device verification and Section 5 closeout - is next but has not started.**
+#### Section 5E - Production two-device verification and Section 5 closeout
+
+**Complete and production-verified on August 29, 2026.**
+
+Implemented and verified:
+
+- frontend PR #42 merged at `fe964bec64f1d2071c899e2ea5d8bf3d79a1e949`, completing protected-device self-rename;
+- frontend PR #43 merged at `f87f5b761cb0cec7c74defad723a3790bf85a6fd`, making family-key recovery selection explicitly verifiable;
+- frontend PR #44 merged at `f7b5ccbf38081ff044808899ef7c965c2e04e1cd`, adding confirmed content-identical manual backups; all 111 frontend tests and the production build passed, and the authoritative Vercel deployment succeeded;
+- family-key recovery and a persistent protected Owner device were verified on the trusted production browser;
+- a second real browser/phone with no family key passed Editor read/write/history/restore/Operations behavior, Viewer read/history-only enforcement, server-authoritative role checks and self-rename;
+- Owner-managed revocation produced timestamped revoked rows, and the untouched revoked-cookie-only browser was rejected, cleared into an explicit disconnected state and never fell back to the family key;
+- content-identical backup/restore checks preserved append-only history, followed by one deliberate optimistic upload that corrected only the trip name and created shared version 17;
+- final invariants are `Columbus Day Week 2027`, October 9–16, 2027, two adults, two children, no park hopping, zero bookings and the unchanged **Wait / Keep the base plan provisional** recommendation state;
+- `Ryan Brave Owner` remains active, temporary Editor/Viewer devices are revoked, device rows expose safe metadata only, and Railway `/health` plus the authoritative frontend deployment remained green;
+- no raw credential or secret entered source, GitHub, logs or screenshots, and no dependency/runtime, schema, itinerary order, reservation, automatic recommendation, legacy-key flag or family-key retirement change was included.
+
+**Section 5 is complete. `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.**
 
 ## Known rebaseline findings still requiring remediation
 
 ### High priority
 
-- Accounts/device migration is incomplete and must not be mistaken for completed family-key replacement.
 - The ride-refresh endpoint remains a public GET even though 2A now rate-limits/serializes the expensive work.
 
 ### Important hardening/maintainability
@@ -525,15 +542,14 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Section 5 in progress**
+**CastleWatch Rebaseline & Stabilization - Sections 1–5 complete**
 
-Sections 1-4 and Sections 5A–5D are complete. Section 5E - production two-device verification and Section 5 closeout - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled through Section 5 closeout; no later retirement option is authorized without a separate explicit user approval after every documented gate passes.
+Sections 1–5 are complete. Section 6 - production smoke verification - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Section 5E - complete the production two-device and Owner/Editor/Viewer authorization verification, update issue #25, and close Section 5 while leaving the family key enabled.**
-2. Section 6 - production smoke verification.
-3. Section 7 - establish a lightweight project/task tracker.
-4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 6 - production smoke verification.**
+2. Section 7 - establish a lightweight project/task tracker.
+3. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.

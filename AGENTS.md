@@ -45,12 +45,12 @@ Legacy-looking areas such as `bots/`, `scheduler/`, `collectors/`, `ai_engine/`,
 
 ## Account/device migration safety gate
 
-The Accounts / Invitations / Device Management migration is incomplete.
+The Accounts / Invitations / Device Management migration is complete and production-verified through Section 5. Family-key recovery remains an intentional safety boundary.
 
 - Do **not** remove or disable `CASTLEWATCH_FAMILY_KEY`.
-- Do **not** assume device-token authorization has replaced the family key for normal shared-plan read/write/history/restore/operations.
-- Do **not** implement legacy-key retirement until an active owner device exists, dual authorization is complete, production recovery/revocation is verified, and the user explicitly approves retirement.
-- Maintain backward compatibility while the migration is being completed.
+- Keep credential selection explicit and reject a missing, invalid or revoked selected credential without silent fallback.
+- Preserve the server-enforced Owner/Editor/Viewer matrix and family-key recovery behavior for normal shared-plan operations.
+- Do **not** implement legacy-key retirement without a separate explicit user approval.
 
 ## Forecasting rule
 

@@ -2,7 +2,7 @@
 
 ## Current status
 
-Gates 0–4 below are a historical record and are already implemented. They must not be repeated. The active remaining-work contract is `accounts_migration_contract.md`, which divides Section 5 into 5A–5E and keeps the legacy family key enabled through Section 5 closeout.
+Gates 0–4 below are a historical record and are already implemented. They must not be repeated. `accounts_migration_contract.md` records the completed Sections 5A–5E boundary; the legacy family key remains enabled after closeout.
 
 Gate 5 remains blocked and is not part of Section 5 implementation. No **Start Section 5x** or **Finalize Section 5x** instruction authorizes a family-key retirement option.
 
@@ -152,16 +152,16 @@ Authorization wording should be clear, for example:
 
 Important: the first implementation should add only an owner-controlled option. It should not automatically remove or disable the family key.
 
-## Current remaining-work authorization
+## Section 5 authorization record
 
 The old Gate 1 recommendation is complete: the additive schema, device/invite routes, typed clients and minimal GUI are already deployed.
 
-The current sequence is:
+The completed sequence is:
 
-1. **5A:** architecture audit and migration contract;
-2. **5B:** owner-device bootstrap and protected credential foundation;
-3. **5C:** normal shared-plan dual authorization and role enforcement;
-4. **5D:** revocation, recovery and legacy-gate hardening;
-5. **5E:** production two-device verification and Section 5 closeout.
+1. **5A:** architecture audit and migration contract — complete;
+2. **5B:** owner-device bootstrap and protected credential foundation — complete;
+3. **5C:** normal shared-plan dual authorization and role enforcement — complete;
+4. **5D:** revocation, recovery and legacy-gate hardening — complete;
+5. **5E:** production two-device verification and Section 5 closeout — complete.
 
-Each batch requires its own explicit Start/Finalize checkpoint. Family-key retirement remains a separate later decision even after 5E.
+Each batch received its own explicit Start/Finalize checkpoint. Family-key retirement remains a separate later decision after 5E.

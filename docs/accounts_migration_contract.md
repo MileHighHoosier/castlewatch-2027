@@ -2,7 +2,7 @@
 
 ## Status
 
-**Sections 5A–5D finalized on August 24, 2026 — Section 5E next and not started.**
+**Section 5 finalized and production-verified on August 29, 2026.**
 
 This document records the August 24, 2026 cross-repository audit of the deployed accounts, invitations and device-management foundation. Section 5A is documentation and planning only: it does not change production authorization, database state, browser credentials, dependencies, runtime configuration or user-visible behavior.
 
@@ -48,7 +48,18 @@ Section 5D closeout evidence:
 - revoked credentials are denied across device management and normal shared-plan routes, the enabled legacy-key flag is authoritative, owner recovery is serialized, and pepper transition/rollback plus protected-cookie failure cleanup are regression-protected;
 - no production device, secret or pepper environment value, legacy-key flag value, schema/data, dependency/runtime, itinerary, reservation, park-order or retirement behavior changed, and `CASTLEWATCH_FAMILY_KEY` remains configured and enabled.
 
-The historical design in `accounts_device_model.md`, the approval history in `accounts_authorization_gates.md`, and the recovery plan in `accounts_recovery_rollback.md` remain supporting references. This contract governs the remaining Section 5 work when their old future-tense wording conflicts with deployed code.
+Section 5E closeout evidence:
+
+- frontend PR #42 merged at `fe964bec64f1d2071c899e2ea5d8bf3d79a1e949`, frontend PR #43 merged at `f87f5b761cb0cec7c74defad723a3790bf85a6fd`, and frontend PR #44 merged at `f7b5ccbf38081ff044808899ef7c965c2e04e1cd`;
+- the frontend verification head passed all 111 tests and the production build, and its authoritative Vercel deployment succeeded;
+- family-key recovery, protected Owner persistence and a second real no-family-key Editor/Viewer browser passed their production role contracts;
+- self-rename, Owner-managed revocation and revoked-cookie-only cleanup passed without hidden family-key fallback;
+- content-identical backup/restore verification preserved append-only history, and a final deliberate trip-name cleanup created shared version 17 through the optimistic upload confirmation;
+- the October 9–16, 2027 two-adult/two-child, no-park-hopping trip profile, zero bookings and manual **Wait / Keep the base plan provisional** recommendation state remained intact;
+- the tested Owner remains active, temporary Editor/Viewer devices are revoked, Railway health and the authoritative frontend deployment are green, and device rows contain safe metadata only;
+- no raw credential/secret, dependency/runtime, schema, itinerary order, reservation, automatic recommendation, legacy-key flag or family-key retirement change was included.
+
+The historical design in `accounts_device_model.md`, the approval history in `accounts_authorization_gates.md`, and the recovery plan in `accounts_recovery_rollback.md` remain supporting references. This contract records the completed Section 5 boundary when their old future-tense wording conflicts with deployed code.
 
 ## Section 5 goal
 
@@ -94,19 +105,19 @@ Completing Section 5 does **not** authorize family-key retirement. `CASTLEWATCH_
 - role-aware controls that keep Viewer sessions read/history-only while Owner and Editor sessions may write, restore and use Operations;
 - strict same-origin JSON validation plus device-token and token-hash response scrubbing;
 - migration guidance, credential-state diagnostics and a production proxy smoke;
-- partial production verification recorded in frontend issue #25.
+- completed production verification recorded in frontend issue #25.
 
-## Verified current gaps
+## Verified final boundary
 
-1. **No production owner device has been created or manually verified.** The explicit family-key-only bootstrap path is deployed and tied to the seeded owner member, but it has not been invoked against production. Real owner-device creation and verification remain 5E work.
-2. **Production verification is incomplete.** Issue #25 confirms several family-key, invite, rename, revoke and UI paths, but protected owner bootstrap, clean revoked-token-only rejection, device-authorized normal sync and the full role matrix have not passed on real devices.
-3. **A legacy direct frontend proxy remains key-only.** `app/api/family-trip/route.ts` has no current in-repository caller and should not be silently promoted or removed during migration work; later implementation must either keep it safely compatible or explicitly classify it as cleanup.
+1. **Production migration acceptance passed.** A protected production Owner and a second real Editor/Viewer browser passed bootstrap, persistence, normal shared-plan authorization, role enforcement, self-rename, revocation, recovery and rejected-cookie cleanup.
+2. **Family-key recovery remains part of the architecture.** `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled; Section 5 finalization is not retirement approval.
+3. **A legacy direct frontend proxy remains key-only.** `app/api/family-trip/route.ts` has no current in-repository caller and should not be silently promoted or removed; later work must either keep it safely compatible or explicitly classify it as cleanup.
 
 Section 5B closed the prior credential-selection and JavaScript-readable long-term device-token gaps: device-management requests now select one explicit credential, and acknowledged device credentials are held by the narrow protected proxy cookie. A failed legacy migration deliberately retains its raw local token for explicit recovery rather than silently losing access.
 
 Section 5C closed the normal-route dual-authorization and role-enforcement gaps: the backend authorizes the selected credential inside existing shared-plan transactions, and the frontend uses one explicit typed credential selection across normal family flows. Browser role metadata remains display-only and the server-side device record remains authoritative.
 
-Section 5D closed the authoritative legacy-gate, revoked-credential, owner-recovery and pepper-continuity gaps. The selected protected-cookie failure path also clears the cookie and safe metadata into an explicit disconnected state without family-key fallback. Production device creation and real-device verification remain isolated in 5E.
+Section 5D closed the authoritative legacy-gate, revoked-credential, owner-recovery and pepper-continuity gaps. The selected protected-cookie failure path also clears the cookie and safe metadata into an explicit disconnected state without family-key fallback. Section 5E then completed production device creation and real-device verification without changing those boundaries.
 
 ## Current and target authorization matrix
 
@@ -150,7 +161,7 @@ The first active owner device must be created only from a valid family-key recov
 - remain recoverable through the family key;
 - never change `legacy_family_key_enabled`.
 
-Section 5B implements this bootstrap contract. It deployed the path but did not invoke it to create a production owner-device record; that remains an explicit real-device verification action in 5E.
+Section 5B implements this bootstrap contract. Section 5E invoked and verified it in production; the protected Owner remains active and the recovery path remains enabled.
 
 ### Shared-plan authorization
 
@@ -242,7 +253,7 @@ Completion evidence:
 
 ### 5E — Production two-device verification and Section 5 closeout
 
-Status: **Next — not started.**
+Status: **Complete — production-verified August 29, 2026.**
 
 Deliverables:
 
@@ -251,6 +262,15 @@ Deliverables:
 - verify Railway and the real `castlewatch-frontend` Vercel project;
 - record evidence in canonical project state and close Section 5 trackers;
 - leave `CASTLEWATCH_FAMILY_KEY` enabled.
+
+Completion evidence:
+
+- frontend PRs #42–#44 merged at `fe964bec64f1d2071c899e2ea5d8bf3d79a1e949`, `f87f5b761cb0cec7c74defad723a3790bf85a6fd` and `f7b5ccbf38081ff044808899ef7c965c2e04e1cd`;
+- all 111 frontend tests and the production build passed at the verification head, and the authoritative Vercel deployment succeeded;
+- the live Owner/Editor/Viewer, family-key recovery, normal shared-plan, history/restore/Operations, rename, revoke and revoked-cookie-only scenarios passed on production devices;
+- final shared version 17 is up to date with history intact, guarded autosave off and the trip/profile/recommendation invariants preserved;
+- Railway health remained green, the active production Owner remains protected, temporary devices are revoked, and no credential material was persisted in verification evidence;
+- `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.
 
 ## Non-retirement gate
 
@@ -266,6 +286,8 @@ Section 5 may close with the family key still enabled. A later retirement option
 8. the user separately and explicitly authorizes an owner-controlled retirement option.
 
 No Section 5 start/finalize instruction constitutes item 8.
+
+Section 5E verified items 1–7. Item 8 has not been granted, so retirement remains unauthorized.
 
 ## Invariants for every Section 5 batch
 

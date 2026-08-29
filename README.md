@@ -45,7 +45,7 @@ Do not assume older `bots/`, `scheduler/`, `collectors/`, `ai_engine/` or `READM
 - calendar/special-event intelligence.
 - shared family-trip PostgreSQL document, versions and restore.
 - operations/usage support.
-- account/device/invite schema and authorization foundations.
+- production-verified account/device invitations, protected Owner/Editor/Viewer authorization, revocation and family-key recovery.
 
 ## Current development phase
 
@@ -53,7 +53,7 @@ Do not assume older `bots/`, `scheduler/`, `collectors/`, `ai_engine/` or `READM
 
 Do not begin a major new feature from this repository without checking `PROJECT_STATE.md` and `ROADMAP.md` first.
 
-The Accounts / Invitations / Device Management migration is incomplete. In particular, do **not** remove or disable `CASTLEWATCH_FAMILY_KEY` or assume device tokens have replaced the family key for all shared-plan operations.
+The Accounts / Invitations / Device Management migration is complete and production-verified through Section 5. Do **not** remove or disable `CASTLEWATCH_FAMILY_KEY`; it remains the explicit recovery path, and retirement requires a separate future user approval.
 
 ## Tests
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-**Historical design baseline; partially implemented.** This document records the original migration design and therefore still uses terms such as "proposed" and step-by-step future language. Since it was written, CastleWatch has implemented the additive account/device schema, authorization helpers, device/invite endpoints, frontend plumbing and a minimal device-management GUI. The migration is **not complete**: normal shared-plan actions still rely on the legacy family key in important paths, owner-device bootstrap/verification is incomplete, production two-device verification remains open, and family-key retirement is not allowed yet.
+**Historical design baseline; Section 5 is implemented and production-verified.** This document records the original migration design and therefore still uses terms such as "proposed" and step-by-step future language. CastleWatch now implements the additive account/device schema, protected credentials, device/invite endpoints, normal shared-plan role enforcement, recovery/revocation hardening and the production Owner/Editor/Viewer verification. Family-key retirement remains unauthorized.
 
 For authoritative current status, read root `PROJECT_STATE.md`, `ARCHITECTURE.md`, `ROADMAP.md`, and `docs/accounts_migration_contract.md` before using this document to plan new work. The design below remains useful as historical intent, but current code and the Section 5 migration contract win when they conflict with the original proposal.
 
@@ -24,11 +24,11 @@ For authoritative current status, read root `PROJECT_STATE.md`, `ARCHITECTURE.md
 - No removal of the current family key.
 - No production migration until the plan is reviewed.
 
-## Current state to preserve
+## Historical baseline to preserve
 
-The current family sync API uses one environment-level family key from `CASTLEWATCH_FAMILY_KEY`. Requests send it in `X-CastleWatch-Key`. Authorized requests read and write one shared family document identified by the fixed `family` id. Writes require an `expectedVersion`, create a new shared version, insert a history snapshot, and prune history to the 25 most recent versions.
+The pre-migration family sync API used one environment-level family key from `CASTLEWATCH_FAMILY_KEY`. Requests sent it in `X-CastleWatch-Key`. Authorized requests read and wrote one shared family document identified by the fixed `family` id. Writes required an `expectedVersion`, created a new shared version, inserted a history snapshot, and pruned history to the 25 most recent versions.
 
-This behavior must continue to work throughout the migration.
+Section 5 layers protected device authorization and server-verified roles onto those preserved version/history semantics. The family-key path remains enabled for recovery.
 
 ## Proposed tables
 
