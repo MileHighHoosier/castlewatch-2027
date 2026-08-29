@@ -222,19 +222,21 @@ Token model:
 
 ### Migration boundary
 
-The migration implementation is complete through Section 5D, but production owner/two-device verification remains incomplete.
+The migration implementation and production Owner/two-device verification are complete through Section 5.
 
-The device-management API and normal shared-plan read, write, history, history-version, restore and Operations paths can authorize device tokens. Normal routes enforce Owner/Editor/Viewer permissions from the verified server record while retaining the explicit family-key recovery path. Do not infer from dual authorization that the family-key migration or production device verification is complete.
+The device-management API and normal shared-plan read, write, history, history-version, restore and Operations paths authorize device tokens. Normal routes enforce Owner/Editor/Viewer permissions from the verified server record while retaining the explicit family-key recovery path. The live 5E run verified a persistent protected Owner, a second real Editor/Viewer device, role enforcement, self-rename, Owner-managed revocation and rejected-cookie cleanup without hidden fallback.
 
-`CASTLEWATCH_FAMILY_KEY` remains required for recovery and current shared-plan behavior until the migration's acceptance gates are explicitly satisfied.
+`CASTLEWATCH_FAMILY_KEY` remains required for recovery. Completing the migration acceptance gates does not retire it: the production key and authoritative `legacy_family_key_enabled` value stay enabled unless a later, separate user approval authorizes a retirement option.
 
-The authoritative remaining-work boundary is `docs/accounts_migration_contract.md`. Section 5B added an explicit family-key-only owner-bootstrap route tied to the seeded owner member. It prevents a second active owner device, permits explicit replacement after revocation, never changes `legacy_family_key_enabled`, and returns its raw credential only through the one-time protected setup flow. Deployment does not itself create a production owner-device record; creation and real-device verification remain explicit 5E work.
+The authoritative migration boundary is `docs/accounts_migration_contract.md`. Section 5B added an explicit family-key-only owner-bootstrap route tied to the seeded owner member. It prevents a second active owner device, permits explicit replacement after revocation, never changes `legacy_family_key_enabled`, and returns its raw credential only through the one-time protected setup flow. Section 5E invoked and verified that path in production; the resulting protected Owner remains active.
 
 The Vercel proxy stores acknowledged device credentials in a narrowly scoped `Secure`, `HttpOnly`, `SameSite=Strict` cookie, verifies same-origin JSON requests, strips raw credentials before responses reach browser JavaScript, and requires explicit family-key or device-cookie selection for device management and normal shared-plan flows without silent fallback. A legacy raw `localStorage` credential is removed only after server-acknowledged migration; safe display metadata may remain browser-readable. When a selected protected credential receives `401`, the proxy expires its cookie and the browser clears safe device metadata into an explicit disconnected selection; it does not fall back to a saved family key.
 
 Section 5C routes normal shared-plan authorization through the common backend layer inside the existing transaction boundary and uses one typed frontend authorization abstraction across manual sync, guarded autosave, history/restore and Operations. Viewer credentials are read/history-only; Owner and Editor credentials may write, restore and use Operations.
 
-Section 5D makes `legacy_family_key_enabled` authoritative for every family-key request while leaving its production value enabled. Revoked credentials are denied across device management and normal shared-plan endpoints without mutation or fallback. Owner-device revocation is transaction-serialized and limited to explicit family-key recovery before replacement bootstrap. New credentials use the primary pepper; active devices and open invites can transition through a previous pepper or the family-key compatibility source and rehash after successful verification. No production device, secret/pepper environment value or flag value changed. Production owner/two-device verification remains 5E work, and `CASTLEWATCH_FAMILY_KEY` must stay configured and enabled.
+Section 5D makes `legacy_family_key_enabled` authoritative for every family-key request while leaving its production value enabled. Revoked credentials are denied across device management and normal shared-plan endpoints without mutation or fallback. Owner-device revocation is transaction-serialized and limited to explicit family-key recovery before replacement bootstrap. New credentials use the primary pepper; active devices and open invites can transition through a previous pepper or the family-key compatibility source and rehash after successful verification.
+
+Section 5E added no backend behavior. Frontend PRs #42–#44 exposed the already-authorized self-rename and family-key verification paths and added a confirmed content-identical backup action needed for safe production testing. The live run completed the Owner/Editor/Viewer, recovery and revocation acceptance gates, preserved append-only history through shared version 17, and left the family key and legacy-key flag enabled.
 
 ## Frontend/backend proxy boundary
 
@@ -263,7 +265,7 @@ Changing only one layer can create misleading "connected" states.
 - Start command: `gunicorn api_server:app --bind 0.0.0.0:$PORT`.
 - PostgreSQL provided by Railway.
 
-At the Section 5D closeout, both merged implementation heads deployed successfully to Railway and the real `castlewatch-frontend` Vercel project. Deployment success still does not replace Section 5E functional production verification.
+At Section 5 closeout, the backend remained on the finalized 5D implementation head and Railway health was green. The frontend 5E verification head deployed successfully to the real `castlewatch-frontend` Vercel project, and the complete two-device functional run passed in production.
 
 ## Automated checks
 
@@ -273,9 +275,9 @@ GitHub Actions uses Python 3.12.14, installs the exact pinned requirements, runs
 
 ### Frontend
 
-GitHub Actions uses Node 22 with clean `npm ci`, runs all 104 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, protected credential/device safety and selected-cookie failure cleanup, shared sync/history/operations and role boundaries, weather, Trip Week decisions, transportation/reservations, Lightning Lane, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
+GitHub Actions uses Node 22 with clean `npm ci`, runs all 111 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, protected credential/device safety, self-rename, explicit family-key recovery selection, selected-cookie failure cleanup, content-identical backups, shared sync/history/operations and role boundaries, weather, Trip Week decisions, transportation/reservations, Lightning Lane, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
 
-Section 4 materially broadened core regression protection, and Sections 5B–5D added account/device migration contracts. Section 5E production functional verification remains separate roadmap work.
+Section 4 materially broadened core regression protection, Sections 5B–5D added account/device migration contracts, and Section 5E completed the production functional verification.
 
 ## Architecture rules for future work
 
@@ -285,7 +287,7 @@ Section 4 materially broadened core regression protection, and Sections 5B–5D 
 4. Preserve user approval for itinerary/schedule changes.
 5. Preserve graceful degradation when external data is unavailable.
 6. Never present historical forecasts as precise future predictions.
-7. Do not retire the family key until the documented migration gates are satisfied.
+7. Keep the family key and legacy-key flag enabled unless a later, separate user approval explicitly authorizes retirement.
 8. Prefer incremental, reversible changes with tests over broad rewrites.
 9. Keep secrets and raw device/invite tokens out of source control, logs and long-lived UI output.
 10. Update this architecture document when a change alters a system boundary or source of truth.

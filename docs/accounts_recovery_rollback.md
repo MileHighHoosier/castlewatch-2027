@@ -1,17 +1,18 @@
 # Accounts recovery and rollback plan
 
-## Section 5D recovery boundary
+## Section 5 recovery boundary
 
 CastleWatch now supports exactly one explicitly selected credential on shared-plan read, write, history, history-version, restore, Operations and device-management requests:
 
 - the existing family key, which remains the owner-equivalent recovery path; or
 - a protected device credential held in a `Secure`, `HttpOnly`, `SameSite=Strict` same-origin cookie.
 
-The database `legacy_family_key_enabled` value is authoritative for every family-key request. Section 5D does not set it to `FALSE`, expose a retirement control or remove `CASTLEWATCH_FAMILY_KEY`. Production owner-device creation and two-device verification remain Section 5E work.
+The database `legacy_family_key_enabled` value is authoritative for every family-key request. Section 5 does not set it to `FALSE`, expose a retirement control or remove `CASTLEWATCH_FAMILY_KEY`. Section 5E production verification passed with an active protected Owner, a second real Editor/Viewer browser, explicit family-key recovery and rejected-cookie cleanup without hidden fallback.
 
 ## Current safe state
 
 - `CASTLEWATCH_FAMILY_KEY` remains configured and the fixed `family` workspace keeps `legacy_family_key_enabled = TRUE`.
+- The tested production Owner remains active; temporary Editor/Viewer devices are revoked.
 - Owner and Editor devices may read, write, restore and use Operations; Viewer devices may read and inspect history only.
 - A protected-device `401` expires the protected cookie, clears safe browser device metadata and records an explicit disconnected selection.
 - CastleWatch never responds to rejected device access by silently selecting a saved family key.
