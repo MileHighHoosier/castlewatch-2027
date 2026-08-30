@@ -2,9 +2,9 @@
 
 ## Status
 
-**Section 6C complete and finalized August 30, 2026.**
+**Section 6D started — separate start checkpoint opened August 30, 2026.**
 
-Sections 6A, 6B and 6C are complete and finalized. Section 6D remains unstarted.
+Sections 6A, 6B and 6C are complete and finalized. Section 6D is scoped for execution, but no 6D acceptance criterion is complete yet.
 
 Section 6 verifies the deployed Vercel/Railway system across critical user flows. It is a production-verification phase, not a feature sprint. Any defect discovered here must be isolated, documented and separately repaired with the normal test/build/deployment gates.
 
@@ -190,3 +190,40 @@ Verified August 30, 2026:
 - no upload, download, backup, restore, guarded-autosave, trip/profile, reservation, resort, recommendation, credential/device, dependency/runtime, schema or family-key mutation occurred.
 
 No new defect was found during 6C. All Section 6C acceptance criteria passed. This separate Finalize checkpoint closes 6C without starting 6D.
+
+## Section 6D start checkpoint
+
+Started August 30, 2026 as a separate checkpoint from Section 6C.
+
+Section 6D is the final Section 6 production-verification batch. It verifies the already-deployed mobile experience, safely exercises representative failure and recovery paths, reconciles production-verification issues and runs the final automated/deployment gates. It does not add features, retire the family key or authorize production/shared-plan/account data changes. Any defect discovered during the smoke run must be isolated and repaired separately through the normal test/build/deployment gates before the affected criterion can pass.
+
+The 6D smoke run will:
+
+1. recheck the exact frontend/backend production heads, authoritative Vercel/Railway deployment state and live frontend/backend health before Section 6 closes;
+2. verify the six-destination navigation and critical park, Trip Week and Getting There paths at the established 390×844 mobile viewport, including touch-target size, portrait layout, sticky navigation and horizontal overflow;
+3. verify critical mobile interactions remain reachable and understandable across park tabs, Live Plan, temporary browser-local Lightning Lane/emergency controls, Trip Week forms and decision content, shared-plan status, Family devices, history and Operations;
+4. verify confirmation, warning, read-only and unavailable states fit the mobile viewport with their safe action or cancel control still reachable;
+5. use automated contracts or isolated browser request interception to simulate representative backend, external-source and selected-credential failures without changing the production database, credentials, devices or family-key configuration;
+6. confirm simulated failures produce explicit disconnected, stale, unknown or unavailable states; do not invent healthy/zero data; do not expose internal exception text; and recover when the simulated service returns;
+7. reuse the completed Section 5D/5E revoked-credential and role-boundary evidence instead of revoking or recreating a production device;
+8. reconcile the canonical production-verification tracker and any defect issues opened during 6D; and
+9. run the full backend and frontend contract suites, production compilation/build, dependency-free mobile browser smoke and exact-head deployment checks before a separate Finalize checkpoint closes Section 6.
+
+The start checkpoint itself makes no browser or production mutation. Later temporary browser-local checks must record and restore their starting state. Failure simulation must remain isolated to request interception or automated test fixtures and must not disable Railway, Vercel, a production data source, a credential or family-key recovery. Section 6D must not upload/download the shared plan, create a backup, restore history, alter trip/profile/reservation/resort/recommendation state, enable guarded autosave, manage devices, accept an invite, expose a credential, change dependencies/runtime/schema or alter `CASTLEWATCH_FAMILY_KEY` or `legacy_family_key_enabled`.
+
+## Section 6D acceptance criteria
+
+- [ ] Exact frontend/backend production heads, authoritative deployments and live frontend/Railway health are current and successful at closeout.
+- [ ] At 390×844 mobile portrait, all six primary destinations remain reachable with usable touch targets, the intended three-column navigation and no material horizontal overflow.
+- [ ] Sticky navigation and mobile layout do not make required park, Trip Week or Getting There content and controls unreachable.
+- [ ] Critical park tabs, Live Plan and temporary browser-local Lightning Lane/emergency interactions remain usable on mobile, with temporary state restored.
+- [ ] Trip Week profile, itinerary, reservation, resort, transportation, recommendation and shared-plan information remain readable and coherent on mobile without an unauthorized write.
+- [ ] Shared-plan status, Family devices, history and Operations present role-appropriate mobile controls without exposing credentials or enabling an unauthorized action.
+- [ ] Confirmation, warning, read-only and unavailable states fit the mobile viewport and preserve a reachable safe action or cancel path.
+- [ ] Safely simulated backend or external-source failures render explicit disconnected, stale, unknown or unavailable states rather than blank, falsely healthy or invented-zero data.
+- [ ] Simulated server and credential failures remain sanitized, reject unauthorized access without silent family-key fallback and recover cleanly when normal responses return.
+- [ ] The full backend and frontend contract suites, backend compilation, frontend production build and dependency-free mobile browser smoke pass on the final heads.
+- [ ] Every production-verification defect found during 6D is linked, reconciled and either repaired and redeployed or explicitly carried forward with user-visible impact documented.
+- [ ] No unauthorized production/shared-plan/profile/itinerary/reservation/resort/recommendation/credential/device/dependency/runtime/schema/family-key mutation occurs during 6D.
+
+This start checkpoint establishes scope only. Section 6D and Section 6 remain open until a separate Finalize checkpoint records the evidence, reconciles defects, confirms exact-head deployments and makes every acceptance decision.

@@ -550,7 +550,15 @@ The run found two isolated frontend defects. Frontend PR [#47](https://github.co
 
 Production verification passed for the approved Trip Week profile and zero-booking baseline; saved Base plan, trip-day cards and overnight resorts; reservation readiness; trip-day/resort-aware Getting There guidance; unified recommendation reasoning and manual approval boundaries; protected Owner connection at shared version 17; synchronization and guarded-autosave state; retained history and restore provenance; and the current Owner/Editor/Viewer contract and completed Section 5E production evidence.
 
-The trusted Owner remained `Ryan Brave Owner · owner`, connected and up to date at shared version 17 with guarded autosave off. Backup History & Restore retained 13 snapshots, marked version 17 current and preserved older-version provenance. The completed Section 5E content-identical backup evidence was reused, so 6C made no upload, download, backup, restore, trip/profile/reservation/resort, recommendation, credential/device, dependency/runtime/schema or family-key mutation. No new defect was found. Section 6D mobile-specific and forced-failure closeout remains unstarted.
+The trusted Owner remained `Ryan Brave Owner · owner`, connected and up to date at shared version 17 with guarded autosave off. Backup History & Restore retained 13 snapshots, marked version 17 current and preserved older-version provenance. The completed Section 5E content-identical backup evidence was reused, so 6C made no upload, download, backup, restore, trip/profile/reservation/resort, recommendation, credential/device, dependency/runtime/schema or family-key mutation. No new defect was found. Section 6D starts separately below.
+
+### Section 6D - Mobile, failure-state and Section 6 closeout
+
+**Started with a separate checkpoint on August 30, 2026; verification in progress.**
+
+The 6D contract covers the established 390×844 mobile portrait layout and critical touch flows across park planning, Trip Week, Getting There and shared-plan views; safe isolated backend, source and selected-credential failure simulations; honest disconnected/stale/unknown/unavailable presentation and recovery; production-verification issue reconciliation; full backend/frontend regression, compile/build and mobile browser gates; and exact-head authoritative Vercel/Railway deployment verification.
+
+The start checkpoint changes documentation and tracking only. It does not count any 6D acceptance criterion as passed and does not authorize an upload/download, backup, history restore, trip/profile/reservation/resort/recommendation change, guarded-autosave change, credential/device lifecycle, dependency/runtime/schema change or family-key change. Production device revocation is specifically excluded; existing Section 5D/5E evidence and isolated simulations must be used. A separate Finalize checkpoint is required to close both 6D and Section 6.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -574,14 +582,14 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A–6C complete**
+**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A–6C complete; 6D in progress**
 
-Sections 1–5 and Sections 6A–6C are complete. Section 6D mobile, failure-state and Section 6 closeout verification is next but remains unstarted. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–5 and Sections 6A–6C are complete. Section 6D mobile, failure-state and Section 6 closeout verification has a separate start checkpoint and is in progress; no 6D acceptance criterion is complete yet. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Start Section 6D mobile/failure-state production smoke verification and Section 6 closeout with a separate checkpoint.**
-2. Complete and separately finalize Section 6D and Section 6 closeout.
+1. **Execute Section 6D mobile/failure-state production smoke verification and final automated/deployment gates.**
+2. Separately finalize Section 6D and Section 6 closeout after all evidence and defects are reconciled.
 3. Section 7 - establish a lightweight project/task tracker.
 4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
