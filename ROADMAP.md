@@ -109,13 +109,13 @@ Until then: **do not remove or disable `CASTLEWATCH_FAMILY_KEY`.**
 
 ### Section 6 - Production smoke verification
 
-Status: **Started August 30, 2026 — Section 6A in progress**
+Status: **Started August 30, 2026 — Section 6A verification complete, awaiting finalization**
 
 Verify the deployed Vercel/Railway system across critical flows and close or update production-verification issues.
 
 Implementation batches:
 
-- **6A - production baseline and smoke contract: In progress.** Confirm exact production heads, CI/deployments, live frontend/backend health, protected-endpoint failure safety and the invariant baseline. A fresh trusted-Owner browser check is required before finalization.
+- **6A - production baseline and smoke contract: Verification complete, awaiting finalization.** Exact production heads, CI/deployments, live frontend/backend health, protected-endpoint failure safety and the invariant baseline passed. A fresh trusted-Owner browser check confirmed shared version 17 remains up to date under the protected Owner credential.
 - **6B - core website flows: Not started.** Verify navigation, parks/live data, historical planning, weather, shows/activities/characters, Live Plan, Lightning Lane and emergency modes.
 - **6C - Trip Week and shared-plan flows: Not started.** Verify Trip Week/profile/reservation/resort/transportation presentation, recommendation reasoning and safe Owner sync/history/backup behavior while reusing Section 5E role evidence where appropriate.
 - **6D - mobile, failure-state and Section 6 closeout: Not started.** Verify critical mobile behavior and graceful failure states, reconcile production issues, run final automated gates and close Section 6.
