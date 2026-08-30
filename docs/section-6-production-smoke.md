@@ -2,7 +2,7 @@
 
 ## Status
 
-**Section 6A started August 30, 2026.**
+**Section 6A verification passed August 30, 2026 — awaiting explicit finalization.**
 
 Section 6 verifies the deployed Vercel/Railway system across critical user flows. It is a production-verification phase, not a feature sprint. Any defect discovered here must be isolated, documented and separately repaired with the normal test/build/deployment gates.
 
@@ -49,7 +49,7 @@ Each batch requires its own Start and Finalize checkpoint.
 - [x] Unauthenticated shared-plan, history, Operations and device-access reads return sanitized HTTP 401 responses.
 - [x] Production CORS grants the CastleWatch frontend origin and does not grant an unrelated origin.
 - [x] The Section 5E invariant baseline is recorded without exposing credentials.
-- [ ] A fresh trusted-Owner browser check confirms shared version 17 remains up to date under `Ryan Brave Owner`.
+- [x] A fresh trusted-Owner browser check confirms shared version 17 remains up to date under `Ryan Brave Owner`.
 
 ## Section 6A automated evidence
 
@@ -65,6 +65,7 @@ Verified August 30, 2026:
 - `https://castlewatch-2027-production.up.railway.app/health` returned HTTP 200 with `{"status":"ok"}`;
 - unauthenticated `GET` requests to `/api/family-trip`, `/api/family-trip/history`, `/api/family-trip/operations` and `/api/family-trip/devices/access` returned HTTP 401 with the stable unauthorized response and no internal exception text;
 - the backend returned `Access-Control-Allow-Origin: https://castlewatch-frontend.vercel.app` for the production frontend origin and no allow-origin grant for `https://example.com`.
+- a fresh trusted-Owner production screenshot confirmed **Connected · v17**, shared version 17, `Ryan Brave Owner · owner`, **Up to date**, and guarded autosave off.
 
 The known starting invariant from the finalized Section 5E production evidence is:
 
@@ -81,3 +82,5 @@ The known starting invariant from the finalized Section 5E production evidence i
 - family-key recovery enabled.
 
 No production data, credential, dependency/runtime, schema, itinerary, reservation, recommendation, device record or family-key setting was changed by the automated Section 6A checks.
+
+All Section 6A acceptance criteria have passed. PR #54 remains unmerged until the explicit Finalize Section 6A checkpoint.
