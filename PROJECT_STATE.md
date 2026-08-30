@@ -520,6 +520,22 @@ Implemented and verified:
 
 **Section 5 is complete. `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.**
 
+### Section 6A - Production baseline and smoke contract
+
+**Complete and finalized August 30, 2026.**
+
+Automated baseline evidence:
+
+- frontend `main` is `1598d6498d447f6e0ce18b06c4bba6090bdb85d2`, and backend `main` is `b590baf35d1dd222d2ee9e4ab7e407386745c4e5`;
+- frontend PR #45 and backend PR #52 are merged, their relevant Family sync reliability workflows passed, and the authoritative Vercel/Railway deployment statuses are successful;
+- the live production frontend returned HTTP 200, and Railway `/health` returned HTTP 200 with status `ok`;
+- unauthenticated shared-plan, history, Operations and device-access reads returned sanitized HTTP 401 responses;
+- production CORS granted the real CastleWatch frontend origin and did not grant an unrelated origin;
+- the finalized Section 5E invariant baseline remains shared version 17, the approved October 9–16, 2027 trip/profile, zero bookings, the unchanged **Wait / Keep the base plan provisional** recommendation, one active protected Owner, revoked temporary devices, guarded autosave off and enabled family-key recovery.
+- a fresh trusted-Owner production screenshot confirmed **Connected · v17**, shared version 17, `Ryan Brave Owner · owner`, **Up to date**, and guarded autosave off.
+
+The Section 6A checks did not change production data, credentials, code, dependencies/runtime, schema, itinerary, reservations, recommendation state, device records or the family-key setting. All 6A acceptance criteria passed, and PR #54 finalizes the checkpoint without starting 6B. The governing checklist and the 6A–6D scope are recorded in `docs/section-6-production-smoke.md`.
+
 ## Known rebaseline findings still requiring remediation
 
 ### High priority
@@ -542,14 +558,15 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Sections 1–5 complete**
+**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A complete**
 
-Sections 1–5 are complete. Section 6 - production smoke verification - is next but has not started. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–5 and Section 6A are complete. Section 6B core website production flows are next and have not started. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Section 6 - production smoke verification.**
-2. Section 7 - establish a lightweight project/task tracker.
-3. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 6B - core website production flows.**
+2. Complete Sections 6C–6D production smoke verification.
+3. Section 7 - establish a lightweight project/task tracker.
+4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
