@@ -2,7 +2,7 @@
 
 ## Status
 
-**Section 6A verification passed August 30, 2026 — awaiting explicit finalization.**
+**Section 6A complete — finalized August 30, 2026.**
 
 Section 6 verifies the deployed Vercel/Railway system across critical user flows. It is a production-verification phase, not a feature sprint. Any defect discovered here must be isolated, documented and separately repaired with the normal test/build/deployment gates.
 
@@ -83,4 +83,4 @@ The known starting invariant from the finalized Section 5E production evidence i
 
 No production data, credential, dependency/runtime, schema, itinerary, reservation, recommendation, device record or family-key setting was changed by the automated Section 6A checks.
 
-All Section 6A acceptance criteria have passed. PR #54 remains unmerged until the explicit Finalize Section 6A checkpoint.
+All Section 6A acceptance criteria passed. PR #54 finalizes the checkpoint without starting Section 6B.
