@@ -109,14 +109,14 @@ Until then: **do not remove or disable `CASTLEWATCH_FAMILY_KEY`.**
 
 ### Section 6 - Production smoke verification
 
-Status: **Section 6A complete August 30, 2026 — Section 6B next and not started**
+Status: **Section 6A complete August 30, 2026 — Section 6B started separately and in progress**
 
 Verify the deployed Vercel/Railway system across critical flows and close or update production-verification issues.
 
 Implementation batches:
 
 - **6A - production baseline and smoke contract: Complete August 30, 2026.** Exact production heads, CI/deployments, live frontend/backend health, protected-endpoint failure safety and the invariant baseline passed. A fresh trusted-Owner browser check confirmed shared version 17 remains up to date under the protected Owner credential. No production data, credential, code, dependency/runtime, schema, itinerary, reservation, device record or family-key setting changed.
-- **6B - core website flows: Not started.** Verify navigation, parks/live data, historical planning, weather, shows/activities/characters, Live Plan, Lightning Lane and emergency modes.
+- **6B - core website flows: Started August 30, 2026; separate start checkpoint opened.** The scoped production run covers navigation, all four park dashboards, live/open and closed-attraction behavior, historical directional planning, weather reliability, Shows/Activities/Characters, Live Plan, temporary browser-local Lightning Lane guidance and temporary browser-local emergency modes. No acceptance criterion is complete at the start checkpoint, and 6B requires a separate Finalize checkpoint. Trip Week/shared-plan work remains in 6C; mobile/failure-state closeout remains in 6D.
 - **6C - Trip Week and shared-plan flows: Not started.** Verify Trip Week/profile/reservation/resort/transportation presentation, recommendation reasoning and safe Owner sync/history/backup behavior while reusing Section 5E role evidence where appropriate.
 - **6D - mobile, failure-state and Section 6 closeout: Not started.** Verify critical mobile behavior and graceful failure states, reconcile production issues, run final automated gates and close Section 6.
 
