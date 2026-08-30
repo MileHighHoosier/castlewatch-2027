@@ -536,6 +536,14 @@ Automated baseline evidence:
 
 The Section 6A checks did not change production data, credentials, code, dependencies/runtime, schema, itinerary, reservations, recommendation state, device records or the family-key setting. All 6A acceptance criteria passed, and PR #54 finalizes the checkpoint without starting 6B. The governing checklist and the 6A–6D scope are recorded in `docs/section-6-production-smoke.md`.
 
+### Section 6B - Core website flows
+
+**Started with a separate checkpoint on August 30, 2026; verification in progress.**
+
+The 6B contract covers the six-destination navigation shell; all four park dashboards; live/open and closed-attraction presentation; historical directional planning information; weather reliability states; Shows, Activities and Characters; Live Plan; temporary browser-local Lightning Lane guidance; and temporary browser-local emergency modes. Trip Week, shared-plan, reservations, resorts, transportation and role-boundary verification remain reserved for 6C. Mobile-specific and forced-failure verification remain reserved for 6D.
+
+The start checkpoint changes documentation and tracking only. It does not count any 6B acceptance criterion as passed and does not authorize production data, shared-plan, itinerary, account/device, credential, dependency/runtime, schema or family-key changes. A separate Finalize checkpoint is required after the production evidence is recorded and any defects are reconciled.
+
 ## Known rebaseline findings still requiring remediation
 
 ### High priority
@@ -558,13 +566,13 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A complete**
+**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A complete; 6B in progress**
 
-Sections 1–5 and Section 6A are complete. Section 6B core website production flows are next and have not started. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–5 and Section 6A are complete. Section 6B core website production verification has a separate start checkpoint and is in progress; no 6B acceptance criterion is complete yet. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Section 6B - core website production flows.**
+1. **Execute and separately finalize Section 6B core website production flows.**
 2. Complete Sections 6C–6D production smoke verification.
 3. Section 7 - establish a lightweight project/task tracker.
 4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
