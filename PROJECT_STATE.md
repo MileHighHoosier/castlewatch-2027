@@ -546,11 +546,11 @@ The run found two isolated frontend defects. Frontend PR [#47](https://github.co
 
 ### Section 6C - Trip Week and shared-plan flows
 
-**Started with a separate checkpoint on August 30, 2026; verification in progress.**
+**Complete and finalized August 30, 2026.**
 
-The 6C contract covers the approved Trip Week profile and itinerary presentation; reservations; overnight resorts; Getting There transportation guidance; unified recommendation reasoning and manual approval controls; the protected Owner shared-plan connection, synchronization state, history and backup controls; and reuse of completed Section 5E role evidence. Section 6D mobile-specific and forced-failure closeout remains unstarted.
+Production verification passed for the approved Trip Week profile and zero-booking baseline; saved Base plan, trip-day cards and overnight resorts; reservation readiness; trip-day/resort-aware Getting There guidance; unified recommendation reasoning and manual approval boundaries; protected Owner connection at shared version 17; synchronization and guarded-autosave state; retained history and restore provenance; and the current Owner/Editor/Viewer contract and completed Section 5E production evidence.
 
-The start checkpoint changes documentation and tracking only. It does not count any 6C acceptance criterion as passed and does not authorize a shared-plan upload/download, backup, history restore, trip/profile/reservation/resort change, recommendation apply/undo/lock, guarded-autosave change, credential/device lifecycle, dependency/runtime/schema change or family-key change. Any later minimal content-identical backup requires a fresh invariant check and separate user confirmation. A separate Finalize checkpoint is required after the production evidence is recorded and any defects are reconciled.
+The trusted Owner remained `Ryan Brave Owner · owner`, connected and up to date at shared version 17 with guarded autosave off. Backup History & Restore retained 13 snapshots, marked version 17 current and preserved older-version provenance. The completed Section 5E content-identical backup evidence was reused, so 6C made no upload, download, backup, restore, trip/profile/reservation/resort, recommendation, credential/device, dependency/runtime/schema or family-key mutation. No new defect was found. Section 6D mobile-specific and forced-failure closeout remains unstarted.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -574,14 +574,14 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A–6B complete; 6C in progress**
+**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A–6C complete**
 
-Sections 1–5 and Sections 6A–6B are complete. Section 6C Trip Week and shared-plan production verification has a separate start checkpoint and is in progress; no 6C acceptance criterion is complete yet. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–5 and Sections 6A–6C are complete. Section 6D mobile, failure-state and Section 6 closeout verification is next but remains unstarted. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Execute and separately finalize Section 6C Trip Week and shared-plan production flows.**
-2. Complete Section 6D mobile/failure-state production smoke verification and Section 6 closeout.
+1. **Start Section 6D mobile/failure-state production smoke verification and Section 6 closeout with a separate checkpoint.**
+2. Complete and separately finalize Section 6D and Section 6 closeout.
 3. Section 7 - establish a lightweight project/task tracker.
 4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
