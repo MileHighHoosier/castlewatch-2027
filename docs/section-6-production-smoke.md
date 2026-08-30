@@ -2,9 +2,9 @@
 
 ## Status
 
-**Section 6C started — separate start checkpoint opened August 30, 2026.**
+**Section 6C complete and finalized August 30, 2026.**
 
-Sections 6A and 6B are complete and finalized. Section 6C is scoped for execution, but no 6C acceptance criterion is complete yet. Section 6D remains unstarted.
+Sections 6A, 6B and 6C are complete and finalized. Section 6D remains unstarted.
 
 Section 6 verifies the deployed Vercel/Railway system across critical user flows. It is a production-verification phase, not a feature sprint. Any defect discovered here must be isolated, documented and separately repaired with the normal test/build/deployment gates.
 
@@ -162,16 +162,31 @@ The start checkpoint makes no production mutation. Section 6C must not upload or
 
 ## Section 6C acceptance criteria
 
-- [ ] Trip Week presents `Columbus Day Week 2027`, October 9–16, 2027, two adults, two children, no park hopping and zero bookings without unexplained drift.
-- [ ] The base itinerary, trip-day cards and overnight resort assignments render coherently without an automatic scenario change.
-- [ ] Reservation counts, details, readiness and conflict presentation accurately reflect the current zero-booking baseline.
-- [ ] Getting There provides usable trip-day/resort-aware transportation guidance and clearly directional rather than guaranteed timing.
-- [ ] The unified recommendation remains understandable, exposes its outcome, confidence, comparison, blockers and next actions, and preserves manual approval for any itinerary change.
-- [ ] Apply, undo and lock controls do not mutate the itinerary unless the user explicitly approves that action; no such action is authorized by this checkpoint.
-- [ ] The trusted browser reports the protected `Ryan Brave Owner` credential, shared version 17, an up-to-date baseline and guarded autosave off before shared-plan verification begins.
-- [ ] Current and historical shared versions, provenance and eligible Owner controls are readable without restoring or overwriting history.
-- [ ] Manual-backup behavior is verified safely using either the completed Section 5E content-identical evidence or a separately confirmed content-identical backup after a fresh baseline check.
-- [ ] Owner/Editor/Viewer boundaries remain supported by current automated contracts and the completed Section 5E production evidence without unnecessarily recreating credentials or devices.
-- [ ] No unauthorized production/shared-plan/profile/itinerary/reservation/resort/recommendation/credential/device/dependency/runtime/schema/family-key mutation occurs during 6C.
+- [x] Trip Week presents `Columbus Day Week 2027`, October 9–16, 2027, two adults, two children, no park hopping and zero bookings without unexplained drift.
+- [x] The base itinerary, trip-day cards and overnight resort assignments render coherently without an automatic scenario change.
+- [x] Reservation counts, details, readiness and conflict presentation accurately reflect the current zero-booking baseline.
+- [x] Getting There provides usable trip-day/resort-aware transportation guidance and clearly directional rather than guaranteed timing.
+- [x] The unified recommendation remains understandable, exposes its outcome, confidence, comparison, blockers and next actions, and preserves manual approval for any itinerary change.
+- [x] Apply, undo and lock controls do not mutate the itinerary unless the user explicitly approves that action; no such action is authorized by this checkpoint.
+- [x] The trusted browser reports the protected `Ryan Brave Owner` credential, shared version 17, an up-to-date baseline and guarded autosave off before shared-plan verification begins.
+- [x] Current and historical shared versions, provenance and eligible Owner controls are readable without restoring or overwriting history.
+- [x] Manual-backup behavior is verified safely using either the completed Section 5E content-identical evidence or a separately confirmed content-identical backup after a fresh baseline check.
+- [x] Owner/Editor/Viewer boundaries remain supported by current automated contracts and the completed Section 5E production evidence without unnecessarily recreating credentials or devices.
+- [x] No unauthorized production/shared-plan/profile/itinerary/reservation/resort/recommendation/credential/device/dependency/runtime/schema/family-key mutation occurs during 6C.
 
-This start checkpoint establishes scope only. Section 6C remains in progress until a separate Finalize checkpoint records the evidence, any defects and every acceptance decision.
+## Section 6C production evidence and finalization
+
+Verified August 30, 2026:
+
+- a trusted-Owner screenshot and full-page PDF showed `Columbus Day Week 2027`, October 9–16, 2027, one park per day, no park hopping, two adults, two children and zero bookings/confirmed reservations;
+- the saved Base plan remained active, all trip-day cards and overnight resort assignments rendered coherently, and no scenario was applied, undone or locked;
+- the unified recommendation remained **Wait for official data / Keep the base plan provisional**, showed low confidence, compared the Base plan with the MNSSHP alternate, identified unreleased official 2027 MNSSHP dates as the blocker and gave explicit next actions;
+- the trusted browser showed **Connected · v17**, `Ryan Brave Owner · owner`, shared version 17, **Up to date**, guarded autosave **Off** and a protected-device label for the Owner;
+- an isolated production-browser read verified trip-day/resort-aware Getting There guidance for Sunday Value Resort to Magic Kingdom and Wednesday Beach Club to Epcot International Gateway, then restored the temporary selected day to Sunday and returned to Trip Week;
+- Backup History & Restore reported 13 retained snapshots, marked shared version 17 **Current**, kept older versions readable and preserved restore provenance including v16 restored from v14 and v14/v13 restored from v11;
+- historical versions exposed preview controls, but no preview or restore was opened;
+- the safe manual-backup criterion reused the completed Section 5E content-identical backup evidence, so no new backup or append-only production write was needed;
+- current backend contracts plus completed Section 5E production evidence supported the Owner/Editor/Viewer boundaries without recreating devices; and
+- no upload, download, backup, restore, guarded-autosave, trip/profile, reservation, resort, recommendation, credential/device, dependency/runtime, schema or family-key mutation occurred.
+
+No new defect was found during 6C. All Section 6C acceptance criteria passed. This separate Finalize checkpoint closes 6C without starting 6D.
