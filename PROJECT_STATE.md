@@ -538,11 +538,11 @@ The Section 6A checks did not change production data, credentials, code, depende
 
 ### Section 6B - Core website flows
 
-**Started with a separate checkpoint on August 30, 2026; verification in progress.**
+**Complete and finalized August 30, 2026.**
 
-The 6B contract covers the six-destination navigation shell; all four park dashboards; live/open and closed-attraction presentation; historical directional planning information; weather reliability states; Shows, Activities and Characters; Live Plan; temporary browser-local Lightning Lane guidance; and temporary browser-local emergency modes. Trip Week, shared-plan, reservations, resorts, transportation and role-boundary verification remain reserved for 6C. Mobile-specific and forced-failure verification remain reserved for 6D.
+Production verification passed for the six-destination navigation shell; all four park dashboards; live/open and closed-attraction presentation; update/source context; historical directional planning; current weather reliability plus conservative temporary Heat/Storm guards; Shows, Activities and Characters; all three Live Plan modes; temporary browser-local Lightning Lane guidance; and temporary emergency mode. Every temporary browser-local state was restored, and no shared-plan, itinerary, reservation, credential, device, dependency/runtime, schema or family-key state changed.
 
-The start checkpoint changes documentation and tracking only. It does not count any 6B acceptance criterion as passed and does not authorize production data, shared-plan, itinerary, account/device, credential, dependency/runtime, schema or family-key changes. A separate Finalize checkpoint is required after the production evidence is recorded and any defects are reconciled.
+The run found two isolated frontend defects. Frontend PR [#47](https://github.com/MileHighHoosier/castlewatch-frontend/pull/47) corrected the Disney Jr. show classification and frontend PR [#49](https://github.com/MileHighHoosier/castlewatch-frontend/pull/49) fixed delayed Lightning Lane mutation feedback; both passed exact Node 22 CI, the full frontend contract suite, production build and mobile browser smoke, deployed successfully through the authoritative `castlewatch-frontend` Vercel project and passed repeated production checks. Trip Week, shared-plan, reservations, resorts, transportation and role-boundary verification remain reserved for 6C. Mobile-specific and forced-failure verification remain reserved for 6D.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -566,14 +566,14 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A complete; 6B in progress**
+**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A–6B complete**
 
-Sections 1–5 and Section 6A are complete. Section 6B core website production verification has a separate start checkpoint and is in progress; no 6B acceptance criterion is complete yet. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–5 and Sections 6A–6B are complete. Section 6C Trip Week and shared-plan production verification is next but remains unstarted. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Execute and separately finalize Section 6B core website production flows.**
-2. Complete Sections 6C–6D production smoke verification.
+1. **Start Section 6C Trip Week and shared-plan production flows with a separate checkpoint.**
+2. Complete Section 6D mobile/failure-state production smoke verification and Section 6 closeout.
 3. Section 7 - establish a lightweight project/task tracker.
 4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
