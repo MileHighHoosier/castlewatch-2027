@@ -109,14 +109,14 @@ Until then: **do not remove or disable `CASTLEWATCH_FAMILY_KEY`.**
 
 ### Section 6 - Production smoke verification
 
-Status: **Section 6A complete August 30, 2026 — Section 6B started separately and in progress**
+Status: **Sections 6A–6B complete August 30, 2026 — Section 6C not started**
 
 Verify the deployed Vercel/Railway system across critical flows and close or update production-verification issues.
 
 Implementation batches:
 
 - **6A - production baseline and smoke contract: Complete August 30, 2026.** Exact production heads, CI/deployments, live frontend/backend health, protected-endpoint failure safety and the invariant baseline passed. A fresh trusted-Owner browser check confirmed shared version 17 remains up to date under the protected Owner credential. No production data, credential, code, dependency/runtime, schema, itinerary, reservation, device record or family-key setting changed.
-- **6B - core website flows: Started August 30, 2026; separate start checkpoint opened.** The scoped production run covers navigation, all four park dashboards, live/open and closed-attraction behavior, historical directional planning, weather reliability, Shows/Activities/Characters, Live Plan, temporary browser-local Lightning Lane guidance and temporary browser-local emergency modes. No acceptance criterion is complete at the start checkpoint, and 6B requires a separate Finalize checkpoint. Trip Week/shared-plan work remains in 6C; mobile/failure-state closeout remains in 6D.
+- **6B - core website flows: Complete and finalized August 30, 2026.** Navigation, all four park dashboards, live/open and closed-attraction behavior, update/source context, historical directional planning, current weather reliability plus conservative temporary guards, Shows/Activities/Characters, all three Live Plan modes, temporary browser-local Lightning Lane guidance and temporary emergency mode passed in production. Frontend PRs [#47](https://github.com/MileHighHoosier/castlewatch-frontend/pull/47) and [#49](https://github.com/MileHighHoosier/castlewatch-frontend/pull/49) repaired the two discovered defects through exact Node 22 CI, production builds, mobile browser smoke, authoritative Vercel deployment and repeated production checks. Temporary state was restored, and no server-side production/shared-plan/credential/device/itinerary/reservation/family-key state changed. Trip Week/shared-plan work remains in 6C; mobile/failure-state closeout remains in 6D.
 - **6C - Trip Week and shared-plan flows: Not started.** Verify Trip Week/profile/reservation/resort/transportation presentation, recommendation reasoning and safe Owner sync/history/backup behavior while reusing Section 5E role evidence where appropriate.
 - **6D - mobile, failure-state and Section 6 closeout: Not started.** Verify critical mobile behavior and graceful failure states, reconcile production issues, run final automated gates and close Section 6.
 

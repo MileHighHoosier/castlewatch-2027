@@ -2,9 +2,9 @@
 
 ## Status
 
-**Section 6B started — separate start checkpoint opened August 30, 2026.**
+**Section 6B complete and finalized August 30, 2026.**
 
-Section 6A is complete and finalized. Section 6B is now scoped for execution, but no 6B acceptance criterion is complete yet. Sections 6C and 6D remain unstarted.
+Sections 6A and 6B are complete and finalized. Sections 6C and 6D remain unstarted.
 
 Section 6 verifies the deployed Vercel/Railway system across critical user flows. It is a production-verification phase, not a feature sprint. Any defect discovered here must be isolated, documented and separately repaired with the normal test/build/deployment gates.
 
@@ -108,15 +108,34 @@ Production mutations are not part of the start checkpoint. Before any temporary 
 
 ## Section 6B acceptance criteria
 
-- [ ] All six primary navigation destinations respond correctly, with the four park destinations loading the corresponding selected-park view.
-- [ ] Each park dashboard presents usable attraction data or an explicit unavailable state rather than a blank, stale-looking or internally detailed failure.
-- [ ] Live/open and closed-attraction behavior, update/source context and park switching remain coherent across all four parks.
-- [ ] Historical planning information is available where supported and remains clearly directional rather than a precise 2027 prediction.
-- [ ] Weather-aware planning presents an honest current, stale or unavailable reliability state and preserves conservative guidance.
-- [ ] Shows, Activities and Characters are separated correctly, usable and free of obvious unrelated or past-only entries.
-- [ ] Live Plan produces usable mode-appropriate recommendations/explanations without silently changing the itinerary.
-- [ ] Temporary Lightning Lane guidance behaves coherently and the original browser-local state is restored after verification.
-- [ ] Temporary emergency break/leave-park behavior works for the selected park and the original browser-local state is restored after verification.
-- [ ] No production data, shared-plan version, credential, device record, itinerary, reservation, recommendation approval, dependency/runtime, schema or family-key setting changes during 6B.
+- [x] All six primary navigation destinations respond correctly, with the four park destinations loading the corresponding selected-park view.
+- [x] Each park dashboard presents usable attraction data or an explicit unavailable state rather than a blank, stale-looking or internally detailed failure.
+- [x] Live/open and closed-attraction behavior, update/source context and park switching remain coherent across all four parks.
+- [x] Historical planning information is available where supported and remains clearly directional rather than a precise 2027 prediction.
+- [x] Weather-aware planning presents an honest current, stale or unavailable reliability state and preserves conservative guidance.
+- [x] Shows, Activities and Characters are separated correctly, usable and free of obvious unrelated or past-only entries.
+- [x] Live Plan produces usable mode-appropriate recommendations/explanations without silently changing the itinerary.
+- [x] Temporary Lightning Lane guidance behaves coherently and the original browser-local state is restored after verification.
+- [x] Temporary emergency break/leave-park behavior works for the selected park and the original browser-local state is restored after verification.
+- [x] No production data, shared-plan version, credential, device record, itinerary, reservation, recommendation approval, dependency/runtime, schema or family-key setting changes during 6B.
 
-This start checkpoint establishes scope only. Section 6B remains in progress until a separate Finalize checkpoint records the evidence, any defects and every acceptance decision.
+## Section 6B production evidence and finalization
+
+Verified August 30, 2026:
+
+- all six primary navigation destinations responded, and Magic Kingdom, Epcot, Hollywood Studios and Animal Kingdom each resolved the selected-park view;
+- all four park dashboards returned usable attraction data with coherent live/open or closed presentation, update timestamps, Railway `/api/rides` source context, historical sample counts and a connected backend;
+- tomorrow and historical planning copy remained explicitly directional and separate from the live response rather than claiming a precise 2027 prediction;
+- Railway weather advisory returned HTTP 200 with a current `weather.gov` no-advisory result, while temporary Heat and Storm selections produced conservative A/C/short-walk and shelter-first guidance before Weather OK was restored;
+- Shows, Activities and Characters rendered usable separated panels across all four parks with upcoming or explicit verify-timing states;
+- Max rides, Low-stress and Cool down produced distinct Animal Kingdom recommendations with explicit Why chosen and historical context, without starting a route or changing the itinerary;
+- temporary emergency mode showed the Animal Kingdom reset/leave-park plan and made Lightning Lane guidance secondary, then returned to its inactive starting state;
+- a temporary Lightning Lane window produced coherent next-window guidance and was removed to restore the empty starting state after the production repair described below; and
+- no server-side production data, shared-plan version, credential, device record, itinerary, reservation, recommendation approval, dependency/runtime, schema or family-key setting changed.
+
+Two production defects were isolated and repaired through the normal frontend gates before the affected criteria passed:
+
+- frontend PR [#47](https://github.com/MileHighHoosier/castlewatch-frontend/pull/47) classified `Disney Jr. Mickey Mouse Clubhouse Live!` as entertainment, excluded it from ride demand and Live Plan, preserved its Activities presentation, passed exact Node 22 CI and deployed successfully from the authoritative Vercel project at merge `26caf3989b92faf60da95b6688c09f05231c5def`;
+- frontend PR [#49](https://github.com/MileHighHoosier/castlewatch-frontend/pull/49) made Lightning Lane Add, Used/Undo and Remove rerender immediately, added a browser add/remove round-trip regression, passed exact Node 22 CI and deployed successfully from the authoritative Vercel project at merge `ae63c89fb7194139df40d7a7d0609cdb6084a7eb`.
+
+All Section 6B acceptance criteria passed. This separate Finalize checkpoint closes 6B without starting 6C or 6D.
