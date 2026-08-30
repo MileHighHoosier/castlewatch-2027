@@ -2,7 +2,9 @@
 
 ## Status
 
-**Section 6A complete — finalized August 30, 2026.**
+**Section 6B started — separate start checkpoint opened August 30, 2026.**
+
+Section 6A is complete and finalized. Section 6B is now scoped for execution, but no 6B acceptance criterion is complete yet. Sections 6C and 6D remain unstarted.
 
 Section 6 verifies the deployed Vercel/Railway system across critical user flows. It is a production-verification phase, not a feature sprint. Any defect discovered here must be isolated, documented and separately repaired with the normal test/build/deployment gates.
 
@@ -84,3 +86,37 @@ The known starting invariant from the finalized Section 5E production evidence i
 No production data, credential, dependency/runtime, schema, itinerary, reservation, recommendation, device record or family-key setting was changed by the automated Section 6A checks.
 
 All Section 6A acceptance criteria passed. PR #54 finalizes the checkpoint without starting Section 6B.
+
+## Section 6B start checkpoint
+
+Started August 30, 2026 as a separate checkpoint from Section 6A.
+
+Section 6B verifies the already-deployed core website experience. It does not add features or authorize itinerary, shared-plan, account/device, credential, dependency/runtime, schema or production-data changes. Any defect discovered during the smoke run must be recorded and repaired separately through the normal test/build/deployment gates before the affected criterion can pass.
+
+The 6B smoke run will:
+
+1. verify the six-destination navigation shell without evaluating the Trip Week or Getting There content reserved for 6C;
+2. open Magic Kingdom, Epcot, Hollywood Studios and Animal Kingdom and verify each park dashboard resolves the selected park correctly;
+3. inspect live/open and closed-attraction presentation, update/source context and historical directional planning information without treating historical evidence as a precise 2027 forecast;
+4. verify weather reliability/status presentation and that current information is not falsely represented when evidence is stale or unavailable;
+5. verify Shows, Activities and Characters remain correctly separated and usable;
+6. exercise Live Plan recommendations and explanations without completing rides or changing the approved itinerary;
+7. exercise temporary browser-local Lightning Lane guidance and restore the starting browser state afterward;
+8. exercise temporary browser-local emergency break/leave-park controls and restore the starting browser state afterward.
+
+Production mutations are not part of the start checkpoint. Before any temporary browser-local state change is used as evidence, its starting state must be recorded and the check must be reversible. Section 6B must not upload/download the shared plan, create a backup, restore history, change trip/profile/reservation/resort data, apply or lock an itinerary scenario, manage devices, use an invite, expose a credential or alter family-key recovery.
+
+## Section 6B acceptance criteria
+
+- [ ] All six primary navigation destinations respond correctly, with the four park destinations loading the corresponding selected-park view.
+- [ ] Each park dashboard presents usable attraction data or an explicit unavailable state rather than a blank, stale-looking or internally detailed failure.
+- [ ] Live/open and closed-attraction behavior, update/source context and park switching remain coherent across all four parks.
+- [ ] Historical planning information is available where supported and remains clearly directional rather than a precise 2027 prediction.
+- [ ] Weather-aware planning presents an honest current, stale or unavailable reliability state and preserves conservative guidance.
+- [ ] Shows, Activities and Characters are separated correctly, usable and free of obvious unrelated or past-only entries.
+- [ ] Live Plan produces usable mode-appropriate recommendations/explanations without silently changing the itinerary.
+- [ ] Temporary Lightning Lane guidance behaves coherently and the original browser-local state is restored after verification.
+- [ ] Temporary emergency break/leave-park behavior works for the selected park and the original browser-local state is restored after verification.
+- [ ] No production data, shared-plan version, credential, device record, itinerary, reservation, recommendation approval, dependency/runtime, schema or family-key setting changes during 6B.
+
+This start checkpoint establishes scope only. Section 6B remains in progress until a separate Finalize checkpoint records the evidence, any defects and every acceptance decision.
