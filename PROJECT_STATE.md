@@ -572,7 +572,7 @@ The audit reconciled backend issue [#61](https://github.com/MileHighHoosier/cast
 
 ### Section 8 - Trip Week Phase 2 unified recommendation engine
 
-**In progress; Section 8A is finalized and the Section 8B implementation merged August 31, 2026. The separate Section 8B test checklist is next.**
+**In progress; Section 8A is finalized and the Section 8B test checklist passed August 31, 2026. Separate Section 8B Finalize approval is next.**
 
 The Start audit confirmed that Section 8 extends the substantial existing frontend engine rather than replacing it. The current keep/swap/wait/review decision already combines backend event/calendar risk, reservation conflicts, no-park-hopping, overnight resort convenience and historical directional crowd evidence while preserving manual scenario approval.
 
@@ -582,7 +582,7 @@ The Start checkpoint changes documentation and tracker state only. It does not c
 
 Section 8A frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) added `app/lib/tripDecisionEvidence.ts` as the typed evidence boundary for availability, provenance, freshness, confidence, contribution and explanation. `tripDecisionEngine.ts` now derives each scenario total and category subtotal from explicit source-owned evidence. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence contributes zero; unknown resort identifiers no longer silently use the default resort. Direct fixtures preserve the established keep/swap/wait/review outcomes, confirmed-reservation review gate, no-park-hopping weighting and manual approval boundary. The separate [Section 8A test checklist](docs/section-8a-test-checklist.md) passed 122 frontend contracts, the production build, exact-head GitHub Actions including the 390×844 mobile smoke, backend tracker/compile gates and a read-only production Trip Week verification. No visible UI or production/shared state changed. The user separately authorized Finalize, so Section 8A is complete.
 
-Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53) merged a canonical `transportationPlanning.ts` route/timing model at `8219b50b9943ab7f435f6dd892779d7b176c8b16`. Getting There, reservation leave-by guidance and Trip Week scenario scoring now use the same conservative resort-to-destination assumptions. Transportation evidence contributes only when a park date has a known previous-night resort; unknown origins are explicit and neutral. Regression coverage includes base/alternate split-stay scoring, reservations, resort transfers and existing keep/swap/wait/review, confirmed-reservation and no-park-hopping behavior. The implementation passed 126 frontend tests, the production build and exact-head GitHub Actions. Section 8B is not finalized: its separately approved test checklist remains next.
+Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53) merged a canonical `transportationPlanning.ts` route/timing model at `8219b50b9943ab7f435f6dd892779d7b176c8b16`. Getting There, reservation leave-by guidance and Trip Week scenario scoring now use the same conservative resort-to-destination assumptions. Transportation evidence contributes only when a park date has a known previous-night resort; unknown origins are explicit and neutral. Regression coverage includes base/alternate split-stay scoring, reservations, resort transfers and existing keep/swap/wait/review, confirmed-reservation and no-park-hopping behavior. The separate [Section 8B test checklist](docs/section-8b-test-checklist.md) passed 126 frontend contracts, the production build, exact-head frontend and backend CI including the 390×844 mobile smoke, backend tracker/compile gates and read-only production Trip Week/Getting There verification. Section 8B remains unfinalized until the user separately authorizes Finalize.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -608,11 +608,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **Trip Week Phase 2 - Section 8 started**
 
-Sections 1–7 and Section 8A are complete. Section 8B implementation is merged; its separate test checklist and Finalize checkpoint remain pending. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–7 and Section 8A are complete. The Section 8B checklist passed; its separate Finalize checkpoint remains pending. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Run `Start Section 8B test checklist`.**
-2. Verify the merged route model across frontend/backend gates and read-only production behavior before any Section 8B Finalize request.
+1. **Run `Finalize Section 8B`.**
+2. Do not start Section 8C until Section 8B is separately finalized.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
