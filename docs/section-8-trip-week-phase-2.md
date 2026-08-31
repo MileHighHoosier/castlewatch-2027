@@ -50,7 +50,7 @@ Acceptance:
 - backend and frontend ownership boundaries remain explicit;
 - no itinerary mutation or production-state change.
 
-Implementation status: frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) merged the typed source-owned evidence contract at `408617e0691ddfb5fa95a460e41e860cecda5b4a`. Scenario totals now derive from explicit evidence contributions; unusable and non-finite evidence is neutral; an unknown origin resort cannot silently inherit the default; and keep/swap/wait/review fixtures remain stable. The [separate Section 8A test checklist](section-8a-test-checklist.md) passed on August 31, 2026. Section 8A remains in progress until the separately commanded Finalize checkpoint.
+Final status: **complete and finalized August 31, 2026.** Frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) merged the typed source-owned evidence contract at `408617e0691ddfb5fa95a460e41e860cecda5b4a`. Scenario totals derive from explicit evidence contributions; unusable and non-finite evidence is neutral; an unknown origin resort cannot silently inherit the default; and keep/swap/wait/review fixtures remain stable. The [separate Section 8A test checklist](section-8a-test-checklist.md) passed before the user authorized Finalize. Section 8B is ready but has not started.
 
 ### 8B — Reservations and transportation
 
@@ -110,4 +110,4 @@ Section 8 uses separate approvals:
 4. repeat for 8B, 8C and 8D
 5. `Finalize Section 8` only after all four batches and production verification pass
 
-The exact next command after the Section 8A checklist is `Finalize Section 8A`.
+The exact next command after Section 8A Finalize is `Start Section 8B`.
