@@ -73,6 +73,7 @@ Important frontend areas include:
 - `app/lib/tripDecisionEvidence.ts` - typed Section 8 evidence contract and deterministic neutral-contribution boundary.
 - `app/lib/tripProfile.ts` - trip profile, reservation model, leave-by guidance.
 - `app/lib/tripResorts.ts` - overnight resort plan/options.
+- `app/lib/transportationPlanning.ts` - canonical resort-route timing, transfer timing, leave-by projection and deterministic route burden shared by Getting There, reservations and Trip Week decisions.
 - `app/lib/tripWeekApproval.ts` - scenario approval/lock state.
 - `app/components/TransportationPlanner.tsx` - Getting There guidance and route calculations.
 - `app/components/WeatherAwarePlanning.tsx` - weather risk mode and automatic weather advisory integration.
@@ -138,13 +139,15 @@ The frontend then combines those backend signals with browser-local inputs in `t
 - reservations,
 - no-park-hopping preference,
 - overnight resorts,
-- transportation convenience heuristics,
+- date- and origin-resort-assignable transportation route evidence,
 - historical forecast risk,
 - event risk.
 
 The final scenario change remains user-approved; CastleWatch must not silently rearrange the trip.
 
 Section 8A formalizes every current scenario input as source-owned evidence with availability, provenance, freshness, confidence, contribution and explanation. Scenario totals and category subtotals derive from those records. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence contributes zero. Weather and Lightning Lane source adapters remain future Section 8C work; the evidence contract defines their identifiers but does not score them yet.
+
+Section 8B replaces the duplicated Trip Week, reservation and Getting There route timing assumptions with `transportationPlanning.ts`. A scenario's transportation contribution is derived only from the route assigned to that park date and its previous-night resort. Unknown resort identifiers remain explicitly unassignable and neutral. Reservation leave-by guidance uses the same conservative route maximum, and confirmed-reservation, no-park-hopping and manual-approval boundaries remain unchanged.
 
 ## Weather data flow
 
