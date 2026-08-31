@@ -145,7 +145,7 @@ Canonical `PROJECT_TRACKER.md` now manages backend, frontend, known rebaseline a
 
 ### Section 8 - Resume product development
 
-Status: **Started — planning checkpoint complete; next command is `Start Section 8A`**
+Status: **In progress — Section 8A implementation merged; next command is `Start Section 8A test checklist`**
 
 Complete **Trip Week Phase 2 - Unified Recommendation Engine** rather than restarting it.
 
@@ -159,6 +159,8 @@ The bounded delivery contract is recorded in `docs/section-8-trip-week-phase-2.m
 - **8D:** decision explainability, manual-control preservation and coordinated release verification.
 
 The Start checkpoint changes documentation and work state only. It does not change recommendation logic, the itinerary, saved/shared data, production state, credentials/devices, schema, dependencies/runtime, deployment configuration or family-key state.
+
+Section 8A frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) added a typed, source-owned evidence contract and made scenario totals derive from those contributions. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence is deterministically neutral. Direct fixtures preserve keep/swap/wait/review, reservation and no-park-hopping behavior. Section 8A remains in progress until its separate test checklist and Finalize checkpoints complete.
 
 ---
 
