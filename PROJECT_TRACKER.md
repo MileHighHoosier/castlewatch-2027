@@ -4,11 +4,11 @@ _Canonical cross-repository tracker · audited August 31, 2026_
 
 ## Fresh-agent handoff
 
-- **Current phase:** Sections 1–7 and Section 8A are complete; the Section 8B test checklist passed and awaits separate Finalize approval.
+- **Current phase:** Sections 1–7 and Sections 8A–8B are complete; Section 8C has not started.
 - **Current blocker:** none.
-- **Exact next command:** `Finalize Section 8B`.
+- **Exact next command:** `Start Section 8C`.
 - **Governing sources:** [PROJECT_STATE.md](PROJECT_STATE.md), [ROADMAP.md](ROADMAP.md), [Section 8 contract](docs/section-8-trip-week-phase-2.md), and backend issue [#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66).
-- **Repository snapshot after the Section 8B checklist:** backend checklist checkpoint pending this documentation merge; frontend `8219b50b9943ab7f435f6dd892779d7b176c8b16`.
+- **Repository snapshot after Section 8B:** backend checklist checkpoint `0f35329eb730d21b13c067c65ae46770521fb031`; frontend `8219b50b9943ab7f435f6dd892779d7b176c8b16`.
 
 This is the one version-controlled work tracker for CastleWatch. GitHub issues and pull requests remain authoritative implementation evidence. `PROJECT_STATE.md` remains authoritative product state, and `ROADMAP.md` remains authoritative phase order.
 
@@ -34,9 +34,8 @@ QC status values:
 | ID | Phase | Task | Status | Owner/agent | Acceptance criteria | Dependencies | QC status | GitHub | Last update | Exact next action |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | CW-003 | Operations follow-up | Decide disposition of browser-local usage counters | NEEDS_DECISION | User | Choose whether frontend issue #14 is superseded by Operations v1 or belongs in later operations work | None | NOT_APPLICABLE | [frontend#14](https://github.com/MileHighHoosier/castlewatch-frontend/issues/14), [backend#7](https://github.com/MileHighHoosier/castlewatch-2027/issues/7) | 2026-08-31 | Decide whether to close frontend #14 as superseded or schedule it as later operations work. |
-| CW-004 | Section 8 | Complete Trip Week Phase 2 unified recommendation engine | IN_PROGRESS | User + Codex | The existing engine is extended through approved 8A–8D checkpoints; unusable evidence stays explicit and neutral; itinerary changes remain user-approved | None | IN_REVIEW | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [contract](docs/section-8-trip-week-phase-2.md) | 2026-08-31 | Run `Finalize Section 8B`. |
-| CW-017 | Section 8B | Align reservation and transportation scoring | IN_PROGRESS | User + Codex | Confirmed-booking/no-hopping gates remain intact and scenario travel uses one date/resort-assignable route model aligned with Getting There | CW-004 | PASSED | [frontend#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53), [checklist](docs/section-8b-test-checklist.md), [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-08-31 | Await the separate user command `Finalize Section 8B`. |
-| CW-018 | Section 8C | Integrate trustworthy weather and assignable Lightning Lane signals | BLOCKED | User + Codex | Weather is horizon/freshness-aware; Lightning Lane evidence contributes only when validly assigned; missing or unusable evidence is neutral | CW-004, CW-017 | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-08-31 | Complete and finalize Section 8B before starting Section 8C. |
+| CW-004 | Section 8 | Complete Trip Week Phase 2 unified recommendation engine | IN_PROGRESS | User + Codex | The existing engine is extended through approved 8A–8D checkpoints; unusable evidence stays explicit and neutral; itinerary changes remain user-approved | None | IN_REVIEW | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [contract](docs/section-8-trip-week-phase-2.md) | 2026-08-31 | Run `Start Section 8C`. |
+| CW-018 | Section 8C | Integrate trustworthy weather and assignable Lightning Lane signals | NOT_STARTED | User + Codex | Weather is horizon/freshness-aware; Lightning Lane evidence contributes only when validly assigned; missing or unusable evidence is neutral | None | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-08-31 | Run `Start Section 8C`. |
 | CW-019 | Section 8D | Complete explainability and coordinated release verification | BLOCKED | User + Codex | Decision breakdown and manual controls are clear; full frontend/backend/mobile/production checks pass before Section 8 Finalize | CW-018 | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-08-31 | Complete and finalize Sections 8A–8C before starting Section 8D. |
 | CW-005 | Stabilization | Harden ride-refresh authorization and interface | NOT_STARTED | Unassigned | Public compatibility GET is replaced or protected without breaking bounded refresh safety | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Open a bounded design issue when the user prioritizes this high-risk item. |
 | CW-006 | Stabilization | Reduce remaining dynamic HTML and imperative frontend state debt | NOT_STARTED | Unassigned | Remaining sinks and polling/DOM patches are audited and split into regression-backed repair issues | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Audit the remaining frontend sinks and state patches, then propose small repair issues. |
@@ -57,6 +56,7 @@ QC status values:
 | Sections 1–6 | Complete and production-verified through August 31, 2026 | [PROJECT_STATE](PROJECT_STATE.md#rebaseline-stabilization-status), [ROADMAP](ROADMAP.md), [Section 6 issue #53](https://github.com/MileHighHoosier/castlewatch-2027/issues/53) |
 | Section 7 | Complete and finalized August 31, 2026 | [Section 7 issue #61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61), [implementation PR #63](https://github.com/MileHighHoosier/castlewatch-2027/pull/63), [handoff PR #64](https://github.com/MileHighHoosier/castlewatch-2027/pull/64) |
 | Section 8A | Complete and finalized August 31, 2026 | [frontend PR #52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52), [checklist](docs/section-8a-test-checklist.md), [checklist PR #69](https://github.com/MileHighHoosier/castlewatch-2027/pull/69) |
+| Section 8B | Complete and finalized August 31, 2026 | [frontend PR #53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53), [checklist](docs/section-8b-test-checklist.md), [checklist PR #72](https://github.com/MileHighHoosier/castlewatch-2027/pull/72) |
 
 Completed work is summarized here instead of being expanded into active task rows. Individual merged evidence remains in the linked project state, roadmap and GitHub records.
 
