@@ -70,6 +70,7 @@ Important frontend areas include:
 - `app/components/TripWeekPlanner.tsx` - trip-week rendering, resort editing, reservations and scenario controls.
 - `app/components/TripWeekDecisionPanel.tsx` - assembles browser-local trip inputs and renders decision/support panels.
 - `app/lib/tripDecisionEngine.ts` - base-vs-alternate scenario scoring and recommendation logic.
+- `app/lib/tripDecisionEvidence.ts` - typed Section 8 evidence contract and deterministic neutral-contribution boundary.
 - `app/lib/tripProfile.ts` - trip profile, reservation model, leave-by guidance.
 - `app/lib/tripResorts.ts` - overnight resort plan/options.
 - `app/lib/tripWeekApproval.ts` - scenario approval/lock state.
@@ -142,6 +143,8 @@ The frontend then combines those backend signals with browser-local inputs in `t
 - event risk.
 
 The final scenario change remains user-approved; CastleWatch must not silently rearrange the trip.
+
+Section 8A formalizes every current scenario input as source-owned evidence with availability, provenance, freshness, confidence, contribution and explanation. Scenario totals and category subtotals derive from those records. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence contributes zero. Weather and Lightning Lane source adapters remain future Section 8C work; the evidence contract defines their identifiers but does not score them yet.
 
 ## Weather data flow
 

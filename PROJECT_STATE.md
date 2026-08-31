@@ -572,13 +572,15 @@ The audit reconciled backend issue [#61](https://github.com/MileHighHoosier/cast
 
 ### Section 8 - Trip Week Phase 2 unified recommendation engine
 
-**Started August 31, 2026; implementation has not started.**
+**In progress; Section 8A implementation merged August 31, 2026 and its separate test checklist is pending.**
 
 The Start audit confirmed that Section 8 extends the substantial existing frontend engine rather than replacing it. The current keep/swap/wait/review decision already combines backend event/calendar risk, reservation conflicts, no-park-hopping, overnight resort convenience and historical directional crowd evidence while preserving manual scenario approval.
 
 `docs/section-8-trip-week-phase-2.md` and backend issue [#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) divide delivery into separately approved 8A–8D checkpoints: typed evidence/scoring contracts; reservation and transportation alignment; trustworthy weather and assignable Lightning Lane integration; then explainability and coordinated release verification. Unavailable, stale, out-of-horizon or unassignable evidence must be explicit and neutral. Confirmed reservation conflicts remain a hard review gate, and itinerary changes remain user-approved.
 
 The Start checkpoint changes documentation and tracker state only. It does not change recommendation behavior, the October 9–16, 2027 plan, saved/shared data, production state, credentials/devices, schema, dependencies/runtime, deployment configuration or family-key state.
+
+Section 8A frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) added `app/lib/tripDecisionEvidence.ts` as the typed evidence boundary for availability, provenance, freshness, confidence, contribution and explanation. `tripDecisionEngine.ts` now derives each scenario total and category subtotal from explicit source-owned evidence. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence contributes zero; unknown resort identifiers no longer silently use the default resort. Direct fixtures preserve the established keep/swap/wait/review outcomes, confirmed-reservation review gate, no-park-hopping weighting and manual approval boundary. The change passed 122 frontend contracts, the production build and GitHub Actions including the mobile smoke; no visible UI or production/shared state changed. Section 8A remains open for its separately commanded test checklist and Finalize checkpoint.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -604,11 +606,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **Trip Week Phase 2 - Section 8 started**
 
-Sections 1–7 are complete. Section 8's bounded 8A–8D delivery contract is open, but no implementation batch has started. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–7 are complete. Section 8A implementation is merged; its test checklist and Finalize checkpoint remain pending before Section 8B can start. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Run `Start Section 8A` to begin the typed evidence and scoring contract.**
-2. Preserve the existing recommendation outcomes and manual approval boundary while establishing explicit neutral behavior for unusable signals.
+1. **Run `Start Section 8A test checklist`.**
+2. Finalize Section 8A only after its separate checklist passes; do not start Section 8B early.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.

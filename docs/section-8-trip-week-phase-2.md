@@ -50,6 +50,8 @@ Acceptance:
 - backend and frontend ownership boundaries remain explicit;
 - no itinerary mutation or production-state change.
 
+Implementation status: frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) merged the typed source-owned evidence contract at `408617e0691ddfb5fa95a460e41e860cecda5b4a`. Scenario totals now derive from explicit evidence contributions; unusable and non-finite evidence is neutral; an unknown origin resort cannot silently inherit the default; and keep/swap/wait/review fixtures remain stable. The separate Section 8A test checklist and Finalize approvals remain pending.
+
 ### 8B — Reservations and transportation
 
 Align recommendation scoring with the existing reservation and Getting There models.
@@ -108,4 +110,4 @@ Section 8 uses separate approvals:
 4. repeat for 8B, 8C and 8D
 5. `Finalize Section 8` only after all four batches and production verification pass
 
-The exact next command after this Start checkpoint merges is `Start Section 8A`.
+The exact next command after the Section 8A implementation merge is `Start Section 8A test checklist`.

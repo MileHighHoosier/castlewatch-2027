@@ -4,11 +4,11 @@ _Canonical cross-repository tracker · audited August 31, 2026_
 
 ## Fresh-agent handoff
 
-- **Current phase:** Sections 1–7 are complete; Section 8 has started as four separately approved 8A–8D checkpoints. No Section 8 implementation batch has started.
+- **Current phase:** Sections 1–7 are complete; Section 8A implementation is merged and its separate test checklist is pending.
 - **Current blocker:** none.
-- **Exact next command:** `Start Section 8A`.
+- **Exact next command:** `Start Section 8A test checklist`.
 - **Governing sources:** [PROJECT_STATE.md](PROJECT_STATE.md), [ROADMAP.md](ROADMAP.md), [Section 8 contract](docs/section-8-trip-week-phase-2.md), and backend issue [#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66).
-- **Repository snapshot before Section 8 Start:** backend `f0870ae675eb15accc90770478c7ddffe5c5d564`; frontend `90fa1f5eb3d2803e728ce7fcf067fd6f8edd6c0f`.
+- **Repository snapshot after Section 8A implementation:** backend `eace72f9b4b5be427e11603a94095bb0b9bb798f`; frontend `408617e0691ddfb5fa95a460e41e860cecda5b4a`.
 
 This is the one version-controlled work tracker for CastleWatch. GitHub issues and pull requests remain authoritative implementation evidence. `PROJECT_STATE.md` remains authoritative product state, and `ROADMAP.md` remains authoritative phase order.
 
@@ -34,8 +34,8 @@ QC status values:
 | ID | Phase | Task | Status | Owner/agent | Acceptance criteria | Dependencies | QC status | GitHub | Last update | Exact next action |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | CW-003 | Operations follow-up | Decide disposition of browser-local usage counters | NEEDS_DECISION | User | Choose whether frontend issue #14 is superseded by Operations v1 or belongs in later operations work | None | NOT_APPLICABLE | [frontend#14](https://github.com/MileHighHoosier/castlewatch-frontend/issues/14), [backend#7](https://github.com/MileHighHoosier/castlewatch-2027/issues/7) | 2026-08-31 | Decide whether to close frontend #14 as superseded or schedule it as later operations work. |
-| CW-004 | Section 8 | Complete Trip Week Phase 2 unified recommendation engine | IN_PROGRESS | User + Codex | The existing engine is extended through approved 8A–8D checkpoints; unusable evidence stays explicit and neutral; itinerary changes remain user-approved | None | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [contract](docs/section-8-trip-week-phase-2.md) | 2026-08-31 | Run `Start Section 8A`. |
-| CW-016 | Section 8A | Establish the typed evidence and scoring contract | NOT_STARTED | User + Codex | Signal availability, provenance, freshness, confidence, contribution and explanation are explicit while existing outcomes remain regression-protected | CW-004 | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-08-31 | Run `Start Section 8A`. |
+| CW-004 | Section 8 | Complete Trip Week Phase 2 unified recommendation engine | IN_PROGRESS | User + Codex | The existing engine is extended through approved 8A–8D checkpoints; unusable evidence stays explicit and neutral; itinerary changes remain user-approved | None | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [contract](docs/section-8-trip-week-phase-2.md) | 2026-08-31 | Run `Start Section 8A test checklist`. |
+| CW-016 | Section 8A | Establish the typed evidence and scoring contract | IN_PROGRESS | User + Codex | Signal availability, provenance, freshness, confidence, contribution and explanation are explicit while existing outcomes remain regression-protected | CW-004 | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [frontend#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) | 2026-08-31 | Run `Start Section 8A test checklist`. |
 | CW-017 | Section 8B | Align reservation and transportation scoring | BLOCKED | User + Codex | Confirmed-booking/no-hopping gates remain intact and scenario travel uses one date/resort-assignable route model aligned with Getting There | CW-016 | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-08-31 | Complete and finalize CW-016 before starting Section 8B. |
 | CW-018 | Section 8C | Integrate trustworthy weather and assignable Lightning Lane signals | BLOCKED | User + Codex | Weather is horizon/freshness-aware; Lightning Lane evidence contributes only when validly assigned; missing or unusable evidence is neutral | CW-016, CW-017 | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-08-31 | Complete and finalize Sections 8A–8B before starting Section 8C. |
 | CW-019 | Section 8D | Complete explainability and coordinated release verification | BLOCKED | User + Codex | Decision breakdown and manual controls are clear; full frontend/backend/mobile/production checks pass before Section 8 Finalize | CW-018 | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-08-31 | Complete and finalize Sections 8A–8C before starting Section 8D. |
