@@ -2,9 +2,9 @@
 
 ## Status
 
-**Tracker implemented and checklist passed August 31, 2026 — separate Finalize checkpoint pending.**
+**Complete and finalized August 31, 2026.**
 
-Section 6 is complete. The canonical tracker, cross-repository reconciliation, maintenance rules, fresh-agent handoff and repeatable structural QC now exist. The live tracker is backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61).
+Sections 1–7 are complete. The canonical tracker, cross-repository reconciliation, maintenance rules, fresh-agent handoff and repeatable structural QC are implemented and finalized. Backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) records the completed checklist.
 
 ## Goal
 
@@ -48,6 +48,8 @@ Status and QC values must use explicit documented vocabularies rather than free-
 - Its fresh-agent handoff identifies the current phase, blocker, repository sources and exact next command.
 - `scripts/validate_project_tracker.py` and `tests/test_project_tracker.py` enforce the exact schema, required cells, stable unique IDs, allowed vocabularies, valid dependencies, dates, executable next actions and forbidden credential patterns.
 - The work made no production/product/data/credential/device/dependency/runtime/schema/family-key mutation.
+- Implementation PR [#63](https://github.com/MileHighHoosier/castlewatch-2027/pull/63) and handoff-alignment PR [#64](https://github.com/MileHighHoosier/castlewatch-2027/pull/64) merged after their local and pinned Python 3.12.14 CI gates passed.
+- The separate Finalize checkpoint moved Section 7 into completed history, removed its completed active rows, unblocked future work and made `Start Section 8` the exact next command.
 
 ## Acceptance criteria
 
@@ -63,4 +65,4 @@ Status and QC values must use explicit documented vocabularies rather than free-
 - [x] A repeatable QC check validates tracker structure, unique task IDs and allowed vocabulary values.
 - [x] No production/product/data/credential/device/dependency/runtime/schema/family-key mutation occurs during Section 7.
 
-The Section 7 implementation and test checklist is complete. Section 7 remains open only for the separately commanded Finalize checkpoint. Section 8 remains unstarted.
+Section 7 is closed. Section 8 remains unstarted and requires its own separate Start checkpoint.
