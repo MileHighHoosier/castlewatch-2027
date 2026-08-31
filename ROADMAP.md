@@ -145,7 +145,7 @@ Canonical `PROJECT_TRACKER.md` now manages backend, frontend, known rebaseline a
 
 ### Section 8 - Resume product development
 
-Status: **In progress — Section 8B checklist passed; next command is `Finalize Section 8B`**
+Status: **In progress — Sections 8A–8B finalized; next command is `Start Section 8C`**
 
 Complete **Trip Week Phase 2 - Unified Recommendation Engine** rather than restarting it.
 
@@ -162,7 +162,7 @@ The Start checkpoint changes documentation and work state only. It does not chan
 
 Section 8A frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) added a typed, source-owned evidence contract and made scenario totals derive from those contributions. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence is deterministically neutral. Direct fixtures preserve keep/swap/wait/review, reservation and no-park-hopping behavior. The separate [Section 8A test checklist](docs/section-8a-test-checklist.md) passed before the user authorized Finalize. Section 8A is complete.
 
-Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53) replaced duplicated broad transportation assumptions with one reusable route/timing model shared by Getting There, reservation leave-by guidance and Trip Week scenario scoring. Only routes assignable to the scenario park date and previous-night resort contribute; unknown origins remain explicit and neutral. Base/alternate split-stay, reservation and resort-transfer regressions accompany the preserved confirmed-booking/no-hopping/manual-control gates. The separate [Section 8B test checklist](docs/section-8b-test-checklist.md) passed frontend/backend/mobile gates and read-only production verification; separate Finalize approval remains pending.
+Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53) replaced duplicated broad transportation assumptions with one reusable route/timing model shared by Getting There, reservation leave-by guidance and Trip Week scenario scoring. Only routes assignable to the scenario park date and previous-night resort contribute; unknown origins remain explicit and neutral. Base/alternate split-stay, reservation and resort-transfer regressions accompany the preserved confirmed-booking/no-hopping/manual-control gates. The separate [Section 8B test checklist](docs/section-8b-test-checklist.md) passed frontend/backend/mobile gates and read-only production verification before the user separately authorized Finalize. Section 8B is complete; Section 8C has not started.
 
 ---
 
