@@ -64,6 +64,8 @@ Acceptance:
 - only evidence assignable to a scenario date and origin resort contributes to its score;
 - base/alternate resort, transfer and reservation cases have regression coverage.
 
+Implementation status: **merged August 31, 2026; separate test checklist pending.** Frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53) added one conservative route/timing model used by Getting There, reservation leave-by guidance and Trip Week scoring. Scenario route evidence is assigned from the park date and its previous-night resort; unknown origins are explicitly not assignable and contribute zero. Direct regressions cover base/alternate split-stay routes, resort transfers, reservations and the preserved keep/swap/wait/review, confirmed-reservation and no-park-hopping gates. The implementation passed 126 frontend tests, the production build and exact-head GitHub Actions. Section 8B is not finalized; the exact next command is `Start Section 8B test checklist`.
+
 ### 8C — Weather and Lightning Lane
 
 Integrate these signals only when the saved evidence can validly affect the compared Trip Week scenarios.
@@ -110,4 +112,4 @@ Section 8 uses separate approvals:
 4. repeat for 8B, 8C and 8D
 5. `Finalize Section 8` only after all four batches and production verification pass
 
-The exact next command after Section 8A Finalize is `Start Section 8B`.
+The exact next command after the Section 8B implementation merge is `Start Section 8B test checklist`.
