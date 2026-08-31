@@ -562,6 +562,14 @@ The final backend gates passed all 90 contracts and production-module compilatio
 
 **Section 6 is complete. `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.**
 
+### Section 7 - Lightweight project tracker
+
+**Started with a separate checkpoint on August 31, 2026; implementation pending.**
+
+Section 7 will establish one canonical version-controlled tracker for backend and frontend work with stable task IDs; explicit status and QC vocabularies; the required phase, task, owner, acceptance, dependency, evidence, update and next-action fields; reconciliation with both repositories; checkpoint maintenance rules; fresh-agent handoff verification; and repeatable structural QC.
+
+The start checkpoint changes documentation and tracking scope only. It does not implement the tracker, start Section 8, change application behavior or authorize a production/data/credential/device/dependency/runtime/schema/family-key change. Backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) is the live Section 7 checklist, and `docs/section-7-project-tracker.md` is the governing contract.
+
 ## Known rebaseline findings still requiring remediation
 
 ### High priority
@@ -584,13 +592,14 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Sections 1–6 complete**
+**CastleWatch Rebaseline & Stabilization - Sections 1–6 complete; Section 7 started**
 
-Sections 1–6 are complete and production-verified. Section 6D closed the mobile, failure-state and final production-smoke work after its separately approved start and finalize checkpoints. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–6 are complete and production-verified. Section 7 has a separate start checkpoint and will establish the lightweight cross-repository tracker; no Section 7 implementation criterion is complete yet. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Section 7 - establish a lightweight project/task tracker through a separate Start checkpoint.**
-2. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Execute the Section 7 tracker implementation and test checklist after the separate Start checkpoint merges.**
+2. Separately finalize Section 7 after the tracker, repository reconciliation, handoff check and structural QC pass.
+3. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
