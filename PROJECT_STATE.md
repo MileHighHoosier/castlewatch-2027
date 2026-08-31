@@ -564,11 +564,11 @@ The final backend gates passed all 90 contracts and production-module compilatio
 
 ### Section 7 - Lightweight project tracker
 
-**Started with a separate checkpoint on August 31, 2026; implementation pending.**
+**Implementation and checklist complete August 31, 2026; separate Finalize checkpoint pending.**
 
-Section 7 will establish one canonical version-controlled tracker for backend and frontend work with stable task IDs; explicit status and QC vocabularies; the required phase, task, owner, acceptance, dependency, evidence, update and next-action fields; reconciliation with both repositories; checkpoint maintenance rules; fresh-agent handoff verification; and repeatable structural QC.
+Section 7 established canonical `PROJECT_TRACKER.md` for backend and frontend work with 15 stable active/future task IDs; explicit status and QC vocabularies; the required phase, task, owner, acceptance, dependency, evidence, update and next-action fields; reconciliation with both repositories; checkpoint maintenance rules; fresh-agent handoff verification; and repeatable structural QC in `scripts/validate_project_tracker.py` plus focused tests.
 
-The start checkpoint changes documentation and tracking scope only. It does not implement the tracker, start Section 8, change application behavior or authorize a production/data/credential/device/dependency/runtime/schema/family-key change. Backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) is the live Section 7 checklist, and `docs/section-7-project-tracker.md` is the governing contract.
+The audit reconciled backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61), frontend issue [#14](https://github.com/MileHighHoosier/castlewatch-frontend/issues/14), the roadmap and known rebaseline debt without reopening completed Sections 1–6. Frontend #14 remains an explicit user decision rather than being silently closed. This checkpoint does not start Section 8, change application behavior or authorize a production/data/credential/device/dependency/runtime/schema/family-key change. The live checklist is backend issue #61, and `docs/section-7-project-tracker.md` is the governing contract.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -592,14 +592,13 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Sections 1–6 complete; Section 7 started**
+**CastleWatch Rebaseline & Stabilization - Sections 1–6 complete; Section 7 checklist passed**
 
-Sections 1–6 are complete and production-verified. Section 7 has a separate start checkpoint and will establish the lightweight cross-repository tracker; no Section 7 implementation criterion is complete yet. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–6 are complete and production-verified. Section 7's canonical cross-repository tracker and structural QC are implemented and its checklist passed; only the separately commanded Finalize checkpoint remains. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Execute the Section 7 tracker implementation and test checklist after the separate Start checkpoint merges.**
-2. Separately finalize Section 7 after the tracker, repository reconciliation, handoff check and structural QC pass.
-3. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Run the separately commanded `Finalize Section 7` checkpoint after this implementation checkpoint merges.**
+2. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
