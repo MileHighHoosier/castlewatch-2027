@@ -64,7 +64,7 @@ Acceptance:
 - only evidence assignable to a scenario date and origin resort contributes to its score;
 - base/alternate resort, transfer and reservation cases have regression coverage.
 
-Checklist status: **passed August 31, 2026; separate Finalize approval pending.** Frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53) added one conservative route/timing model used by Getting There, reservation leave-by guidance and Trip Week scoring. Scenario route evidence is assigned from the park date and its previous-night resort; unknown origins are explicitly not assignable and contribute zero. The [separate Section 8B test checklist](section-8b-test-checklist.md) passed direct base/alternate split-stay, resort-transfer, reservation, keep/swap/wait/review, confirmed-reservation and no-park-hopping regressions; production build; exact-head frontend/backend CI including mobile smoke; and read-only production verification. Section 8B is not finalized; the exact next command is `Finalize Section 8B`.
+Final status: **complete and finalized August 31, 2026.** Frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53) added one conservative route/timing model used by Getting There, reservation leave-by guidance and Trip Week scoring. Scenario route evidence is assigned from the park date and its previous-night resort; unknown origins are explicitly not assignable and contribute zero. The [separate Section 8B test checklist](section-8b-test-checklist.md) passed direct base/alternate split-stay, resort-transfer, reservation, keep/swap/wait/review, confirmed-reservation and no-park-hopping regressions; production build; exact-head frontend/backend CI including mobile smoke; and read-only production verification. The user separately authorized Finalize. Section 8C has not started; the exact next command is `Start Section 8C`.
 
 ### 8C — Weather and Lightning Lane
 
@@ -112,4 +112,4 @@ Section 8 uses separate approvals:
 4. repeat for 8B, 8C and 8D
 5. `Finalize Section 8` only after all four batches and production verification pass
 
-The exact next command after the Section 8B test checklist is `Finalize Section 8B`.
+The exact next command after Section 8B Finalize is `Start Section 8C`.

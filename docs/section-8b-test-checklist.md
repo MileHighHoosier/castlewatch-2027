@@ -4,7 +4,7 @@ _Verification checkpoint · August 31, 2026_
 
 ## Result
 
-**Passed.** Section 8B's reservation and transportation alignment is regression-protected and ready for its separate Finalize checkpoint. This checklist does not finalize Section 8B or start Section 8C.
+**Passed and finalized August 31, 2026.** Section 8B's reservation and transportation alignment is regression-protected. The user separately authorized Finalize after this checklist passed. Section 8C has not started.
 
 ## Acceptance evidence
 
@@ -42,8 +42,8 @@ _Verification checkpoint · August 31, 2026_
 - No schema, dependency/runtime or deployment configuration changed.
 - No secret, family key, raw device token or invite token was added to source or output.
 - `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.
-- Section 8C remains blocked until the user separately commands and completes `Finalize Section 8B`.
+- Section 8C was not started by the Finalize checkpoint.
 
 ## Exact next command
 
-`Finalize Section 8B`
+`Start Section 8C`
