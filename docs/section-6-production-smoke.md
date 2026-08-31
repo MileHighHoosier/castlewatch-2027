@@ -2,9 +2,9 @@
 
 ## Status
 
-**Section 6D started — separate start checkpoint opened August 30, 2026.**
+**Section 6 complete — Section 6D finalized August 31, 2026.**
 
-Sections 6A, 6B and 6C are complete and finalized. Section 6D is scoped for execution, but no 6D acceptance criterion is complete yet.
+Sections 6A, 6B, 6C and 6D are complete and finalized. Production verification is closed; later feature development begins through a separate checkpoint.
 
 Section 6 verifies the deployed Vercel/Railway system across critical user flows. It is a production-verification phase, not a feature sprint. Any defect discovered here must be isolated, documented and separately repaired with the normal test/build/deployment gates.
 
@@ -213,17 +213,31 @@ The start checkpoint itself makes no browser or production mutation. Later tempo
 
 ## Section 6D acceptance criteria
 
-- [ ] Exact frontend/backend production heads, authoritative deployments and live frontend/Railway health are current and successful at closeout.
-- [ ] At 390×844 mobile portrait, all six primary destinations remain reachable with usable touch targets, the intended three-column navigation and no material horizontal overflow.
-- [ ] Sticky navigation and mobile layout do not make required park, Trip Week or Getting There content and controls unreachable.
-- [ ] Critical park tabs, Live Plan and temporary browser-local Lightning Lane/emergency interactions remain usable on mobile, with temporary state restored.
-- [ ] Trip Week profile, itinerary, reservation, resort, transportation, recommendation and shared-plan information remain readable and coherent on mobile without an unauthorized write.
-- [ ] Shared-plan status, Family devices, history and Operations present role-appropriate mobile controls without exposing credentials or enabling an unauthorized action.
-- [ ] Confirmation, warning, read-only and unavailable states fit the mobile viewport and preserve a reachable safe action or cancel path.
-- [ ] Safely simulated backend or external-source failures render explicit disconnected, stale, unknown or unavailable states rather than blank, falsely healthy or invented-zero data.
-- [ ] Simulated server and credential failures remain sanitized, reject unauthorized access without silent family-key fallback and recover cleanly when normal responses return.
-- [ ] The full backend and frontend contract suites, backend compilation, frontend production build and dependency-free mobile browser smoke pass on the final heads.
-- [ ] Every production-verification defect found during 6D is linked, reconciled and either repaired and redeployed or explicitly carried forward with user-visible impact documented.
-- [ ] No unauthorized production/shared-plan/profile/itinerary/reservation/resort/recommendation/credential/device/dependency/runtime/schema/family-key mutation occurs during 6D.
+- [x] Exact frontend/backend production heads, authoritative deployments and live frontend/Railway health are current and successful at closeout.
+- [x] At 390×844 mobile portrait, all six primary destinations remain reachable with usable touch targets, the intended three-column navigation and no material horizontal overflow.
+- [x] Sticky navigation and mobile layout do not make required park, Trip Week or Getting There content and controls unreachable.
+- [x] Critical park tabs, Live Plan and temporary browser-local Lightning Lane/emergency interactions remain usable on mobile, with temporary state restored.
+- [x] Trip Week profile, itinerary, reservation, resort, transportation, recommendation and shared-plan information remain readable and coherent on mobile without an unauthorized write.
+- [x] Shared-plan status, Family devices, history and Operations present role-appropriate mobile controls without exposing credentials or enabling an unauthorized action.
+- [x] Confirmation, warning, read-only and unavailable states fit the mobile viewport and preserve a reachable safe action or cancel path.
+- [x] Safely simulated backend or external-source failures render explicit disconnected, stale, unknown or unavailable states rather than blank, falsely healthy or invented-zero data.
+- [x] Simulated server and credential failures remain sanitized, reject unauthorized access without silent family-key fallback and recover cleanly when normal responses return.
+- [x] The full backend and frontend contract suites, backend compilation, frontend production build and dependency-free mobile browser smoke pass on the final heads.
+- [x] Every production-verification defect found during 6D is linked, reconciled and either repaired and redeployed or explicitly carried forward with user-visible impact documented.
+- [x] No unauthorized production/shared-plan/profile/itinerary/reservation/resort/recommendation/credential/device/dependency/runtime/schema/family-key mutation occurs during 6D.
 
-This start checkpoint establishes scope only. Section 6D and Section 6 remain open until a separate Finalize checkpoint records the evidence, reconciles defects, confirms exact-head deployments and makes every acceptance decision.
+## Section 6D production evidence and finalization
+
+Verified August 31, 2026:
+
+- the pre-finalize production heads were backend `04898269c0daa6c45aef464bbb7f0fb0a14b2166` and frontend `90fa1f5eb3d2803e728ce7fcf067fd6f8edd6c0f`; their authoritative Railway and `castlewatch-frontend` Vercel deployments succeeded, the live frontend returned HTTP 200 and Railway `/health` returned HTTP 200 with `{"status":"ok"}`;
+- exact-head Node 22 mobile smoke at 390×844 verified six destination controls, minimum 44-pixel targets, the intended three-column navigation, no horizontal overflow, park switching, critical tabs and a temporary Lightning Lane round trip restored to empty;
+- live production checks confirmed sticky navigation at `top: 0`, reachable six-destination controls, 48-pixel Getting There day controls and readable park, Trip Week, reservation, resort, transportation, recommendation, shared-plan, Family devices, history and warning content;
+- confirmation, warning, read-only and unavailable states retained a reachable safe or cancel path; disconnected Operations stayed read only and disabled report refresh;
+- isolated browser and automated failure evidence covered stale/unknown weather, partial and total calendar-source failures, contained forecast failure, sanitized generic server failure, rejected or revoked selected credentials, conflict-safe shared sync and clean disconnected recovery without family-key fallback;
+- unauthenticated shared-plan, history, Operations and device-access requests continued to fail closed with the same sanitized HTTP 401 response, while current contracts preserved the Owner/Editor/Viewer authorization boundaries;
+- the final backend suite passed all 90 contracts and production-module compilation; the frontend suite passed 114 contracts after the production repair, the production Next.js build and the dependency-free mobile-browser smoke;
+- the only 6D finding, frontend issue [#50](https://github.com/MileHighHoosier/castlewatch-frontend/issues/50), was repaired in frontend PR [#51](https://github.com/MileHighHoosier/castlewatch-frontend/pull/51) at merge `90fa1f5eb3d2803e728ce7fcf067fd6f8edd6c0f`; authoritative Vercel deployment succeeded and a fresh connected-Owner production screenshot confirmed the shared-plan timestamp and `Credential: Ryan Brave Owner · owner.` render on separate lines; and
+- no family key or raw device/invite credential was entered, displayed or recorded, and no production shared-plan/profile/itinerary/reservation/resort/recommendation/credential/device/dependency/runtime/schema/family-key state changed.
+
+All Section 6D acceptance criteria passed. This separate Finalize checkpoint closes Section 6D and Section 6 without starting Section 7. `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.
