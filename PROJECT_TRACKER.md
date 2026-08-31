@@ -4,9 +4,9 @@ _Canonical cross-repository tracker · audited August 31, 2026_
 
 ## Fresh-agent handoff
 
-- **Current phase:** Section 7 tracker implementation and checklist are in review; Sections 1–6 are complete and production-verified.
-- **Current blocker:** the implementation checkpoint must merge before the separately commanded Section 7 Finalize checkpoint.
-- **Exact next command after this checkpoint merges:** `Finalize Section 7`.
+- **Current phase:** Section 7 tracker implementation and checklist are complete; Sections 1–6 are complete and production-verified.
+- **Current blocker:** none; Section 7 closure is waiting for the separately commanded Finalize checkpoint.
+- **Exact next command:** `Finalize Section 7`.
 - **Governing sources:** [PROJECT_STATE.md](PROJECT_STATE.md), [ROADMAP.md](ROADMAP.md), [Section 7 contract](docs/section-7-project-tracker.md), and backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61).
 - **Repository snapshot:** backend `78926483a8509825703ec093dadee8d257301259`; frontend `90fa1f5eb3d2803e728ce7fcf067fd6f8edd6c0f`.
 
@@ -33,8 +33,8 @@ QC status values:
 
 | ID | Phase | Task | Status | Owner/agent | Acceptance criteria | Dependencies | QC status | GitHub | Last update | Exact next action |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| CW-001 | Section 7 | Implement the canonical project tracker | IN_PROGRESS | Codex | Both repositories reconciled; required fields populated; validator and tests pass; handoff is recoverable | None | IN_REVIEW | [backend#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) | 2026-08-31 | Merge the Section 7 implementation checkpoint and record its evidence in backend issue #61. |
-| CW-002 | Section 7 | Finalize Section 7 | BLOCKED | User + Codex | Implementation is merged; issue checklist is complete; state and roadmap record closeout | CW-001 | NOT_RUN | [backend#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) | 2026-08-31 | After CW-001 merges, run `Finalize Section 7`. |
+| CW-001 | Section 7 | Complete the canonical project tracker checkpoint | IN_PROGRESS | Codex | Both repositories reconciled; required fields populated; validator and tests pass; handoff is recoverable | None | PASSED | [backend#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61), [backend#63](https://github.com/MileHighHoosier/castlewatch-2027/pull/63) | 2026-08-31 | Preserve the passed checklist evidence while Section 7 awaits its separate Finalize checkpoint. |
+| CW-002 | Section 7 | Finalize Section 7 | NOT_STARTED | User + Codex | Implementation is merged; issue checklist is complete; state and roadmap record closeout | CW-001 | NOT_RUN | [backend#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) | 2026-08-31 | Run `Finalize Section 7`. |
 | CW-003 | Operations follow-up | Decide disposition of browser-local usage counters | NEEDS_DECISION | User | Choose whether frontend issue #14 is superseded by Operations v1 or belongs in later operations work | None | NOT_APPLICABLE | [frontend#14](https://github.com/MileHighHoosier/castlewatch-frontend/issues/14), [backend#7](https://github.com/MileHighHoosier/castlewatch-2027/issues/7) | 2026-08-31 | Decide whether to close frontend #14 as superseded or schedule it as later operations work. |
 | CW-004 | Section 8 | Start Trip Week Phase 2 unified recommendation engine | BLOCKED | User + Codex | Section 8 receives its own approved Start checkpoint with bounded acceptance criteria | CW-002 | NOT_RUN | [ROADMAP](ROADMAP.md#section-8---resume-product-development) | 2026-08-31 | After CW-002 passes, run `Start Section 8`. |
 | CW-005 | Stabilization | Harden ride-refresh authorization and interface | NOT_STARTED | Unassigned | Public compatibility GET is replaced or protected without breaking bounded refresh safety | CW-002 | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | After Section 7 closes, open a bounded design issue when the user prioritizes this high-risk item. |
@@ -66,4 +66,3 @@ Completed work is summarized here instead of being expanded into active task row
 5. **Decision/defer:** retain a concrete user decision or review action; never use a vague `TBD` next step.
 6. **QC:** run `python scripts/validate_project_tracker.py` and the repository test suite after every tracker edit.
 7. **Safety:** never record secrets, raw credentials, family keys, token material or private operational payloads.
-
