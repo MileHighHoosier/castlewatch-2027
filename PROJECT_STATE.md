@@ -572,7 +572,7 @@ The audit reconciled backend issue [#61](https://github.com/MileHighHoosier/cast
 
 ### Section 8 - Trip Week Phase 2 unified recommendation engine
 
-**In progress; Section 8A implementation merged August 31, 2026 and its separate test checklist is pending.**
+**In progress; Section 8A implementation and its separate test checklist completed August 31, 2026, with Finalize pending.**
 
 The Start audit confirmed that Section 8 extends the substantial existing frontend engine rather than replacing it. The current keep/swap/wait/review decision already combines backend event/calendar risk, reservation conflicts, no-park-hopping, overnight resort convenience and historical directional crowd evidence while preserving manual scenario approval.
 
@@ -580,7 +580,7 @@ The Start audit confirmed that Section 8 extends the substantial existing fronte
 
 The Start checkpoint changes documentation and tracker state only. It does not change recommendation behavior, the October 9–16, 2027 plan, saved/shared data, production state, credentials/devices, schema, dependencies/runtime, deployment configuration or family-key state.
 
-Section 8A frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) added `app/lib/tripDecisionEvidence.ts` as the typed evidence boundary for availability, provenance, freshness, confidence, contribution and explanation. `tripDecisionEngine.ts` now derives each scenario total and category subtotal from explicit source-owned evidence. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence contributes zero; unknown resort identifiers no longer silently use the default resort. Direct fixtures preserve the established keep/swap/wait/review outcomes, confirmed-reservation review gate, no-park-hopping weighting and manual approval boundary. The change passed 122 frontend contracts, the production build and GitHub Actions including the mobile smoke; no visible UI or production/shared state changed. Section 8A remains open for its separately commanded test checklist and Finalize checkpoint.
+Section 8A frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-frontend/pull/52) added `app/lib/tripDecisionEvidence.ts` as the typed evidence boundary for availability, provenance, freshness, confidence, contribution and explanation. `tripDecisionEngine.ts` now derives each scenario total and category subtotal from explicit source-owned evidence. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence contributes zero; unknown resort identifiers no longer silently use the default resort. Direct fixtures preserve the established keep/swap/wait/review outcomes, confirmed-reservation review gate, no-park-hopping weighting and manual approval boundary. The separate [Section 8A test checklist](docs/section-8a-test-checklist.md) passed 122 frontend contracts, the production build, exact-head GitHub Actions including the 390×844 mobile smoke, backend tracker/compile gates and a read-only production Trip Week verification. No visible UI or production/shared state changed. Section 8A remains open only for the separately commanded Finalize checkpoint.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -606,11 +606,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **Trip Week Phase 2 - Section 8 started**
 
-Sections 1–7 are complete. Section 8A implementation is merged; its test checklist and Finalize checkpoint remain pending before Section 8B can start. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–7 are complete. Section 8A implementation is merged and its test checklist passed; its Finalize checkpoint remains pending before Section 8B can start. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Run `Start Section 8A test checklist`.**
-2. Finalize Section 8A only after its separate checklist passes; do not start Section 8B early.
+1. **Run `Finalize Section 8A`.**
+2. Do not start Section 8B until Section 8A is finalized.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
