@@ -554,11 +554,13 @@ The trusted Owner remained `Ryan Brave Owner · owner`, connected and up to date
 
 ### Section 6D - Mobile, failure-state and Section 6 closeout
 
-**Started with a separate checkpoint on August 30, 2026; verification in progress.**
+**Complete and finalized August 31, 2026.**
 
-The 6D contract covers the established 390×844 mobile portrait layout and critical touch flows across park planning, Trip Week, Getting There and shared-plan views; safe isolated backend, source and selected-credential failure simulations; honest disconnected/stale/unknown/unavailable presentation and recovery; production-verification issue reconciliation; full backend/frontend regression, compile/build and mobile browser gates; and exact-head authoritative Vercel/Railway deployment verification.
+Production verification passed for the established 390×844 mobile portrait layout, six-destination navigation, touch targets, sticky navigation, park and Trip Week paths, Getting There, shared-plan/Family devices/history/Operations role boundaries, confirmation and warning states, and isolated backend/source/credential failure behavior. Failure evidence remained explicit and sanitized, rejected unauthorized credentials without silent family-key fallback and recovered cleanly.
 
-The start checkpoint changes documentation and tracking only. It does not count any 6D acceptance criterion as passed and does not authorize an upload/download, backup, history restore, trip/profile/reservation/resort/recommendation change, guarded-autosave change, credential/device lifecycle, dependency/runtime/schema change or family-key change. Production device revocation is specifically excluded; existing Section 5D/5E evidence and isolated simulations must be used. A separate Finalize checkpoint is required to close both 6D and Section 6.
+The final backend gates passed all 90 contracts and production-module compilation. The frontend gates passed 114 contracts under Node 22, the production Next.js build and the dependency-free 390×844 mobile smoke. The only 6D finding, frontend issue [#50](https://github.com/MileHighHoosier/castlewatch-frontend/issues/50), was repaired in frontend PR [#51](https://github.com/MileHighHoosier/castlewatch-frontend/pull/51) at `90fa1f5eb3d2803e728ce7fcf067fd6f8edd6c0f`, deployed successfully through the authoritative `castlewatch-frontend` Vercel project and visually reverified in the connected Owner production view. No production shared-plan/profile/itinerary/reservation/resort/recommendation/credential/device/dependency/runtime/schema/family-key state changed.
+
+**Section 6 is complete. `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.**
 
 ## Known rebaseline findings still requiring remediation
 
@@ -582,15 +584,13 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**CastleWatch Rebaseline & Stabilization - Sections 1–5 and 6A–6C complete; 6D in progress**
+**CastleWatch Rebaseline & Stabilization - Sections 1–6 complete**
 
-Sections 1–5 and Sections 6A–6C are complete. Section 6D mobile, failure-state and Section 6 closeout verification has a separate start checkpoint and is in progress; no 6D acceptance criterion is complete yet. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–6 are complete and production-verified. Section 6D closed the mobile, failure-state and final production-smoke work after its separately approved start and finalize checkpoints. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Execute Section 6D mobile/failure-state production smoke verification and final automated/deployment gates.**
-2. Separately finalize Section 6D and Section 6 closeout after all evidence and defects are reconciled.
-3. Section 7 - establish a lightweight project/task tracker.
-4. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
+1. **Section 7 - establish a lightweight project/task tracker through a separate Start checkpoint.**
+2. Section 8 - resume and complete Trip Week Phase 2 unified recommendation engine.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
