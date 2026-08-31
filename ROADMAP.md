@@ -124,7 +124,7 @@ The governing checklist is `docs/section-6-production-smoke.md`, and backend iss
 
 ### Section 7 - Lightweight project tracker
 
-Status: **Started August 31, 2026 — separate start checkpoint opened; implementation pending**
+Status: **Implementation and checklist complete August 31, 2026 — separate Finalize checkpoint pending**
 
 Establish a simple durable tracker for:
 
@@ -141,7 +141,7 @@ Establish a simple durable tracker for:
 
 The tracker manages work; GitHub remains the source of truth for code and repository documentation.
 
-The governing contract is `docs/section-7-project-tracker.md`, and backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) is the live checklist. Section 7 will use one canonical version-controlled tracker, stable task IDs, explicit status/QC vocabularies, cross-repository issue reconciliation, checkpoint maintenance rules, fresh-agent handoff verification and repeatable structural QC. This start checkpoint does not implement the tracker or start Section 8; a separate Finalize checkpoint is required.
+Canonical `PROJECT_TRACKER.md` now contains 15 stable active/future tasks spanning both repositories, known rebaseline work and the product roadmap while completed Sections 1–6 remain summarized. The tracker defines explicit status/QC vocabularies and Start/checklist/defect/Finalize maintenance rules; its fresh-agent handoff identifies the current phase, blocker and exact next command. `scripts/validate_project_tracker.py` plus focused tests enforce its schema, IDs, vocabulary, dependencies, dates, next actions and credential-safety boundary. The governing contract is `docs/section-7-project-tracker.md`, and backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) is the live checklist. Section 8 remains unstarted; a separate Finalize checkpoint is required.
 
 ### Section 8 - Resume product development
 
