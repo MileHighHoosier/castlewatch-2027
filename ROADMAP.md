@@ -145,11 +145,20 @@ Canonical `PROJECT_TRACKER.md` now manages backend, frontend, known rebaseline a
 
 ### Section 8 - Resume product development
 
-Status: **Not started — next command is `Start Section 8`**
+Status: **Started — planning checkpoint complete; next command is `Start Section 8A`**
 
 Complete **Trip Week Phase 2 - Unified Recommendation Engine** rather than restarting it.
 
 The existing engine already uses event, reservation, resort/transportation and historical crowd signals. Remaining work should integrate missing signals and replace broad heuristics where justified while keeping itinerary changes user-approved.
+
+The bounded delivery contract is recorded in `docs/section-8-trip-week-phase-2.md` and backend issue [#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66):
+
+- **8A:** typed evidence and scoring contract with neutral unusable-signal behavior and current-outcome regression baselines;
+- **8B:** reservation and no-park-hopping preservation plus one Getting There-aligned transportation model;
+- **8C:** horizon/freshness-aware weather and date/park-assignable Lightning Lane constraints;
+- **8D:** decision explainability, manual-control preservation and coordinated release verification.
+
+The Start checkpoint changes documentation and work state only. It does not change recommendation logic, the itinerary, saved/shared data, production state, credentials/devices, schema, dependencies/runtime, deployment configuration or family-key state.
 
 ---
 
