@@ -124,7 +124,7 @@ The governing checklist is `docs/section-6-production-smoke.md`, and backend iss
 
 ### Section 7 - Lightweight project tracker
 
-Status: **Implementation and checklist complete August 31, 2026 — separate Finalize checkpoint pending**
+Status: **Complete and finalized August 31, 2026**
 
 Establish a simple durable tracker for:
 
@@ -141,9 +141,11 @@ Establish a simple durable tracker for:
 
 The tracker manages work; GitHub remains the source of truth for code and repository documentation.
 
-Canonical `PROJECT_TRACKER.md` now contains 15 stable active/future tasks spanning both repositories, known rebaseline work and the product roadmap while completed Sections 1–6 remain summarized. The tracker defines explicit status/QC vocabularies and Start/checklist/defect/Finalize maintenance rules; its fresh-agent handoff identifies the current phase, blocker and exact next command. `scripts/validate_project_tracker.py` plus focused tests enforce its schema, IDs, vocabulary, dependencies, dates, next actions and credential-safety boundary. The governing contract is `docs/section-7-project-tracker.md`, and backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) is the live checklist. Section 8 remains unstarted; a separate Finalize checkpoint is required.
+Canonical `PROJECT_TRACKER.md` now manages backend, frontend, known rebaseline and roadmap work while completed Sections 1–7 remain summarized. The tracker defines explicit status/QC vocabularies and Start/checklist/defect/Finalize maintenance rules; its fresh-agent handoff identifies the current phase, blocker and exact next command. `scripts/validate_project_tracker.py` plus focused tests enforce its schema, IDs, vocabulary, dependencies, dates, next actions and credential-safety boundary. The governing contract is `docs/section-7-project-tracker.md`, and backend issue [#61](https://github.com/MileHighHoosier/castlewatch-2027/issues/61) records the completed checklist. Section 7 closed without starting Section 8 or changing production/product/data/credential/device/dependency/runtime/schema/family-key state.
 
 ### Section 8 - Resume product development
+
+Status: **Not started — next command is `Start Section 8`**
 
 Complete **Trip Week Phase 2 - Unified Recommendation Engine** rather than restarting it.
 
