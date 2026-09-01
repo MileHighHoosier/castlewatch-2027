@@ -572,7 +572,7 @@ The audit reconciled backend issue [#61](https://github.com/MileHighHoosier/cast
 
 ### Section 8 - Trip Week Phase 2 unified recommendation engine
 
-**In progress; Sections 8A–8C are finalized. The Section 8D checklist is in review with read-only production screenshots pending.**
+**In progress; Sections 8A–8C are finalized. The Section 8D checklist passed and separate Finalize approval is pending.**
 
 The Start audit confirmed that Section 8 extends the substantial existing frontend engine rather than replacing it. The current keep/swap/wait/review decision already combines backend event/calendar risk, reservation conflicts, no-park-hopping, overnight resort convenience and historical directional crowd evidence while preserving manual scenario approval.
 
@@ -586,7 +586,7 @@ Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-fron
 
 Section 8C frontend PR [#54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54) merged at `65b26d90789a92c54385193e2f777db19dc59dfe`. Trip Week weather evidence now has an explicit seven-day horizon and six-hour automatic-observation freshness gate; unavailable, stale, out-of-horizon and date-unassignable observations are visible and neutral. Legacy Lightning Lane windows remain valid but neutral until both a Trip Week date and park are assignable, while new trip-day saves are tagged with the active park and current date. Usable signals join scenario totals and readiness without inferring official forecasts, bookings or product rules. Direct regressions preserve keep/swap/wait/review, confirmed-reservation, no-park-hopping and manual approval behavior. The [separate Section 8C test checklist](docs/section-8c-test-checklist.md) passed 134 frontend contracts, the production build, exact-head frontend CI including the 390×844 mobile smoke, backend tracker/compile gates and read-only production presentation. The live recommendation kept Weather and Lightning Lane neutral at zero, named the seven-day horizon, retained the Base plan and continued to wait for official data. The user separately authorized Finalize, so Section 8C is complete without starting Section 8D or changing production/shared data, itinerary, weather/Lightning Lane state, credentials/devices, dependencies/runtime, schema, deployment or family-key state.
 
-Section 8D frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) merged at `e46498ba5721015938856660a2b0f5773b65330b`. The recommendation card now has a collapsed decision-evidence and reservation-impact view for both scenarios. Category and item rows explain contribution, usable or neutral state, source and available date/park context; confirmed and provisional booking impacts are named; and a persistent control note makes clear that CastleWatch never changes the park order automatically. Existing apply, undo, lock and unlock logic and all established recommendation outcomes remain unchanged. The [Section 8D checklist](docs/section-8d-test-checklist.md) has passed 138 frontend contracts, production build, exact-head Node 22 and 390×844 mobile CI, backend contracts/compilation, tracker gates and successful Vercel/Railway deployment statuses. The remaining gate is read-only mobile production presentation evidence; no production state was changed.
+Section 8D frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) merged at `e46498ba5721015938856660a2b0f5773b65330b`. The recommendation card now has a collapsed decision-evidence and reservation-impact view for both scenarios. Category and item rows explain contribution, usable or neutral state, source and available date/park context; confirmed and provisional booking impacts are named; and a persistent control note makes clear that CastleWatch never changes the park order automatically. Existing apply, undo, lock and unlock logic and all established recommendation outcomes remain unchanged. The [Section 8D checklist](docs/section-8d-test-checklist.md) passed 138 frontend contracts, production build, exact-head Node 22 and 390×844 mobile CI, backend contracts/compilation, tracker gates, successful Vercel/Railway deployment statuses and the user-supplied read-only mobile screenshots covering the score/control surface plus expanded Base and alternate evidence. No production state was changed. Finalize remains a separate approval.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -612,11 +612,11 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 **Trip Week Phase 2 - Section 8 started**
 
-Sections 1–7 and Sections 8A–8C are complete. The Section 8D checklist is in review with production screenshots pending. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–7 and Sections 8A–8C are complete. The Section 8D checklist passed; Finalize approval is pending. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Run `Submit Section 8D production screenshots`.**
-2. After the screenshots pass, keep `Finalize Section 8D` and `Finalize Section 8` as distinct approvals.
+1. **Run `Finalize Section 8D`.**
+2. Keep `Finalize Section 8` as a later distinct approval.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
