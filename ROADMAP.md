@@ -145,7 +145,7 @@ Canonical `PROJECT_TRACKER.md` now manages backend, frontend, known rebaseline a
 
 ### Section 8 - Resume product development
 
-Status: **In progress — Section 8C checklist passed; next command is `Finalize Section 8C`**
+Status: **In progress — Sections 8A–8C finalized; next command is `Start Section 8D`**
 
 Complete **Trip Week Phase 2 - Unified Recommendation Engine** rather than restarting it.
 
@@ -164,7 +164,7 @@ Section 8A frontend PR [#52](https://github.com/MileHighHoosier/castlewatch-fron
 
 Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-frontend/pull/53) replaced duplicated broad transportation assumptions with one reusable route/timing model shared by Getting There, reservation leave-by guidance and Trip Week scenario scoring. Only routes assignable to the scenario park date and previous-night resort contribute; unknown origins remain explicit and neutral. Base/alternate split-stay, reservation and resort-transfer regressions accompany the preserved confirmed-booking/no-hopping/manual-control gates. The separate [Section 8B test checklist](docs/section-8b-test-checklist.md) passed frontend/backend/mobile gates and read-only production verification before the user separately authorized Finalize. Section 8B is complete.
 
-Section 8C frontend PR [#54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54) added a seven-day trustworthy weather horizon, six-hour automatic freshness enforcement and date/park-assignable Lightning Lane constraints. Unavailable, stale, out-of-horizon, legacy-unassigned and otherwise unusable signals remain explicit and neutral. New trip-day Lightning Lane saves carry the active park and current date. Usable evidence joins scenario totals/readiness while current recommendation outcomes and manual approval stay regression-protected. The separate [Section 8C test checklist](docs/section-8c-test-checklist.md) passed 134 frontend contracts, production build, exact-head mobile CI, backend tracker/compile gates and read-only production verification. Finalize approval remains pending; Section 8D has not started.
+Section 8C frontend PR [#54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54) added a seven-day trustworthy weather horizon, six-hour automatic freshness enforcement and date/park-assignable Lightning Lane constraints. Unavailable, stale, out-of-horizon, legacy-unassigned and otherwise unusable signals remain explicit and neutral. New trip-day Lightning Lane saves carry the active park and current date. Usable evidence joins scenario totals/readiness while current recommendation outcomes and manual approval stay regression-protected. The separate [Section 8C test checklist](docs/section-8c-test-checklist.md) passed 134 frontend contracts, production build, exact-head mobile CI, backend tracker/compile gates and read-only production verification before the user separately authorized Finalize. Section 8C is complete; Section 8D has not started.
 
 ---
 
