@@ -78,7 +78,7 @@ Acceptance:
 - no official product rule, booking or forecast is inferred when it is not present;
 - missing, stale, invalid and actionable cases have regression coverage.
 
-Checklist status: **passed September 1, 2026; Finalize approval pending.** Frontend PR [#54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54) added an explicit seven-day trustworthy weather horizon and six-hour automatic-observation freshness gate. Weather that is missing, stale, outside the horizon or not date-assignable remains visible and contributes zero. Existing Lightning Lane records remain backward-compatible but neutral unless both date and park are assignable; new trip-day saves receive the active park and current date. Date/park conflicts contribute conservatively while preserving no-park-hopping weighting, confirmed-reservation review, current keep/swap/wait/review fixtures and manual itinerary approval. No official forecast, booking or product rule is inferred. The [separate Section 8C test checklist](section-8c-test-checklist.md) passed 134 frontend contracts, the production build, exact-head CI including the 390×844 mobile smoke, backend tracker/compile gates and read-only production verification. Section 8C is not finalized; the exact next command is `Finalize Section 8C`.
+Final status: **complete and finalized September 1, 2026.** Frontend PR [#54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54) added an explicit seven-day trustworthy weather horizon and six-hour automatic-observation freshness gate. Weather that is missing, stale, outside the horizon or not date-assignable remains visible and contributes zero. Existing Lightning Lane records remain backward-compatible but neutral unless both date and park are assignable; new trip-day saves receive the active park and current date. Date/park conflicts contribute conservatively while preserving no-park-hopping weighting, confirmed-reservation review, current keep/swap/wait/review fixtures and manual itinerary approval. No official forecast, booking or product rule is inferred. The [separate Section 8C test checklist](section-8c-test-checklist.md) passed 134 frontend contracts, the production build, exact-head CI including the 390×844 mobile smoke, backend tracker/compile gates and read-only production verification. The user separately authorized Finalize. Section 8D has not started; the exact next command is `Start Section 8D`.
 
 ### 8D — Explainability and release verification
 
@@ -114,4 +114,4 @@ Section 8 uses separate approvals:
 4. repeat for 8B, 8C and 8D
 5. `Finalize Section 8` only after all four batches and production verification pass
 
-The exact next command after the passed Section 8C test checklist is `Finalize Section 8C`.
+The exact next command after Section 8C Finalize is `Start Section 8D`.
