@@ -4,7 +4,7 @@ _Started September 1, 2026_
 
 ## Status
 
-**Passed September 1, 2026; Finalize approval pending.** Repository, build, exact-head CI, mobile-smoke, compilation, deployment-status and read-only production-presentation gates all pass. Section 8D is not finalized.
+**Passed and finalized September 1, 2026.** Repository, build, exact-head CI, mobile-smoke, compilation, deployment-status and read-only production-presentation gates all passed. The user separately authorized Finalize after the checklist passed. Parent Section 8 is not finalized.
 
 ## Implementation under test
 
@@ -37,8 +37,8 @@ The mobile evidence is readable without a visible error state or horizontal cont
 
 ## Finalize boundary
 
-The checklist evidence may be merged, but Section 8D remains open until the user separately authorizes `Finalize Section 8D`. `Finalize Section 8` remains a later separate approval.
+The checklist evidence was merged before the user separately authorized Section 8D Finalize. Parent Section 8 remains open until the user separately authorizes `Finalize Section 8`.
 
 ## Exact next command
 
-`Finalize Section 8D`
+`Finalize Section 8`
