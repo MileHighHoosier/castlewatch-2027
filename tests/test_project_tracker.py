@@ -42,7 +42,7 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("`Start Section 8D test checklist`", handoff)
+        self.assertIn("`Submit Section 8D production screenshots`", handoff)
 
 
 if __name__ == "__main__":

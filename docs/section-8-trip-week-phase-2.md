@@ -93,7 +93,7 @@ Acceptance:
 - the authoritative production UI is verified without mutating shared data or credentials;
 - project state, architecture, roadmap and tracker are updated in a separately approved Finalize checkpoint.
 
-Implementation status: **merged September 1, 2026; separate test checklist pending.** Frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) added a collapsed evidence and reservation-impact view for both scenarios. Each category and evidence item now names its contribution, usability state, source and available date/park context; affected confirmed and provisional reservations are listed without changing them. The card states that plan changes are never automatic, while existing apply, undo, lock and unlock controls remain unchanged. Four focused regressions joined the preserved keep/swap/wait/review suite, and the exact PR head passed 138 frontend contracts, the production build and the 390×844 mobile smoke. This is the implementation checkpoint only: coordinated backend and read-only production verification remain for the separately commanded checklist. The exact next command is `Start Section 8D test checklist`.
+Implementation status: **merged September 1, 2026; separate test checklist in review.** Frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) added a collapsed evidence and reservation-impact view for both scenarios. Each category and evidence item now names its contribution, usability state, source and available date/park context; affected confirmed and provisional reservations are listed without changing them. The card states that plan changes are never automatic, while existing apply, undo, lock and unlock controls remain unchanged. Four focused regressions joined the preserved keep/swap/wait/review suite. The [Section 8D checklist](section-8d-test-checklist.md) has passed 138 frontend contracts, the production build, exact-head Node 22 and 390×844 mobile CI, backend contracts/compilation, tracker gates and successful Vercel/Railway deployment statuses. Read-only live mobile screenshots remain pending because the automated production browser connection was unavailable. The exact next command is `Submit Section 8D production screenshots`.
 
 ## Invariants and non-goals
 
@@ -116,4 +116,4 @@ Section 8 uses separate approvals:
 4. repeat for 8B, 8C and 8D
 5. `Finalize Section 8` only after all four batches and production verification pass
 
-The exact next command after the Section 8D implementation checkpoint is `Start Section 8D test checklist`.
+The exact next command while the Section 8D checklist is in review is `Submit Section 8D production screenshots`.
