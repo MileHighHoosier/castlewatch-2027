@@ -4,7 +4,7 @@ _Verification checkpoint · September 1, 2026_
 
 ## Result
 
-**Passed September 1, 2026; Finalize approval pending.** Section 8C's weather and Lightning Lane integration is regression-protected and presents the current long-range evidence conservatively. Section 8C is not finalized by this checklist.
+**Passed and finalized September 1, 2026.** Section 8C's weather and Lightning Lane integration is regression-protected and presents the current long-range evidence conservatively. The user separately authorized Finalize after this checklist passed. Section 8D has not started.
 
 ## Acceptance evidence
 
@@ -46,4 +46,4 @@ _Verification checkpoint · September 1, 2026_
 
 ## Exact next command
 
-`Finalize Section 8C`
+`Start Section 8D`
