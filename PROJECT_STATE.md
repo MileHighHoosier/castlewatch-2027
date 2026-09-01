@@ -610,15 +610,23 @@ The user separately authorized parent Section 8 Finalize after all four delivery
 
 The most recent pre-rebaseline development thread was the Accounts / Invitations / Device Management migration and production verification work. The frontend production-verification issue for the Family devices panel remained open. The prior Trip Week Phase 2 plan is no longer a clean "next feature" because the decision engine already exists in partial form.
 
+## Reservation Awareness Phase 2 start
+
+The user authorized `Start Reservation Awareness Phase 2` on September 1, 2026. The cross-repository audit confirmed that CastleWatch already has frontend-owned provisional/confirmed reservation records, priority experience templates, transportation and leave-by guidance, conflict warnings, shared sync/history and reservation-aware Trip Week decision evidence. The backend stores and versions the client plan but does not own booking-policy rules.
+
+[The Phase 2 contract](docs/reservation-awareness-phase-2.md) and backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85) divide delivery into separately approved Phase 2A–2D checkpoints. Booking targets are distinct from actual reservations; every opening/deadline calculation must expose its rule, provenance, verification state and override; target, reservation and itinerary changes remain user-controlled; and external alert delivery stays in the later Notifications phase.
+
+The Start checkpoint changed documentation and tracking only. It did not change application behavior, production/shared-plan data, the October 9–16, 2027 itinerary, reservations, resorts, recommendations, credentials/devices, database schema, dependencies/runtime, deployment configuration or family-key behavior. `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.
+
 ## Current development phase
 
-**Trip Week Phase 2 - Section 8 complete**
+**Reservation Awareness Phase 2 — started; Phase 2A not started**
 
-Sections 1–8 are complete. Reservation Awareness Phase 2 and the 60-day planner are next but have not started. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–8 are complete. Reservation Awareness Phase 2 is in progress at its completed Start checkpoint. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Run `Start Reservation Awareness Phase 2`.**
-2. Keep its scope contract, implementation, test checklist and Finalize approval as separate checkpoints.
+1. **Run `Start Reservation Awareness Phase 2A`.**
+2. Keep Phase 2A implementation, its test checklist and its Finalize approval as separate checkpoints before starting Phase 2B.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
