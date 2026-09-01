@@ -145,9 +145,13 @@ The frontend then combines those backend signals with browser-local inputs in `t
 
 The final scenario change remains user-approved; CastleWatch must not silently rearrange the trip.
 
-Section 8A formalizes every current scenario input as source-owned evidence with availability, provenance, freshness, confidence, contribution and explanation. Scenario totals and category subtotals derive from those records. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence contributes zero. Weather and Lightning Lane source adapters remain future Section 8C work; the evidence contract defines their identifiers but does not score them yet.
+Section 8A formalizes every scenario input as source-owned evidence with availability, provenance, freshness, confidence, contribution and explanation. Scenario totals and category subtotals derive from those records. Unavailable, stale, out-of-horizon, non-assignable and non-finite evidence contributes zero.
 
 Section 8B replaces the duplicated Trip Week, reservation and Getting There route timing assumptions with `transportationPlanning.ts`. A scenario's transportation contribution is derived only from the route assigned to that park date and its previous-night resort. Unknown resort identifiers remain explicitly unassignable and neutral. Reservation leave-by guidance uses the same conservative route maximum, and confirmed-reservation, no-park-hopping and manual-approval boundaries remain unchanged.
+
+Section 8C adds weather evidence only inside a seven-day trustworthy horizon and requires automatic observations to be no more than six hours old. Lightning Lane evidence contributes only when both its Trip Week date and park are assignable. Missing, stale, out-of-horizon and legacy-unassigned records remain visible and neutral; no official forecast, booking or product rule is inferred.
+
+Section 8D exposes the scenario totals, category and item contributions, usability state, confidence, source, available date/park context, blockers and affected reservations in a collapsed decision-evidence view. The UI explicitly states that plan changes are never automatic, and the existing apply, undo, lock and unlock paths remain user-controlled.
 
 ## Weather data flow
 
@@ -277,13 +281,13 @@ At Section 5 closeout, the backend remained on the finalized 5D implementation h
 
 ### Backend
 
-GitHub Actions uses Python 3.12.14, installs the exact pinned requirements, runs all 90 backend contracts and compiles every active root production module. Coverage includes account authorization/routes, invite atomicity, role enforcement, legacy-gate/revocation/owner-recovery/pepper continuity, shared family storage/history/operations, ride read/refresh safety, response/CORS security, dependency/deployment controls, weather safety, live planning insights, historical/date forecasting, calendar/event intelligence and Trip Week attachment/fallback behavior.
+GitHub Actions uses Python 3.12.14, installs the exact pinned requirements, runs all 95 backend contracts and compiles every active root production module. Coverage includes account authorization/routes, invite atomicity, role enforcement, legacy-gate/revocation/owner-recovery/pepper continuity, shared family storage/history/operations, ride read/refresh safety, response/CORS security, dependency/deployment controls, weather safety, live planning insights, historical/date forecasting, calendar/event intelligence, Trip Week attachment/fallback behavior and canonical tracker validation.
 
 ### Frontend
 
-GitHub Actions uses Node 22 with clean `npm ci`, runs all 111 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, protected credential/device safety, self-rename, explicit family-key recovery selection, selected-cookie failure cleanup, content-identical backups, shared sync/history/operations and role boundaries, weather, Trip Week decisions, transportation/reservations, Lightning Lane, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
+GitHub Actions uses Node 22 with clean `npm ci`, runs all 138 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, protected credential/device safety, self-rename, explicit family-key recovery selection, selected-cookie failure cleanup, content-identical backups, shared sync/history/operations and role boundaries, weather, Trip Week evidence and decisions, transportation/reservations, Lightning Lane, explainability/manual controls, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
 
-Section 4 materially broadened core regression protection, Sections 5B–5D added account/device migration contracts, and Section 5E completed the production functional verification.
+Section 4 materially broadened core regression protection, Sections 5B–5D added account/device migration contracts, Section 5E completed the account/device production verification, and Section 8 completed coordinated recommendation-engine regression, build, mobile and read-only production-presentation verification.
 
 ## Architecture rules for future work
 
