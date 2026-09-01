@@ -8,7 +8,7 @@ _Canonical cross-repository tracker · audited August 31, 2026_
 - **Current blocker:** none.
 - **Exact next command:** `Start Section 8D`.
 - **Governing sources:** [PROJECT_STATE.md](PROJECT_STATE.md), [ROADMAP.md](ROADMAP.md), [Section 8 contract](docs/section-8-trip-week-phase-2.md), and backend issue [#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66).
-- **Repository snapshot after the Section 8C checklist:** backend checklist checkpoint `86ad6ee7e2307296ac6513f82bf22e570238f150`; frontend implementation `65b26d90789a92c54385193e2f777db19dc59dfe`.
+- **Repository snapshot after Section 8C Finalize:** backend finalization checkpoint `300e609dbf149aaed2072c56c3d4ffc5d3f81293`; frontend implementation `65b26d90789a92c54385193e2f777db19dc59dfe`.
 
 This is the one version-controlled work tracker for CastleWatch. GitHub issues and pull requests remain authoritative implementation evidence. `PROJECT_STATE.md` remains authoritative product state, and `ROADMAP.md` remains authoritative phase order.
 
