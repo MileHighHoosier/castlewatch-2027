@@ -153,6 +153,14 @@ Section 8C adds weather evidence only inside a seven-day trustworthy horizon and
 
 Section 8D exposes the scenario totals, category and item contributions, usability state, confidence, source, available date/park context, blockers and affected reservations in a collapsed decision-evidence view. The UI explicitly states that plan changes are never automatic, and the existing apply, undo, lock and unlock paths remain user-controlled.
 
+## Reservation Awareness Phase 2 boundary
+
+Reservation Awareness Phase 2 extends the frontend-owned trip-planning model with **booking targets**, which represent desired future booking attempts and remain distinct from actual `TripReservation` records. The frontend owns booking-window calculation, rule provenance/verification, override precedence, target priority and lifecycle UI. Existing reservations continue to own booked date/time/location, transportation guidance, conflict warnings and Trip Week decision effects.
+
+The backend continues to store and version the shared client plan without interpreting Disney booking-window policy. Additive client normalization must accept payloads with no booking-target data. No database-schema change is assumed. A target may link to a reservation only through an explicit user action; target state never creates, confirms, edits or deletes a reservation or itinerary automatically.
+
+Opening dates and deadlines are planning evidence, not silently authoritative facts. Each result must identify its rule/source, as-of or verification state and any user override. Missing, stale, malformed or inapplicable rules remain explicit rather than producing a guessed date. Phase 2 reminders are in-app readiness states only; external email, text and push delivery belongs to the later Notifications phase.
+
 ## Weather data flow
 
 ```text
