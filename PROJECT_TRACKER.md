@@ -1,14 +1,14 @@
 # CastleWatch Project Tracker
 
-_Canonical cross-repository tracker · audited August 31, 2026_
+_Canonical cross-repository tracker · audited September 1, 2026_
 
 ## Fresh-agent handoff
 
-- **Current phase:** Sections 1–8 are complete; Reservation Awareness Phase 2 and the 60-day planner are next but not started.
+- **Current phase:** Reservation Awareness Phase 2 has started. Its documentation-and-tracker checkpoint is complete; Phase 2A implementation has not started.
 - **Current blocker:** none.
-- **Exact next command:** `Start Reservation Awareness Phase 2`.
-- **Governing sources:** [PROJECT_STATE.md](PROJECT_STATE.md), [ROADMAP.md](ROADMAP.md), [Section 8 contract](docs/section-8-trip-week-phase-2.md), and backend issue [#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66).
-- **Repository snapshot at Section 8 closeout:** backend Section 8D finalization `a95c144cc682a93313e69069366e98edbf05d943`; frontend explainability implementation `e46498ba5721015938856660a2b0f5773b65330b`.
+- **Exact next command:** `Start Reservation Awareness Phase 2A`.
+- **Governing sources:** [PROJECT_STATE.md](PROJECT_STATE.md), [ROADMAP.md](ROADMAP.md), [Reservation Awareness Phase 2 contract](docs/reservation-awareness-phase-2.md), and backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85).
+- **Repository snapshot at Phase 2 Start:** backend Section 8 closeout `d1284de3ced75c47d2ff5da90fee2e7356a4d60c`; frontend explainability implementation `e46498ba5721015938856660a2b0f5773b65330b`.
 
 This is the one version-controlled work tracker for CastleWatch. GitHub issues and pull requests remain authoritative implementation evidence. `PROJECT_STATE.md` remains authoritative product state, and `ROADMAP.md` remains authoritative phase order.
 
@@ -40,7 +40,7 @@ QC status values:
 | CW-008 | Maintenance | Clean up legacy Flask-CORS initialization | NOT_STARTED | Unassigned | Global legacy initialization is removed or narrowed while current origin policy remains regression-protected | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Open a focused backend cleanup issue with current CORS tests as acceptance gates. |
 | CW-009 | Maintenance | Remove obsolete Vercel project integration | NOT_STARTED | User + Codex | Obsolete project linkage is identified and removed without touching the authoritative frontend deployment | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Confirm the obsolete project identifier before any hosting configuration change. |
 | CW-010 | Privacy | Decide repository privacy and configuration separation | NEEDS_DECISION | User | Decide whether public repositories may retain personal trip dates and itinerary defaults | None | NOT_APPLICABLE | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Choose private repositories, configuration separation, or explicit acceptance of the current exposure. |
-| CW-011 | Product roadmap | Reservation Awareness Phase 2 and 60-day planner | NOT_STARTED | User + Codex | Booking windows, priorities, statuses, reminders and contingency choices are implemented with user-approved scope | None | NOT_RUN | [ROADMAP](ROADMAP.md#2-reservation-awareness-phase-2--60-day-planner) | 2026-09-01 | Run `Start Reservation Awareness Phase 2`. |
+| CW-011 | Product roadmap | Reservation Awareness Phase 2 and 60-day planner | IN_PROGRESS | User + Codex | Booking windows, priorities, statuses, in-app reminders and contingency choices are implemented through separately approved 2A–2D checkpoints | None | NOT_RUN | [issue #85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), [contract](docs/reservation-awareness-phase-2.md) | 2026-09-01 | Run `Start Reservation Awareness Phase 2A`. |
 | CW-012 | Product roadmap | Prediction Phase 2 | BLOCKED | Unassigned | Seasonal, event, recent-trend, park-hour and confidence improvements are scoped and regression-tested | CW-011 | NOT_RUN | [ROADMAP](ROADMAP.md#3-prediction-phase-2) | 2026-09-01 | Complete CW-011 before starting Prediction Phase 2. |
 | CW-013 | Product roadmap | Cross-park ripple prediction | BLOCKED | Unassigned | Displacement from events, weather, outages and schedules is estimated with explainable confidence | CW-012 | NOT_RUN | [ROADMAP](ROADMAP.md#4-cross-park-ripple-prediction) | 2026-08-31 | Complete CW-012 before designing cross-park effects. |
 | CW-014 | Product roadmap | Actionable notifications and change alerts | BLOCKED | Unassigned | Alerts are limited to material, actionable changes with explicit delivery and deduplication rules | CW-011, CW-012 | NOT_RUN | [ROADMAP](ROADMAP.md#5-notifications-and-change-alerts) | 2026-09-01 | Complete the prerequisite product phases, then rank alert types by user value. |

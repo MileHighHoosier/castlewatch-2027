@@ -192,7 +192,7 @@ Output should remain understandable: keep, swap, wait or review, with reasons an
 
 ### 2. Reservation Awareness Phase 2 + 60-day planner
 
-Status: **Not started — exact next command is `Start Reservation Awareness Phase 2`**
+Status: **Started September 1, 2026 — Start checkpoint complete; exact next command is `Start Reservation Awareness Phase 2A`**
 
 Build largely together:
 
@@ -202,6 +202,10 @@ Build largely together:
 - booked/attempted/unavailable/backup statuses,
 - reminders before reservation windows,
 - contingency choices when priority bookings fail.
+
+The [Phase 2 contract](docs/reservation-awareness-phase-2.md) and backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85) divide delivery into separately approved 2A–2D checkpoints: an additive booking-target and booking-window contract; the user-facing 60-day priority timeline; attempt/booking/unavailable/backup and contingency workflow; then in-app reminders and coordinated release verification.
+
+Booking targets remain distinct from actual reservations, all target/reservation/itinerary changes remain user-controlled, and existing reservation/shared-plan payloads remain backward-compatible. Every calculated date must identify its rule, provenance, as-of/verification state and manual-override precedence. External email, text and push delivery remains reserved for the later Notifications phase.
 
 ### 3. Prediction Phase 2
 
