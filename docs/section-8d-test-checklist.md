@@ -4,7 +4,7 @@ _Started September 1, 2026_
 
 ## Status
 
-**Passed and finalized September 1, 2026.** Repository, build, exact-head CI, mobile-smoke, compilation, deployment-status and read-only production-presentation gates all passed. The user separately authorized Finalize after the checklist passed. Parent Section 8 is not finalized.
+**Passed and finalized September 1, 2026.** Repository, build, exact-head CI, mobile-smoke, compilation, deployment-status and read-only production-presentation gates all passed. The user separately authorized Section 8D Finalize after the checklist passed and later authorized parent Section 8 Finalize.
 
 ## Implementation under test
 
@@ -37,8 +37,8 @@ The mobile evidence is readable without a visible error state or horizontal cont
 
 ## Finalize boundary
 
-The checklist evidence was merged before the user separately authorized Section 8D Finalize. Parent Section 8 remains open until the user separately authorizes `Finalize Section 8`.
+The checklist evidence was merged before the user separately authorized Section 8D Finalize. Parent Section 8 was finalized afterward without starting a later roadmap phase.
 
 ## Exact next command
 
-`Finalize Section 8`
+`Start Reservation Awareness Phase 2`

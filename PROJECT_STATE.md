@@ -572,7 +572,7 @@ The audit reconciled backend issue [#61](https://github.com/MileHighHoosier/cast
 
 ### Section 8 - Trip Week Phase 2 unified recommendation engine
 
-**In progress; Sections 8A–8D are finalized. Parent Section 8 awaits separate Finalize approval.**
+**Complete, production-verified and finalized September 1, 2026.**
 
 The Start audit confirmed that Section 8 extends the substantial existing frontend engine rather than replacing it. The current keep/swap/wait/review decision already combines backend event/calendar risk, reservation conflicts, no-park-hopping, overnight resort convenience and historical directional crowd evidence while preserving manual scenario approval.
 
@@ -587,6 +587,8 @@ Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-fron
 Section 8C frontend PR [#54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54) merged at `65b26d90789a92c54385193e2f777db19dc59dfe`. Trip Week weather evidence now has an explicit seven-day horizon and six-hour automatic-observation freshness gate; unavailable, stale, out-of-horizon and date-unassignable observations are visible and neutral. Legacy Lightning Lane windows remain valid but neutral until both a Trip Week date and park are assignable, while new trip-day saves are tagged with the active park and current date. Usable signals join scenario totals and readiness without inferring official forecasts, bookings or product rules. Direct regressions preserve keep/swap/wait/review, confirmed-reservation, no-park-hopping and manual approval behavior. The [separate Section 8C test checklist](docs/section-8c-test-checklist.md) passed 134 frontend contracts, the production build, exact-head frontend CI including the 390×844 mobile smoke, backend tracker/compile gates and read-only production presentation. The live recommendation kept Weather and Lightning Lane neutral at zero, named the seven-day horizon, retained the Base plan and continued to wait for official data. The user separately authorized Finalize, so Section 8C is complete without starting Section 8D or changing production/shared data, itinerary, weather/Lightning Lane state, credentials/devices, dependencies/runtime, schema, deployment or family-key state.
 
 Section 8D frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) merged at `e46498ba5721015938856660a2b0f5773b65330b`. The recommendation card now has a collapsed decision-evidence and reservation-impact view for both scenarios. Category and item rows explain contribution, usable or neutral state, source and available date/park context; confirmed and provisional booking impacts are named; and a persistent control note makes clear that CastleWatch never changes the park order automatically. Existing apply, undo, lock and unlock logic and all established recommendation outcomes remain unchanged. The [Section 8D checklist](docs/section-8d-test-checklist.md) passed 138 frontend contracts, production build, exact-head Node 22 and 390×844 mobile CI, backend contracts/compilation, tracker gates, successful Vercel/Railway deployment statuses and the user-supplied read-only mobile screenshots covering the score/control surface plus expanded Base and alternate evidence. The user separately authorized Finalize, so Section 8D is complete without changing production/shared data, itinerary, reservations, resorts, credentials/devices, dependencies/runtime, schema, deployment or family-key state.
+
+The user separately authorized parent Section 8 Finalize after all four delivery checkpoints and coordinated release gates passed. Section 8 and backend issue #66 are closed without starting Reservation Awareness Phase 2 or changing production/shared data, the October 9–16, 2027 itinerary, reservations, resorts, credentials/devices, schema, dependencies/runtime, deployment configuration or family-key state.
 
 ## Known rebaseline findings still requiring remediation
 
@@ -610,13 +612,13 @@ The most recent pre-rebaseline development thread was the Accounts / Invitations
 
 ## Current development phase
 
-**Trip Week Phase 2 - Section 8 started**
+**Trip Week Phase 2 - Section 8 complete**
 
-Sections 1–7 and Sections 8A–8D are complete. Parent Section 8 awaits separate Finalize approval. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–8 are complete. Reservation Awareness Phase 2 and the 60-day planner are next but have not started. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Run `Finalize Section 8`.**
-2. Do not start a later roadmap phase until the parent Section 8 Finalize checkpoint is merged.
+1. **Run `Start Reservation Awareness Phase 2`.**
+2. Keep its scope contract, implementation, test checklist and Finalize approval as separate checkpoints.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
