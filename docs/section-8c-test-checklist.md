@@ -25,7 +25,7 @@ _Verification checkpoint · September 1, 2026_
 - Frontend production build: **passed** with TypeScript and route generation complete.
 - Frontend diff hygiene: **passed**.
 - Frontend exact-head CI: run **84** passed clean install, all tests, production build and the 390×844 Chrome mobile smoke for Section 8C head `7192a7ab4006d6a3a8f7c5fb24ead2d336a03e55`, merged as frontend `65b26d90789a92c54385193e2f777db19dc59dfe`.
-- Backend tracker validation, focused tracker tests, active production-module compilation and exact-head CI are required for this checklist checkpoint before merge.
+- Backend tracker validation, five focused tracker tests and active production-module compilation passed. Exact-head backend CI run **169** passed the pinned dependency install, full contract suite and production-module compilation for checklist head `884f3389475feba43a1420df530d2709d507be7c`, merged as backend `86ad6ee7e2307296ac6513f82bf22e570238f150`.
 
 ## Production read-only verification
 
