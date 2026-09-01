@@ -4,11 +4,11 @@ _Canonical cross-repository tracker · audited August 31, 2026_
 
 ## Fresh-agent handoff
 
-- **Current phase:** Sections 1–7 and Sections 8A–8C are complete; Section 8D has not started.
+- **Current phase:** Sections 1–7 and Sections 8A–8C are complete; Section 8D implementation is merged and its separate test checklist has not started.
 - **Current blocker:** none.
-- **Exact next command:** `Start Section 8D`.
+- **Exact next command:** `Start Section 8D test checklist`.
 - **Governing sources:** [PROJECT_STATE.md](PROJECT_STATE.md), [ROADMAP.md](ROADMAP.md), [Section 8 contract](docs/section-8-trip-week-phase-2.md), and backend issue [#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66).
-- **Repository snapshot after Section 8C Finalize:** backend finalization checkpoint `300e609dbf149aaed2072c56c3d4ffc5d3f81293`; frontend implementation `65b26d90789a92c54385193e2f777db19dc59dfe`.
+- **Repository snapshot after the Section 8D implementation checkpoint:** backend Section 8C handoff `d43c84570df35bfbdb3a776040db7dbd1d3cce61`; frontend explainability implementation `e46498ba5721015938856660a2b0f5773b65330b`.
 
 This is the one version-controlled work tracker for CastleWatch. GitHub issues and pull requests remain authoritative implementation evidence. `PROJECT_STATE.md` remains authoritative product state, and `ROADMAP.md` remains authoritative phase order.
 
@@ -34,8 +34,8 @@ QC status values:
 | ID | Phase | Task | Status | Owner/agent | Acceptance criteria | Dependencies | QC status | GitHub | Last update | Exact next action |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | CW-003 | Operations follow-up | Decide disposition of browser-local usage counters | NEEDS_DECISION | User | Choose whether frontend issue #14 is superseded by Operations v1 or belongs in later operations work | None | NOT_APPLICABLE | [frontend#14](https://github.com/MileHighHoosier/castlewatch-frontend/issues/14), [backend#7](https://github.com/MileHighHoosier/castlewatch-2027/issues/7) | 2026-08-31 | Decide whether to close frontend #14 as superseded or schedule it as later operations work. |
-| CW-004 | Section 8 | Complete Trip Week Phase 2 unified recommendation engine | IN_PROGRESS | User + Codex | The existing engine is extended through approved 8A–8D checkpoints; unusable evidence stays explicit and neutral; itinerary changes remain user-approved | None | IN_REVIEW | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [contract](docs/section-8-trip-week-phase-2.md) | 2026-09-01 | Run `Start Section 8D`. |
-| CW-019 | Section 8D | Complete explainability and coordinated release verification | NOT_STARTED | User + Codex | Decision breakdown and manual controls are clear; full frontend/backend/mobile/production checks pass before Section 8 Finalize | None | NOT_RUN | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66) | 2026-09-01 | Run `Start Section 8D`. |
+| CW-004 | Section 8 | Complete Trip Week Phase 2 unified recommendation engine | IN_PROGRESS | User + Codex | The existing engine is extended through approved 8A–8D checkpoints; unusable evidence stays explicit and neutral; itinerary changes remain user-approved | None | IN_REVIEW | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [contract](docs/section-8-trip-week-phase-2.md) | 2026-09-01 | Run `Start Section 8D test checklist`. |
+| CW-019 | Section 8D | Complete explainability and coordinated release verification | IN_PROGRESS | User + Codex | Decision breakdown and manual controls are clear; full frontend/backend/mobile/production checks pass before Section 8 Finalize | None | IN_REVIEW | [backend#66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [frontend#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) | 2026-09-01 | Run `Start Section 8D test checklist`. |
 | CW-005 | Stabilization | Harden ride-refresh authorization and interface | NOT_STARTED | Unassigned | Public compatibility GET is replaced or protected without breaking bounded refresh safety | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Open a bounded design issue when the user prioritizes this high-risk item. |
 | CW-006 | Stabilization | Reduce remaining dynamic HTML and imperative frontend state debt | NOT_STARTED | Unassigned | Remaining sinks and polling/DOM patches are audited and split into regression-backed repair issues | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Audit the remaining frontend sinks and state patches, then propose small repair issues. |
 | CW-007 | Maintenance | Archive or remove legacy scaffold code | NOT_STARTED | Unassigned | Unused scaffold paths are proven unreachable and removed or clearly archived without behavior change | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Inventory legacy paths and produce a deletion-safe dependency map. |
