@@ -17,10 +17,10 @@ class ProjectTrackerTests(unittest.TestCase):
     def test_duplicate_task_ids_are_rejected(self):
         duplicate = self.tracker.replace(
             "| CW-003 | Operations follow-up |",
-            "| CW-004 | Operations follow-up |",
+            "| CW-005 | Operations follow-up |",
             1,
         )
-        self.assertIn("duplicate task ID: CW-004", validate_tracker_text(duplicate))
+        self.assertIn("duplicate task ID: CW-005", validate_tracker_text(duplicate))
 
     def test_invalid_vocabulary_is_rejected(self):
         invalid = self.tracker.replace(
@@ -42,7 +42,7 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("`Finalize Section 8`", handoff)
+        self.assertIn("`Start Reservation Awareness Phase 2`", handoff)
 
 
 if __name__ == "__main__":
