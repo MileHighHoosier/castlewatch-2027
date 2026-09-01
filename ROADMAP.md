@@ -4,7 +4,7 @@ _Last rebaseline: August 2026_
 
 This roadmap supersedes older chat-only progress estimates. It should be updated when a phase is finalized.
 
-## Current phase: Rebaseline & Stabilization
+## Current phase: Product roadmap development
 
 ### Section 1 - Authoritative project documentation
 
@@ -145,7 +145,7 @@ Canonical `PROJECT_TRACKER.md` now manages backend, frontend, known rebaseline a
 
 ### Section 8 - Resume product development
 
-Status: **In progress — Sections 8A–8D finalized; next command is `Finalize Section 8`**
+Status: **Complete — production-verified and finalized September 1, 2026**
 
 Complete **Trip Week Phase 2 - Unified Recommendation Engine** rather than restarting it.
 
@@ -166,13 +166,15 @@ Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-fron
 
 Section 8C frontend PR [#54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54) added a seven-day trustworthy weather horizon, six-hour automatic freshness enforcement and date/park-assignable Lightning Lane constraints. Unavailable, stale, out-of-horizon, legacy-unassigned and otherwise unusable signals remain explicit and neutral. New trip-day Lightning Lane saves carry the active park and current date. Usable evidence joins scenario totals/readiness while current recommendation outcomes and manual approval stay regression-protected. The separate [Section 8C test checklist](docs/section-8c-test-checklist.md) passed 134 frontend contracts, production build, exact-head mobile CI, backend tracker/compile gates and read-only production verification before the user separately authorized Finalize. Section 8C is complete.
 
-Section 8D frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) added the bounded user-facing explainability layer: scenario evidence is grouped by category and names score contribution, usability state, provenance and date/park context; affected reservations are explicit; and the card states that itinerary changes are never automatic. Apply, undo, lock and unlock behavior is unchanged. The [Section 8D checklist](docs/section-8d-test-checklist.md) passed 138 frontend contracts, the production build, exact-head Node 22/mobile CI, backend contracts/compilation, tracker gates, successful Vercel/Railway deployment statuses and read-only mobile screenshots of the score/control surface plus expanded Base and alternate evidence. The user separately authorized Finalize, so Section 8D is complete. Parent Section 8 Finalize remains a separate approval; the exact next command is `Finalize Section 8`.
+Section 8D frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) added the bounded user-facing explainability layer: scenario evidence is grouped by category and names score contribution, usability state, provenance and date/park context; affected reservations are explicit; and the card states that itinerary changes are never automatic. Apply, undo, lock and unlock behavior is unchanged. The [Section 8D checklist](docs/section-8d-test-checklist.md) passed 138 frontend contracts, the production build, exact-head Node 22/mobile CI, backend contracts/compilation, tracker gates, successful Vercel/Railway deployment statuses and read-only mobile screenshots of the score/control surface plus expanded Base and alternate evidence. The user separately authorized Section 8D Finalize and then parent Section 8 Finalize. Section 8 is complete; the exact next command is `Start Reservation Awareness Phase 2`.
 
 ---
 
 ## Product roadmap after stabilization
 
 ### 1. Complete Trip Week Phase 2
+
+Status: **Complete — production-verified and finalized September 1, 2026**
 
 Goals:
 
@@ -189,6 +191,8 @@ Goals:
 Output should remain understandable: keep, swap, wait or review, with reasons and affected reservations.
 
 ### 2. Reservation Awareness Phase 2 + 60-day planner
+
+Status: **Not started — exact next command is `Start Reservation Awareness Phase 2`**
 
 Build largely together:
 
