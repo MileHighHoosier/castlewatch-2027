@@ -4,7 +4,7 @@ _Started September 1, 2026_
 
 ## Status
 
-**In review.** Repository, build, exact-head CI, mobile-smoke, compilation and deployment-status gates pass. The remaining gate is a read-only visual verification of the deployed mobile decision surface. Section 8D is not finalized.
+**Passed September 1, 2026; Finalize approval pending.** Repository, build, exact-head CI, mobile-smoke, compilation, deployment-status and read-only production-presentation gates all pass. Section 8D is not finalized.
 
 ## Implementation under test
 
@@ -25,19 +25,20 @@ _Started September 1, 2026_
 - [x] Railway reports a successful deployment for backend merge `719a5ae5a0a0720be9c9e9eb50a71887510b4393`.
 - [x] No dependency/runtime, schema, credential/device or family-key change is present.
 
-## Pending production presentation gate
+## Production presentation gate
 
-The automated production browser connection was unavailable in this session. No alternate login, credential entry or mutating action was attempted. Two screenshots from the live mobile Trip Week page are required:
+The automated production browser connection was unavailable, so no alternate login, credential entry or mutating action was attempted. The user supplied three read-only screenshots from the live mobile Trip Week page:
 
-1. the recommendation card showing the scenario scores and the `Plan changes are never automatic` statement;
-2. the expanded `Decision evidence & reservation impact` section showing both scenario headings and at least one category's state, source and point contribution.
+1. the recommendation card shows Base plan `11` versus MNSSHP alternate `18`, the official-calendar blocker and the `Plan changes are never automatic` statement;
+2. the expanded Base plan evidence shows affected-reservation status plus category states, sources, date/park context and contributions;
+3. the expanded `MNSSHP alternate · 18 points` evidence shows affected-reservation status and readable Events, Reservations, Transportation and Historical Crowds evidence with explicit availability, confidence, sources and contributions.
 
-The screenshots are read-only evidence. Do not apply, undo, lock, unlock, upload, restore, disconnect, rename, revoke or change any shared-plan, itinerary, reservation, resort, credential or device state.
+The mobile evidence is readable without a visible error state or horizontal content clipping. No apply, undo, lock, unlock, upload, restore, disconnect, rename, revoke or shared-plan, itinerary, reservation, resort, credential or device mutation was performed.
 
 ## Finalize boundary
 
-After the production screenshots pass, the checklist may be merged and the exact next command becomes `Finalize Section 8D`. `Finalize Section 8` remains a later separate approval.
+The checklist evidence may be merged, but Section 8D remains open until the user separately authorizes `Finalize Section 8D`. `Finalize Section 8` remains a later separate approval.
 
 ## Exact next command
 
-`Submit Section 8D production screenshots`
+`Finalize Section 8D`
