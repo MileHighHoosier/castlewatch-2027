@@ -634,7 +634,7 @@ The obsolete `castlewatch-2027` Vercel project was not altered. Its failed check
 
 ## Reservation Awareness Phase 2A checkpoint
 
-The user authorized `Start Reservation Awareness Phase 2A` on September 8, 2026. Backend issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90) and the [CW-017 checkpoint](docs/reservation-awareness-phase-2a.md) define the bounded acceptance criteria.
+The user authorized `Start Reservation Awareness Phase 2A` on September 8, 2026. Backend issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90), frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57), documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91) and the [CW-017 checkpoint](docs/reservation-awareness-phase-2a.md) define the bounded acceptance and review evidence.
 
 Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) adds an additive booking-target contract, lossless optional-field handling, explicit rule provenance/as-of/verification state, separate manual opening/deadline overrides and deterministic date-only booking-window calculations. Unverified results stay labeled, unavailable or malformed rules do not invent dates, and no 2B presentation, 2C workflow behavior or 2D reminders are included. All 157 frontend contracts and the production build passed locally; mobile smoke awaits exact-head CI because the local runner has no Chrome executable.
 

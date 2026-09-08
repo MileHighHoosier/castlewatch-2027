@@ -2,7 +2,7 @@
 
 **Status:** Active; bounded implementation is published for review.
 
-**Tracker:** backend issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85).
+**Tracker:** backend issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), with implementation PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) and documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91).
 
 ## Verified baseline
 
@@ -37,7 +37,7 @@ No official booking dates or policy defaults are added. Phase 2A supplies the co
 - [x] Reservation validation, unknown-payload preservation, shared-sync conflict behavior, family-key authorization and manual itinerary controls remain regression-protected.
 - [x] No dependency/runtime, backend API, database schema, production data, itinerary, reservation, credential/device, family-key or hosting configuration change is included.
 - [x] Publish the frontend implementation branch after explicit user approval as PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57).
-- [ ] Publish and link the paired documentation PR.
+- [x] Publish and link documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91).
 - [ ] Pass exact-head frontend and backend CI, including the Node 22 mobile browser smoke.
 - [ ] Review and separately authorize Phase 2A Finalize before any merge or deployment.
 
@@ -73,4 +73,4 @@ Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/5
 
 `Review CW-017 exact-head CI and pull requests`
 
-After the paired documentation PR is linked, review both PRs, exact-head CI and the authoritative frontend preview. Do not merge or deploy.
+Review both PRs, exact-head CI and the authoritative frontend preview. Do not merge or deploy.
