@@ -1,12 +1,12 @@
 # CastleWatch Project Tracker
 
-_Canonical cross-repository tracker · audited September 7, 2026_
+_Canonical cross-repository tracker · audited September 8, 2026_
 
 ## Fresh-agent handoff
 
-- **Current phase:** Pre–Phase 2A corrective checkpoint (CW-016); the lost temporary commits are being reconstructed on new review branches.
-- **Current blocker:** paired review, exact-head CI, backend-first rollout verification and separate Finalize approval must pass before Phase 2A feature work begins.
-- **Exact next command:** `Review the reconstructed pre–Phase 2A corrective pull requests`.
+- **Current phase:** Reservation Awareness Phase 2 Start checkpoint is complete; CW-016 is finalized and Phase 2A feature work remains paused.
+- **Current blocker:** no corrective blocker remains; Reservation Awareness Phase 2A still requires separate explicit Start authorization.
+- **Exact next command:** `Start Reservation Awareness Phase 2A` only after the user separately authorizes that next checkpoint.
 - **Governing sources:** [PROJECT_STATE.md](PROJECT_STATE.md), [ROADMAP.md](ROADMAP.md), [corrective checkpoint](docs/pre-phase-2a-corrective.md), backend issue [#87](https://github.com/MileHighHoosier/castlewatch-2027/issues/87), and the [Reservation Awareness Phase 2 contract](docs/reservation-awareness-phase-2.md).
 - **Repository snapshot at Phase 2 Start:** backend Section 8 closeout `d1284de3ced75c47d2ff5da90fee2e7356a4d60c`; frontend explainability implementation `e46498ba5721015938856660a2b0f5773b65330b`.
 
@@ -40,8 +40,7 @@ QC status values:
 | CW-008 | Maintenance | Clean up legacy Flask-CORS initialization | NOT_STARTED | Unassigned | Global legacy initialization is removed or narrowed while current origin policy remains regression-protected | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Open a focused backend cleanup issue with current CORS tests as acceptance gates. |
 | CW-009 | Maintenance | Remove obsolete Vercel project integration | NOT_STARTED | User + Codex | Obsolete project linkage is identified and removed without touching the authoritative frontend deployment | None | NOT_RUN | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Confirm the obsolete project identifier before any hosting configuration change. |
 | CW-010 | Privacy | Decide repository privacy and configuration separation | NEEDS_DECISION | User | Decide whether public repositories may retain personal trip dates and itinerary defaults | None | NOT_APPLICABLE | [PROJECT_STATE](PROJECT_STATE.md#known-rebaseline-findings-still-requiring-remediation) | 2026-08-31 | Choose private repositories, configuration separation, or explicit acceptance of the current exposure. |
-| CW-016 | Corrective checkpoint | Protect the Phase 2A shared-plan baseline | IN_PROGRESS | User + Codex | Mixed-version fields and malformed reservations cannot be silently erased; blockers use the relevant scenario; Orlando dates and elapsed-time weather freshness are regression-protected; paired review and rollout gates are documented | None | IN_REVIEW | [issue #87](https://github.com/MileHighHoosier/castlewatch-2027/issues/87), [checkpoint](docs/pre-phase-2a-corrective.md) | 2026-09-08 | Review paired reconstructed pull requests and exact-head CI; do not merge or deploy without separate approval. |
-| CW-011 | Product roadmap | Reservation Awareness Phase 2 and 60-day planner | BLOCKED | User + Codex | Booking windows, priorities, statuses, in-app reminders and contingency choices are implemented through separately approved 2A–2D checkpoints | CW-016 | NOT_RUN | [issue #85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), [contract](docs/reservation-awareness-phase-2.md) | 2026-09-08 | Finalize CW-016 before running `Start Reservation Awareness Phase 2A`. |
+| CW-011 | Product roadmap | Reservation Awareness Phase 2 and 60-day planner | IN_PROGRESS | User + Codex | Booking windows, priorities, statuses, in-app reminders and contingency choices are implemented through separately approved 2A–2D checkpoints | CW-016 (completed) | NOT_RUN | [issue #85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), [contract](docs/reservation-awareness-phase-2.md) | 2026-09-08 | Await separate user authorization before running `Start Reservation Awareness Phase 2A`. |
 | CW-012 | Product roadmap | Prediction Phase 2 | BLOCKED | Unassigned | Seasonal, event, recent-trend, park-hour and confidence improvements are scoped and regression-tested | CW-011 | NOT_RUN | [ROADMAP](ROADMAP.md#3-prediction-phase-2) | 2026-09-01 | Complete CW-011 before starting Prediction Phase 2. |
 | CW-013 | Product roadmap | Cross-park ripple prediction | BLOCKED | Unassigned | Displacement from events, weather, outages and schedules is estimated with explainable confidence | CW-012 | NOT_RUN | [ROADMAP](ROADMAP.md#4-cross-park-ripple-prediction) | 2026-08-31 | Complete CW-012 before designing cross-park effects. |
 | CW-014 | Product roadmap | Actionable notifications and change alerts | BLOCKED | Unassigned | Alerts are limited to material, actionable changes with explicit delivery and deduplication rules | CW-011, CW-012 | NOT_RUN | [ROADMAP](ROADMAP.md#5-notifications-and-change-alerts) | 2026-09-01 | Complete the prerequisite product phases, then rank alert types by user value. |
@@ -58,6 +57,7 @@ QC status values:
 | Section 8C | Complete and finalized September 1, 2026 | [frontend PR #54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54), [checklist](docs/section-8c-test-checklist.md), [checklist PR #76](https://github.com/MileHighHoosier/castlewatch-2027/pull/76) |
 | Section 8D | Complete and finalized September 1, 2026 | [frontend PR #55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55), [checklist](docs/section-8d-test-checklist.md), [checklist PR #82](https://github.com/MileHighHoosier/castlewatch-2027/pull/82) |
 | Section 8 | Complete, production-verified and finalized September 1, 2026 | [issue #66](https://github.com/MileHighHoosier/castlewatch-2027/issues/66), [contract](docs/section-8-trip-week-phase-2.md), [frontend PR #55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) |
+| Pre–Phase 2A corrective checkpoint (CW-016) | Complete, production-verified and finalized September 8, 2026 | [issue #87](https://github.com/MileHighHoosier/castlewatch-2027/issues/87), [backend PR #88](https://github.com/MileHighHoosier/castlewatch-2027/pull/88), [frontend PR #56](https://github.com/MileHighHoosier/castlewatch-frontend/pull/56), [checkpoint](docs/pre-phase-2a-corrective.md) |
 
 Completed work is summarized here instead of being expanded into active task rows. Individual merged evidence remains in the linked project state, roadmap and GitHub records.
 
