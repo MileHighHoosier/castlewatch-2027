@@ -166,7 +166,7 @@ Section 8B frontend PR [#53](https://github.com/MileHighHoosier/castlewatch-fron
 
 Section 8C frontend PR [#54](https://github.com/MileHighHoosier/castlewatch-frontend/pull/54) added a seven-day trustworthy weather horizon, six-hour automatic freshness enforcement and date/park-assignable Lightning Lane constraints. Unavailable, stale, out-of-horizon, legacy-unassigned and otherwise unusable signals remain explicit and neutral. New trip-day Lightning Lane saves carry the active park and current date. Usable evidence joins scenario totals/readiness while current recommendation outcomes and manual approval stay regression-protected. The separate [Section 8C test checklist](docs/section-8c-test-checklist.md) passed 134 frontend contracts, production build, exact-head mobile CI, backend tracker/compile gates and read-only production verification before the user separately authorized Finalize. Section 8C is complete.
 
-Section 8D frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) added the bounded user-facing explainability layer: scenario evidence is grouped by category and names score contribution, usability state, provenance and date/park context; affected reservations are explicit; and the card states that itinerary changes are never automatic. Apply, undo, lock and unlock behavior is unchanged. The [Section 8D checklist](docs/section-8d-test-checklist.md) passed 138 frontend contracts, the production build, exact-head Node 22/mobile CI, backend contracts/compilation, tracker gates, successful Vercel/Railway deployment statuses and read-only mobile screenshots of the score/control surface plus expanded Base and alternate evidence. The user separately authorized Section 8D Finalize and then parent Section 8 Finalize. Section 8 is complete; the exact next command is `Start Reservation Awareness Phase 2`.
+Section 8D frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55) added the bounded user-facing explainability layer: scenario evidence is grouped by category and names score contribution, usability state, provenance and date/park context; affected reservations are explicit; and the card states that itinerary changes are never automatic. Apply, undo, lock and unlock behavior is unchanged. The [Section 8D checklist](docs/section-8d-test-checklist.md) passed 138 frontend contracts, the production build, exact-head Node 22/mobile CI, backend contracts/compilation, tracker gates, successful Vercel/Railway deployment statuses and read-only mobile screenshots of the score/control surface plus expanded Base and alternate evidence. The user separately authorized Section 8D Finalize and then parent Section 8 Finalize. These remain historical completion records; the September 7 audit later opened the bounded CW-016 corrections that must release before Phase 2A.
 
 ---
 
@@ -192,7 +192,7 @@ Output should remain understandable: keep, swap, wait or review, with reasons an
 
 ### 2. Reservation Awareness Phase 2 + 60-day planner
 
-Status: **Started September 1, 2026 — Start checkpoint complete; exact next command is `Start Reservation Awareness Phase 2A`**
+Status: **Started September 1, 2026 — Phase 2A paused behind the pre–Phase 2A corrective checkpoint (CW-016)**
 
 Build largely together:
 
@@ -206,6 +206,8 @@ Build largely together:
 The [Phase 2 contract](docs/reservation-awareness-phase-2.md) and backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85) divide delivery into separately approved 2A–2D checkpoints: an additive booking-target and booking-window contract; the user-facing 60-day priority timeline; attempt/booking/unavailable/backup and contingency workflow; then in-app reminders and coordinated release verification.
 
 Booking targets remain distinct from actual reservations, all target/reservation/itinerary changes remain user-controlled, and existing reservation/shared-plan payloads remain backward-compatible. Every calculated date must identify its rule, provenance, as-of/verification state and manual-override precedence. External email, text and push delivery remains reserved for the later Notifications phase.
+
+Before Phase 2A may start, the paired CW-016 corrections must preserve unknown shared-payload fields, reject destructive older-schema writes, validate reservations without silently erasing malformed source data, calculate blockers against the relevant scenario, and protect Walt Disney World calendar/freshness boundaries. Review, exact-head CI, backend-first rollout verification and separate Finalize approval remain required; production is unchanged by the review checkpoint.
 
 ### 3. Prediction Phase 2
 

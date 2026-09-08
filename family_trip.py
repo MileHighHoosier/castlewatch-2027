@@ -1,4 +1,5 @@
 import json
+import math
 from datetime import datetime, timezone
 
 from flask import jsonify, request
@@ -135,11 +136,103 @@ def _history_entry(row, current_version):
     }
 
 
+def _valid_reservations(value):
+    if not isinstance(value, list):
+        return False
+
+    seen_ids = set()
+    string_fields = ("id", "title", "date", "time", "location", "notes")
+    valid_types = {"dining", "experience", "tour", "flight", "other"}
+    valid_statuses = {"provisional", "confirmed"}
+
+    for reservation in value:
+        if not isinstance(reservation, dict):
+            return False
+        if not all(isinstance(reservation.get(field), str) for field in string_fields):
+            return False
+
+        reservation_id = reservation["id"].strip()
+        if not reservation_id or reservation_id in seen_ids:
+            return False
+        seen_ids.add(reservation_id)
+
+        if reservation.get("type") not in valid_types:
+            return False
+        if reservation.get("status") not in valid_statuses:
+            return False
+
+        date = reservation["date"]
+        if date:
+            try:
+                if datetime.strptime(date, "%Y-%m-%d").strftime("%Y-%m-%d") != date:
+                    return False
+            except ValueError:
+                return False
+
+        time_value = reservation["time"]
+        if time_value:
+            try:
+                if datetime.strptime(time_value, "%H:%M").strftime("%H:%M") != time_value:
+                    return False
+            except ValueError:
+                return False
+
+        for field in ("durationMinutes", "arrivalBufferMinutes"):
+            minutes = reservation.get(field)
+            if (
+                isinstance(minutes, bool)
+                or not isinstance(minutes, (int, float))
+                or not math.isfinite(minutes)
+                or minutes < 0
+            ):
+                return False
+
+    return True
+
+
+def _payload_compatibility_error(current_payload, incoming_payload):
+    current_payload = _json_value(current_payload)
+    if not isinstance(current_payload, dict):
+        return None
+
+    missing_fields = sorted(set(current_payload) - set(incoming_payload))
+    if missing_fields:
+        return jsonify({
+            "status": "incompatible_payload",
+            "message": "The submitted shared plan omits fields from the current version. Download the current version before saving.",
+            "missingFields": missing_fields,
+        }), 409
+
+    current_schema = current_payload.get("schemaVersion")
+    incoming_schema = incoming_payload.get("schemaVersion")
+    if (
+        isinstance(current_schema, int)
+        and not isinstance(current_schema, bool)
+        and (
+            not isinstance(incoming_schema, int)
+            or isinstance(incoming_schema, bool)
+            or incoming_schema < current_schema
+        )
+    ):
+        return jsonify({
+            "status": "incompatible_payload",
+            "message": "The submitted shared plan uses an older schema version. Download the current version before saving.",
+        }), 409
+
+    return None
+
+
 def _validate_payload(payload):
     if not isinstance(payload, dict):
         return None, (jsonify({
             "status": "invalid_request",
             "message": "payload must be a JSON object.",
+        }), 400)
+
+    if "reservations" in payload and not _valid_reservations(payload["reservations"]):
+        return None, (jsonify({
+            "status": "invalid_request",
+            "message": "reservations must contain complete, valid reservation records.",
         }), 400)
 
     serialized_payload = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
@@ -335,6 +428,13 @@ def put_family_trip(engine):
         if expected_version != current_version:
             return _version_conflict_response(current)
 
+        compatibility_error = _payload_compatibility_error(
+            current["payload"] if current else None,
+            payload,
+        )
+        if compatibility_error:
+            return compatibility_error
+
         next_version = current_version + 1
         if current is None:
             connection.execute(text("""
@@ -451,6 +551,13 @@ def restore_family_trip_version(engine):
         serialized_payload, payload_error = _validate_payload(source_payload)
         if payload_error:
             return payload_error
+
+        compatibility_error = _payload_compatibility_error(
+            current["payload"] if current else None,
+            source_payload,
+        )
+        if compatibility_error:
+            return compatibility_error
 
         next_version = current_version + 1
         connection.execute(text("""

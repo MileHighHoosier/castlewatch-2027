@@ -4,7 +4,9 @@ _Verification checkpoint · August 31, 2026_
 
 ## Result
 
-**Passed.** Section 8A's typed evidence/scoring boundary is regression-protected and ready for its separate Finalize checkpoint. This checklist does not finalize Section 8A or start Section 8B.
+**Passed and finalized August 31, 2026.** Section 8A's typed evidence/scoring boundary is regression-protected. This remains the historical checklist evidence; later checkpoint state is recorded in `PROJECT_TRACKER.md`.
+
+Audit note (September 7, 2026): this remains valid historical evidence for Section 8A. It did not test unknown future shared-payload fields or malformed persisted reservation arrays; CW-016 adds those compatibility and validation gates before Phase 2A.
 
 ## Acceptance evidence
 
@@ -34,8 +36,8 @@ _Verification checkpoint · August 31, 2026_
 - No itinerary, reservation, resort, recommendation, credential or device state was changed.
 - No schema, dependency/runtime or deployment configuration changed.
 - `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.
-- Section 8B remains blocked until the user separately commands and completes `Finalize Section 8A`.
+- Section 8B remained blocked at this checkpoint until the user separately finalized 8A; it was started and completed later under its own approvals.
 
 ## Exact next command
 
-`Finalize Section 8A`
+Historical at this checkpoint: `Finalize Section 8A`. Current next action is maintained in `PROJECT_TRACKER.md`.

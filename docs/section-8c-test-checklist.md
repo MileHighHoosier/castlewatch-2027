@@ -4,7 +4,9 @@ _Verification checkpoint · September 1, 2026_
 
 ## Result
 
-**Passed and finalized September 1, 2026.** Section 8C's weather and Lightning Lane integration is regression-protected and presents the current long-range evidence conservatively. The user separately authorized Finalize after this checklist passed. Section 8D has not started.
+**Passed and finalized September 1, 2026.** Section 8C's weather and Lightning Lane integration is regression-protected and presents long-range evidence conservatively. The user separately authorized Finalize after this checklist passed. This remains historical checklist evidence; later checkpoint state is recorded in `PROJECT_TRACKER.md`.
+
+Audit note (September 7, 2026): this remains valid historical evidence for Section 8C's scoring contract. It did not cover the `America/New_York` calendar boundary or an observation becoming stale while an open page had no storage change; CW-016 adds both regressions.
 
 ## Acceptance evidence
 
@@ -42,8 +44,8 @@ _Verification checkpoint · September 1, 2026_
 - No schema, dependency/runtime, deployment or hosting configuration changed.
 - No secret, family key, raw device token or invite token was added to source or output.
 - `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.
-- Section 8D was not started.
+- Section 8D was not started at this checkpoint; it was started and completed later under its own approvals.
 
 ## Exact next command
 
-`Start Section 8D`
+Historical at this checkpoint: `Start Section 8D`. Current next action is maintained in `PROJECT_TRACKER.md`.

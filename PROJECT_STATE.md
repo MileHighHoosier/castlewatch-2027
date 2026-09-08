@@ -23,7 +23,7 @@ CastleWatch is an unofficial personal planning tool and is not affiliated with D
 The original feature roadmap is mostly implemented, but CastleWatch is not yet production-hardened enough to treat every recommendation as fully dependable. A reasonable rebaseline is:
 
 - Core tracking and planning foundation: mostly complete.
-- Trip-week planning and decision support: substantial, but the unified recommendation engine is incomplete.
+- Trip-week planning and decision support: Section 8's unified evidence/scoring and explainability work is complete, subject to the current corrective checkpoint before later payload expansion.
 - Historical prediction: useful directional signal, not a precise 2027 crowd model.
 - Shared family sync/history: substantial implementation.
 - Account/device migration: Section 5 is complete and production-verified; family-key recovery remains enabled and retirement is not authorized.
@@ -66,7 +66,7 @@ The original feature roadmap is mostly implemented, but CastleWatch is not yet p
 - historical crowd signals,
 - readiness/confidence indicators.
 
-The engine can recommend **keep**, **swap**, **wait**, or **review**, but Trip Week Phase 2 is not complete. Weather and Lightning Lane are currently readiness inputs rather than fully integrated scenario-scoring signals, and transportation is still scored mainly through broad resort-category heuristics.
+The engine can recommend **keep**, **swap**, **wait**, or **review**. Section 8 completed typed evidence/scoring, the shared transportation model, trustworthy date-assigned weather, date/park-assigned Lightning Lane evidence and user-facing explanations. Itinerary changes remain manual. The current corrective checkpoint adds malformed-reservation review behavior, preferred-scenario blocker calculation and elapsed-time/date-boundary regression protection before Phase 2A expands the shared payload.
 
 ## Shared family sync
 
@@ -618,15 +618,28 @@ The user authorized `Start Reservation Awareness Phase 2` on September 1, 2026. 
 
 The Start checkpoint changed documentation and tracking only. It did not change application behavior, production/shared-plan data, the October 9–16, 2027 itinerary, reservations, resorts, recommendations, credentials/devices, database schema, dependencies/runtime, deployment configuration or family-key behavior. `CASTLEWATCH_FAMILY_KEY` and `legacy_family_key_enabled` remain configured and enabled.
 
+## Pre–Phase 2A corrective checkpoint
+
+A September 7, 2026 repo-first audit found five bounded issues that must be corrected before Phase 2A introduces booking-target fields:
+
+- an older frontend rebuild could omit additive shared-payload fields;
+- malformed stored reservation arrays could be rendered as empty and later overwritten;
+- generic recommendation warnings were calculated against the base scenario even when the alternate scenario was relevant;
+- weather and assigned-window date boundaries used UTC instead of the Walt Disney World calendar day;
+- weather freshness did not age while an open page had no storage mutation.
+
+CW-016 reconstructs the authorized backend compatibility/validation guard and the paired frontend preservation, validation, scenario and date/freshness corrections after the original temporary commits were lost before publication. This is corrective work only: Phase 2A booking-target implementation remains paused. Review, exact-head CI, backend-first rollout, a separately approved production checklist and Finalize approval are still required. Production is unchanged.
+
 ## Current development phase
 
-**Reservation Awareness Phase 2 — started; Phase 2A not started**
+**Pre–Phase 2A corrective checkpoint — reconstructed changes under review; Phase 2A paused**
 
-Sections 1–8 are complete. Reservation Awareness Phase 2 is in progress at its completed Start checkpoint. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–8 retain their historical completion records. Reservation Awareness Phase 2 is in progress at its completed Start checkpoint, but audit corrections must clear the release gate before Phase 2A begins. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
 
 ## Exact next priorities
 
-1. **Run `Start Reservation Awareness Phase 2A`.**
-2. Keep Phase 2A implementation, its test checklist and its Finalize approval as separate checkpoints before starting Phase 2B.
+1. **Review and verify the paired reconstructed CW-016 corrective pull requests.**
+2. After separate approval, deploy the backend compatibility guard before the frontend preservation changes and run the corrective production checklist.
+3. Finalize CW-016 separately; only then run `Start Reservation Awareness Phase 2A`.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
