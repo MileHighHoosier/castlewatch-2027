@@ -21,9 +21,9 @@ Started September 7, 2026 after the user authorized the independent audit's boun
 
 ## Current status
 
-The original temporary Work commits were lost before publication and cannot be recovered. On September 8, 2026 the user authorized a controlled reconstruction with new commit identities. This branch is that reconstruction; it does not claim the lost SHAs.
+The original temporary Work commits were lost before publication and cannot be recovered. On September 8, 2026 the user authorized a controlled reconstruction with new commit identities. The published corrective commits do not claim the lost SHAs.
 
-Implementation is reconstructed and local verification is in progress. The checkpoint is not finalized, merged or deployed. Production remains unchanged.
+**Finalized September 8, 2026.** The backend and frontend corrections passed exact-head review, rolled out backend first, passed production verification, and were finalized without starting Reservation Awareness Phase 2A.
 
 ## Surviving reconstruction evidence
 
@@ -73,6 +73,17 @@ Passed on the reconstructed worktrees:
 
 The local runtime supplied Python 3.12.13 and Node 24.19.0. Exact pinned Python 3.12.14 / Node 22 execution and the 390×844 Chrome smoke remain required in GitHub Actions. The local mobile smoke could not start because this environment has no supported Chrome executable; no browser assertion failed.
 
+## Final rollout evidence
+
+- Backend PR [#88](https://github.com/MileHighHoosier/castlewatch-2027/pull/88) retained authorized head `048baf821f317f19e2b9d2b26078818505719291` and merged as `c4f4f015ea2f8987463293bb19f1d210edf7ace3`.
+- Railway reported the backend deployment successful. Production `/health`, root and `/api/trip-week` reads returned HTTP 200; an unauthenticated family-plan read returned the expected HTTP 401.
+- A production family-key recovery read connected through the frontend and loaded shared version 17 without saving, restoring or otherwise mutating shared data.
+- Frontend PR [#56](https://github.com/MileHighHoosier/castlewatch-frontend/pull/56) retained authorized head `5780b5ca38777172272a4462d09b4fd2ba05ed4d` and merged as `0ed5b79e8612bb941678f6d68930b773e1ad49b8`.
+- The correct `castlewatch-frontend` Vercel production deployment succeeded, and post-merge frontend workflow run 89 passed.
+- Read-only production smoke passed for live ride/history data, Railway connectivity, Trip Week dates and scenario evidence, elapsed-time cache presentation, and authenticated shared-plan reads. No application-origin browser console errors were observed.
+- The separate obsolete `castlewatch-2027` Vercel project remains unchanged. Its known one-second failure is configuration-only: the configured Root Directory `website` does not exist. Cleanup remains tracked separately as CW-009.
+- No production/shared plan, itinerary, reservation, resort, credential/device, schema, dependency or hosting configuration was changed outside the authorized deployments.
+
 ## Rollout and rollback order
 
 1. Review both PRs and require exact-head CI.
@@ -82,4 +93,4 @@ The local runtime supplied Python 3.12.13 and Node 24.19.0. Exact pinned Python 
 5. Run the separately approved corrective production checklist.
 6. Roll back frontend first, then backend, if the paired rollout fails. Do not introduce booking-target fields while either corrective side is absent.
 
-Phase 2A remains blocked until this checkpoint is separately finalized.
+CW-016 is finalized. Reservation Awareness Phase 2A remains paused and requires separate explicit authorization before any feature work begins.

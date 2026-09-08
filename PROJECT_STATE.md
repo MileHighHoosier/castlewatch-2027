@@ -1,6 +1,6 @@
 # CastleWatch Project State
 
-_Last rebaseline: August 2026_
+_Last rebaseline: September 8, 2026_
 
 ## Purpose
 
@@ -620,7 +620,7 @@ The Start checkpoint changed documentation and tracking only. It did not change 
 
 ## Pre–Phase 2A corrective checkpoint
 
-A September 7, 2026 repo-first audit found five bounded issues that must be corrected before Phase 2A introduces booking-target fields:
+A September 7, 2026 repo-first audit found five bounded issues that had to be corrected before Phase 2A could introduce booking-target fields:
 
 - an older frontend rebuild could omit additive shared-payload fields;
 - malformed stored reservation arrays could be rendered as empty and later overwritten;
@@ -628,18 +628,20 @@ A September 7, 2026 repo-first audit found five bounded issues that must be corr
 - weather and assigned-window date boundaries used UTC instead of the Walt Disney World calendar day;
 - weather freshness did not age while an open page had no storage mutation.
 
-CW-016 reconstructs the authorized backend compatibility/validation guard and the paired frontend preservation, validation, scenario and date/freshness corrections after the original temporary commits were lost before publication. This is corrective work only: Phase 2A booking-target implementation remains paused. Review, exact-head CI, backend-first rollout, a separately approved production checklist and Finalize approval are still required. Production is unchanged.
+CW-016 was finalized September 8, 2026 after the controlled reconstruction passed local suites, exact-head CI, backend-first rollout and read-only production verification. Backend PR [#88](https://github.com/MileHighHoosier/castlewatch-2027/pull/88) merged as `c4f4f015ea2f8987463293bb19f1d210edf7ace3`; Railway deployment, health, public reads, the expected unauthenticated family-plan rejection and an authenticated shared-plan read all passed before frontend rollout. Frontend PR [#56](https://github.com/MileHighHoosier/castlewatch-frontend/pull/56) then merged as `0ed5b79e8612bb941678f6d68930b773e1ad49b8`; the correct `castlewatch-frontend` Vercel production deployment, post-merge CI and read-only production smoke passed.
+
+The obsolete `castlewatch-2027` Vercel project was not altered. Its failed check remains configuration-only because its Root Directory is set to nonexistent `website`; cleanup stays tracked separately as CW-009. The rollout did not mutate shared plan data, itinerary, reservations, resorts, credentials/devices, database schema, dependencies/runtime or hosting configuration. Reservation Awareness Phase 2A feature implementation was not started.
 
 ## Current development phase
 
-**Pre–Phase 2A corrective checkpoint — reconstructed changes under review; Phase 2A paused**
+**Reservation Awareness Phase 2 — Start checkpoint complete; CW-016 finalized; Phase 2A paused**
 
-Sections 1–8 retain their historical completion records. Reservation Awareness Phase 2 is in progress at its completed Start checkpoint, but audit corrections must clear the release gate before Phase 2A begins. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no later retirement option is authorized without a separate explicit user approval.
+Sections 1–8 retain their historical completion records. The corrective shared-plan baseline is production-verified. Reservation Awareness Phase 2 remains at its completed Start checkpoint until the user separately authorizes Phase 2A. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. **Review and verify the paired reconstructed CW-016 corrective pull requests.**
-2. After separate approval, deploy the backend compatibility guard before the frontend preservation changes and run the corrective production checklist.
-3. Finalize CW-016 separately; only then run `Start Reservation Awareness Phase 2A`.
+1. Keep Reservation Awareness Phase 2A paused until separate explicit user authorization.
+2. When authorized, use the existing Phase 2 contract and run `Start Reservation Awareness Phase 2A` as a new checkpoint.
+3. Keep obsolete Vercel-project cleanup isolated under CW-009; do not combine it with product development.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
