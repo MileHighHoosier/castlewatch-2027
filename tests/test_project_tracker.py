@@ -42,11 +42,11 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("Reservation Awareness Phase 2A (CW-017)", handoff)
-        self.assertIn("`Finalize Reservation Awareness Phase 2A`", handoff)
-        self.assertIn("Do not begin Phase 2B", handoff)
+        self.assertIn("Reservation Awareness Phase 2A (CW-017) is complete", handoff)
+        self.assertIn("`Start Reservation Awareness Phase 2B`", handoff)
+        self.assertIn("Do not begin Phase 2B implicitly", handoff)
 
-    def test_phase_2a_is_active_after_cw016_finalization(self):
+    def test_phase_2a_is_completed_after_cw016_finalization(self):
         self.assertNotIn("| CW-016 | Corrective checkpoint |", self.tracker)
         self.assertIn(
             "| CW-011 | Product roadmap | Reservation Awareness Phase 2 and 60-day planner | IN_PROGRESS |",
@@ -56,8 +56,9 @@ class ProjectTrackerTests(unittest.TestCase):
             "| Pre–Phase 2A corrective checkpoint (CW-016) | Complete, production-verified and finalized September 8, 2026 |",
             self.tracker,
         )
+        self.assertNotIn("| CW-017 | Reservation Awareness Phase 2A |", self.tracker.split("## Completed phase summary", 1)[0])
         self.assertIn(
-            "| CW-017 | Reservation Awareness Phase 2A | Add the booking-target contract and deterministic booking-window engine | IN_PROGRESS |",
+            "| Reservation Awareness Phase 2A (CW-017) | Complete, production-verified and finalized September 8, 2026 |",
             self.tracker,
         )
         self.assertIn("[issue #90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90)", self.tracker)

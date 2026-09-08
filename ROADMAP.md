@@ -192,7 +192,7 @@ Output should remain understandable: keep, swap, wait or review, with reasons an
 
 ### 2. Reservation Awareness Phase 2 + 60-day planner
 
-Status: **Phase 2A acceptance gates passed September 8, 2026 — awaiting separate Finalize authorization under CW-017**
+Status: **Phase 2A complete, production-verified and finalized September 8, 2026 under CW-017; Phase 2B not started**
 
 Build largely together:
 
@@ -207,7 +207,7 @@ The [Phase 2 contract](docs/reservation-awareness-phase-2.md) and backend issue 
 
 Booking targets remain distinct from actual reservations, all target/reservation/itinerary changes remain user-controlled, and existing reservation/shared-plan payloads remain backward-compatible. Every calculated date must identify its rule, provenance, as-of/verification state and manual-override precedence. External email, text and push delivery remains reserved for the later Notifications phase.
 
-CW-016 is finalized and production-verified. Phase 2A issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90) and its [checkpoint](docs/reservation-awareness-phase-2a.md) now govern the additive booking-target contract and booking-window engine. The implementation is review-only: publish approval, exact-head CI, checklist review and separate Finalize/rollout authorization remain required. Phase 2B has not started, and production is unchanged.
+CW-016 remains finalized and production-verified. Phase 2A issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90) and its [checkpoint](docs/reservation-awareness-phase-2a.md) record the completed additive booking-target contract and booking-window engine. Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) and documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91) passed exact-head and post-merge CI, backend-first Railway/Vercel production rollout and read-only smoke verification. Phase 2B has not started and requires separate explicit Start authorization.
 
 ### 3. Prediction Phase 2
 

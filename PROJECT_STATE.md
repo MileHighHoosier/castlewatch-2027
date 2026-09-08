@@ -638,18 +638,20 @@ The user authorized `Start Reservation Awareness Phase 2A` on September 8, 2026.
 
 Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) adds an additive booking-target contract, lossless optional-field handling, explicit rule provenance/as-of/verification state, separate manual opening/deadline overrides and deterministic date-only booking-window calculations. Unverified results stay labeled, unavailable or malformed rules do not invent dates, and no 2B presentation, 2C workflow behavior or 2D reminders are included. Exact-head frontend CI passed all 157 contracts, production build and mobile browser smoke; backend PR #91 CI passed; and the authoritative `castlewatch-frontend` preview is Ready. The obsolete secondary Vercel project's known configuration failure remains isolated and unchanged.
 
-The implementation is published for review. No merge, deployment, production/shared-plan mutation, backend API/schema/runtime change, itinerary/reservation change, credential/device change, family-key change or obsolete-Vercel-project change has occurred.
+The user separately authorized `Finalize Reservation Awareness Phase 2A` on September 8, 2026. Documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91) merged first as `f145139d181a7bbaf761fc88983d59653798eb24`; post-merge backend CI passed and matching Railway deployment `e368f086-f1e4-4ac1-8c00-d82d03df95c2` succeeded. Production `/health`, root and `/api/trip-week` reads returned HTTP 200, while unauthenticated `/api/family-trip` returned the expected HTTP 401.
+
+Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) then merged as `977778c82ac9c6811ca0ad9c88139e77a291b925`. The authoritative `castlewatch-frontend` Vercel production deployment `9iXGxGE4Gx57qj32suwx2EVeAHUZ` and post-merge CI passed. Read-only production smoke returned HTTP 200 for the CastleWatch and Operations pages and live Railway `/api/rides` data. No shared-plan, itinerary, reservation, resort, recommendation, credential/device, family-key, database-schema, dependency/runtime or hosting-configuration mutation occurred. The obsolete secondary Vercel project was not altered.
 
 ## Current development phase
 
-**Reservation Awareness Phase 2A (CW-017) — acceptance gates passed; awaiting separate Finalize authorization**
+**Reservation Awareness Phase 2A (CW-017) — complete, production-verified and finalized; Phase 2B not started**
 
-Sections 1–8 and CW-016 retain their historical completion records. The corrective shared-plan baseline is production-verified. Phase 2A remains review-only until the user separately authorizes Finalize. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
+Sections 1–8, CW-016 and Phase 2A retain their completion records. Phase 2B requires separate explicit Start authorization. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. Review the passed CW-017 checklist and separately authorize Phase 2A Finalize only if accepted.
-2. Do not merge, deploy or begin Phase 2B before that separate authorization.
+1. Keep Phase 2B paused until separate explicit user authorization.
+2. When authorized, run `Start Reservation Awareness Phase 2B` as a new bounded checkpoint.
 3. Keep obsolete Vercel-project cleanup isolated under CW-009; do not combine it with product development.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.

@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2A checkpoint (CW-017)
 
-**Status:** Acceptance and exact-head review gates passed; awaiting separate Phase 2A Finalize authorization.
+**Status:** Complete, production-verified and finalized September 8, 2026. Phase 2B has not started.
 
 **Tracker:** backend issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), with implementation PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) and documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91).
 
@@ -39,7 +39,7 @@ No official booking dates or policy defaults are added. Phase 2A supplies the co
 - [x] Publish the frontend implementation branch after explicit user approval as PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57).
 - [x] Publish and link documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91).
 - [x] Pass exact-head frontend and backend CI, including the Node 22 mobile browser smoke.
-- [ ] Review and separately authorize Phase 2A Finalize before any merge or deployment.
+- [x] Review and separately authorize Phase 2A Finalize before any merge or deployment.
 
 ## Current validation evidence
 
@@ -57,8 +57,16 @@ Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/5
 - Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) remained at `4394ab030edf1d4331a95cb64d5ae78e7a3be53e`; `frontend-tests` passed its Node 22 clean install, all 157 contracts, production build and mobile browser smoke.
 - The authoritative `castlewatch-frontend` Vercel preview reported **Ready** for deployment `8kvTTNoBUypeXmxgU4VdPiAW4Kc2`.
 - The separate obsolete `castlewatch-2027` Vercel project reported its known configuration failure. This does not contradict the Ready authoritative preview, and the obsolete project was not altered or bypassed.
-- Documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91) passed `backend-tests` at its published review head before this evidence-only update; the updated head must retain the same gate.
-- Both PRs remain open and unmerged. No production deployment was requested or performed.
+- Documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91) passed `backend-tests` at its reviewed head.
+
+## Finalize and production evidence
+
+- The user separately authorized `Finalize Reservation Awareness Phase 2A` on September 8, 2026.
+- Documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91) merged first as `f145139d181a7bbaf761fc88983d59653798eb24`; post-merge backend CI run [34226891130](https://github.com/MileHighHoosier/castlewatch-2027/actions/runs/34226891130) passed.
+- Matching Railway deployment `e368f086-f1e4-4ac1-8c00-d82d03df95c2` succeeded. Production `/health`, root and `/api/trip-week` reads returned HTTP 200; unauthenticated `/api/family-trip` returned the expected HTTP 401.
+- Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) then merged as `977778c82ac9c6811ca0ad9c88139e77a291b925`; post-merge frontend CI run [34227288400](https://github.com/MileHighHoosier/castlewatch-frontend/actions/runs/34227288400) passed its clean install, all 157 contracts, production build and mobile browser smoke.
+- The authoritative `castlewatch-frontend` Vercel production deployment `9iXGxGE4Gx57qj32suwx2EVeAHUZ` reported success. Read-only production smoke returned HTTP 200 for the CastleWatch and Operations pages and live Railway `/api/rides` data.
+- The obsolete `castlewatch-2027` Vercel project was not altered. No shared-plan, itinerary, reservation, resort, recommendation, credential/device, family-key, database-schema, dependency/runtime or hosting-configuration mutation occurred.
 
 ## Preserved boundaries
 
@@ -66,7 +74,7 @@ Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/5
 - No booking target changes the itinerary, park order, resort assignments or recommendation approval.
 - Existing family sync/history remains opaque to the backend and version-tolerant in the frontend.
 - Family-key recovery and `legacy_family_key_enabled` remain unchanged and enabled.
-- Production data is not read or mutated by this implementation checkpoint.
+- Production data was not mutated; final verification used only public/read-only routes and the expected unauthenticated protected-route rejection.
 - Phase 2B UI, Phase 2C workflow behavior and Phase 2D reminders are not started.
 - The obsolete `castlewatch-2027` Vercel project is not altered.
 
@@ -74,11 +82,11 @@ Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/5
 
 - Stop if exact-head CI exposes a regression or if the authoritative `castlewatch-frontend` preview is not Ready.
 - Do not bypass branch protections or the obsolete Vercel project's failed check.
-- Before merge authorization, rollback is branch deletion only; `main` and production are unchanged.
-- After review, Phase 2A still requires separate Finalize and rollout instructions. Phase 2B remains blocked until 2A is finalized.
+- The merged implementation remains independently revertible by its frontend merge commit; no data migration or backend schema rollback is required.
+- Phase 2B remains paused until separately authorized.
 
 ## Exact next command
 
-`Finalize Reservation Awareness Phase 2A`
+`Start Reservation Awareness Phase 2B`
 
-Use this command only if the acceptance evidence is approved. Otherwise, report the failed criterion or requested correction. Phase 2B remains blocked.
+Use this command only after separate explicit user authorization. Phase 2B has not started, and Phase 2C/2D remain out of scope.
