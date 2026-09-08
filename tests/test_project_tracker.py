@@ -42,10 +42,11 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("`Start Reservation Awareness Phase 2A`", handoff)
-        self.assertIn("separately authorizes", handoff)
+        self.assertIn("Reservation Awareness Phase 2A (CW-017)", handoff)
+        self.assertIn("`Review CW-017 exact-head CI and pull requests`", handoff)
+        self.assertIn("do not merge or deploy", handoff)
 
-    def test_phase_2a_waits_for_separate_authorization_after_cw016_finalization(self):
+    def test_phase_2a_is_active_after_cw016_finalization(self):
         self.assertNotIn("| CW-016 | Corrective checkpoint |", self.tracker)
         self.assertIn(
             "| CW-011 | Product roadmap | Reservation Awareness Phase 2 and 60-day planner | IN_PROGRESS |",
@@ -55,6 +56,11 @@ class ProjectTrackerTests(unittest.TestCase):
             "| Pre–Phase 2A corrective checkpoint (CW-016) | Complete, production-verified and finalized September 8, 2026 |",
             self.tracker,
         )
+        self.assertIn(
+            "| CW-017 | Reservation Awareness Phase 2A | Add the booking-target contract and deterministic booking-window engine | IN_PROGRESS |",
+            self.tracker,
+        )
+        self.assertIn("[issue #90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90)", self.tracker)
 
 
 if __name__ == "__main__":

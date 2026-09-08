@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2 + 60-day planner
 
-**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The Start checkpoint changed documentation and tracking only. A later repo-first audit opened the bounded [pre–Phase 2A corrective checkpoint](pre-phase-2a-corrective.md); product implementation remains paused until that checkpoint passes paired review, backend-first rollout verification and separate Finalize approval.
+**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The pre–Phase 2A corrective checkpoint was finalized and production-verified September 8, 2026. The user then separately authorized [Phase 2A / CW-017](reservation-awareness-phase-2a.md); its bounded contract and booking-window engine are published for review in frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57).
 
 ## Existing foundation
 
@@ -29,6 +29,8 @@ The 60-day planner is a planning horizon, not a claim that every product follows
 ## Delivery checkpoints
 
 ### Reservation Awareness Phase 2A — planning contract and booking-window engine
+
+Status: **Active under CW-017; implementation published for review.**
 
 - Add an additive, version-tolerant booking-target contract and safe normalization for absent or malformed optional fields.
 - Represent target type, priority, desired trip date, booking status, rule provenance/as-of state, opening/deadline calculation and manual override separately.
@@ -100,6 +102,6 @@ Reservation Awareness Phase 2 can finalize only when:
 
 ## Exact next command
 
-`Review the reconstructed pre–Phase 2A corrective pull requests`
+`Review CW-017 exact-head CI and pull requests`
 
-After CW-016 is separately finalized, the next product command returns to `Start Reservation Awareness Phase 2A`.
+Review exact-head CI and the [Phase 2A checkpoint](reservation-awareness-phase-2a.md). Stop on a regression or authoritative-preview failure. Do not merge, deploy, finalize 2A or begin 2B without the corresponding separate authorization.
