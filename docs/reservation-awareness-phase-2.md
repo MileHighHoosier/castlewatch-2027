@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2 + 60-day planner
 
-**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The pre–Phase 2A corrective checkpoint was finalized and production-verified September 8, 2026. The user then separately authorized [Phase 2A / CW-017](reservation-awareness-phase-2a.md); its bounded contract and booking-window engine are published for review in frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57).
+**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The pre–Phase 2A corrective checkpoint and [Phase 2A / CW-017](reservation-awareness-phase-2a.md) were finalized and production-verified September 8, 2026. Phase 2B has not started.
 
 ## Existing foundation
 
@@ -30,7 +30,7 @@ The 60-day planner is a planning horizon, not a claim that every product follows
 
 ### Reservation Awareness Phase 2A — planning contract and booking-window engine
 
-Status: **Active under CW-017; implementation published for review.**
+Status: **Complete, production-verified and finalized September 8, 2026 under CW-017.**
 
 - Add an additive, version-tolerant booking-target contract and safe normalization for absent or malformed optional fields.
 - Represent target type, priority, desired trip date, booking status, rule provenance/as-of state, opening/deadline calculation and manual override separately.
@@ -102,6 +102,6 @@ Reservation Awareness Phase 2 can finalize only when:
 
 ## Exact next command
 
-`Finalize Reservation Awareness Phase 2A`
+`Start Reservation Awareness Phase 2B`
 
-Use this command only after reviewing the passed [Phase 2A checkpoint](reservation-awareness-phase-2a.md). Do not merge, deploy, finalize 2A or begin 2B without the corresponding separate authorization.
+Use this command only after the user separately authorizes the Phase 2B checkpoint. Do not begin 2B implicitly, and do not begin 2C or 2D.
