@@ -19,6 +19,8 @@ Before cross-cutting or architectural changes, inspect both repositories and rea
 
 Do not rely on old chat history as the source of truth when repository documentation and code disagree.
 
+Read `PROJECT_TRACKER.md` for the current checkpoint, blocker, and exact next action. CW-016 is the user-authorized pre–Phase 2A corrective checkpoint; Reservation Awareness Phase 2A feature work remains paused until its paired backend/frontend corrections pass review, CI, backend-first rollout, and separate finalization. Preserve unknown shared-payload fields, reject destructive schema downgrades, and never clean malformed reservations into a write.
+
 ## Production-path discipline
 
 The Railway production path is:

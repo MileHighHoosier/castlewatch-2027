@@ -6,6 +6,8 @@ _Started September 1, 2026_
 
 **Passed and finalized September 1, 2026.** Repository, build, exact-head CI, mobile-smoke, compilation, deployment-status and read-only production-presentation gates all passed. The user separately authorized Section 8D Finalize after the checklist passed and later authorized parent Section 8 Finalize.
 
+Audit note (September 7, 2026): these screenshots and checks remain historical Section 8D presentation evidence. They are not evidence that the later CW-016 compatibility, malformed-input, scenario-specific or elapsed-time corrections are deployed; those require their own paired review and release verification.
+
 ## Implementation under test
 
 - frontend PR [#55](https://github.com/MileHighHoosier/castlewatch-frontend/pull/55), merged as `e46498ba5721015938856660a2b0f5773b65330b`;
@@ -41,4 +43,4 @@ The checklist evidence was merged before the user separately authorized Section 
 
 ## Exact next command
 
-`Start Reservation Awareness Phase 2`
+Historical after Section 8: `Start Reservation Awareness Phase 2`. Current next action is maintained in `PROJECT_TRACKER.md`.

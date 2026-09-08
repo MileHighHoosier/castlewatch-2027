@@ -141,7 +141,9 @@ The frontend then combines those backend signals with browser-local inputs in `t
 - overnight resorts,
 - date- and origin-resort-assignable transportation route evidence,
 - historical forecast risk,
-- event risk.
+- event risk,
+- trustworthy date-assignable weather evidence inside the seven-day horizon,
+- date- and park-assignable Lightning Lane evidence.
 
 The final scenario change remains user-approved; CastleWatch must not silently rearrange the trip.
 
@@ -176,9 +178,7 @@ core_app.get_weather_advisory()
 WeatherAwarePlanning frontend
 ```
 
-Weather currently influences park-day presentation and safe-mode behavior. Long-range weather is intentionally not treated as dependable Trip Week evidence far in advance.
-
-A known rebaseline issue is that a failed weather refresh can clear a prior automatic warning; stabilization work should preserve last-known warnings and mark them stale instead.
+Weather influences park-day presentation and safe-mode behavior. For Trip Week scoring, it contributes only inside the explicit seven-day horizon and when an automatic observation is no more than six hours old. Calendar-day assignment uses `America/New_York`; long-range, stale, invalid, or unassignable weather remains visible and neutral.
 
 ## Browser-local state
 
@@ -191,6 +191,7 @@ Several user-editable planning features currently use `localStorage`, including:
 - Lightning Lane windows,
 - weather mode/override state,
 - family sync metadata,
+- a preserved copy of the last downloaded shared payload so additive fields unknown to this frontend version survive rebuilds,
 - legacy family key,
 - safe device display metadata; acknowledged raw device credentials live in the protected proxy cookie rather than long-term `localStorage`.
 
@@ -213,13 +214,15 @@ Write model:
 
 1. client reads current version,
 2. client submits `expectedVersion`,
-3. backend takes a PostgreSQL advisory/write lock,
-4. backend rejects stale writes with HTTP 409,
-5. successful write creates the next version,
-6. a history snapshot is inserted,
-7. history is pruned to the most recent 25 versions.
+3. backend validates reservation records before storage,
+4. backend takes a PostgreSQL advisory/write lock,
+5. backend rejects stale writes with HTTP 409,
+6. while holding the lock, backend rejects a payload that omits current root fields or down-revs `schemaVersion`,
+7. successful write creates the next version,
+8. a history snapshot is inserted,
+9. history is pruned to the most recent 25 versions.
 
-Restore creates a **new current version** from an older snapshot rather than rewriting history.
+Restore creates a **new current version** from an older snapshot rather than rewriting history. The same compatibility guard prevents a restore from erasing fields introduced by a newer current version.
 
 ## Account/device authorization architecture
 
@@ -289,11 +292,11 @@ At Section 5 closeout, the backend remained on the finalized 5D implementation h
 
 ### Backend
 
-GitHub Actions uses Python 3.12.14, installs the exact pinned requirements, runs all 95 backend contracts and compiles every active root production module. Coverage includes account authorization/routes, invite atomicity, role enforcement, legacy-gate/revocation/owner-recovery/pepper continuity, shared family storage/history/operations, ride read/refresh safety, response/CORS security, dependency/deployment controls, weather safety, live planning insights, historical/date forecasting, calendar/event intelligence, Trip Week attachment/fallback behavior and canonical tracker validation.
+GitHub Actions uses Python 3.12.14, installs the exact pinned requirements, runs all 101 backend contracts and compiles every active root production module. Coverage includes account authorization/routes, invite atomicity, role enforcement, legacy-gate/revocation/owner-recovery/pepper continuity, shared family storage/history/operations, mixed-version payload and reservation validation, ride read/refresh safety, response/CORS security, dependency/deployment controls, weather safety, live planning insights, historical/date forecasting, calendar/event intelligence, Trip Week attachment/fallback behavior and canonical tracker validation.
 
 ### Frontend
 
-GitHub Actions uses Node 22 with clean `npm ci`, runs all 138 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, protected credential/device safety, self-rename, explicit family-key recovery selection, selected-cookie failure cleanup, content-identical backups, shared sync/history/operations and role boundaries, weather, Trip Week evidence and decisions, transportation/reservations, Lightning Lane, explainability/manual controls, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
+GitHub Actions uses Node 22 with clean `npm ci`, runs all 150 frontend contracts, builds the production Next.js application and executes the dependency-free 390×844 Chrome smoke. Coverage includes dependency controls, protected credential/device safety, self-rename, explicit family-key recovery selection, selected-cookie failure cleanup, content-identical backups, shared sync/history/operations and role boundaries, mixed-version preservation, malformed-reservation handling, Orlando calendar/freshness behavior, preferred-scenario blockers, weather, Trip Week evidence and decisions, transportation/reservations, Lightning Lane, explainability/manual controls, Park Command Center, Live Plan, emergency mode, shows/activities/characters and the key mobile navigation flow.
 
 Section 4 materially broadened core regression protection, Sections 5B–5D added account/device migration contracts, Section 5E completed the account/device production verification, and Section 8 completed coordinated recommendation-engine regression, build, mobile and read-only production-presentation verification.
 

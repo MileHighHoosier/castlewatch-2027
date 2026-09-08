@@ -268,6 +268,86 @@ class FamilyTripContractTests(unittest.TestCase):
             body={"expectedVersion": expected_version, "payload": payload},
         )
 
+    def test_invalid_reservation_records_are_rejected_without_mutation(self):
+        invalid_payload = self.payload("Invalid reservations")
+        invalid_payload["reservations"] = [None]
+
+        status, result = self.write(0, invalid_payload)
+
+        self.assertEqual(status, 400)
+        self.assertEqual(result["status"], "invalid_request")
+        self.assertIsNone(self.engine.state)
+        self.assertEqual(self.engine.history, {})
+
+    def test_older_client_cannot_drop_unknown_current_payload_fields(self):
+        current = self.payload("Future-aware plan")
+        current["bookingTargets"] = [{"id": "crt"}]
+        self.write(0, current)
+        state_before = deepcopy(self.engine.state)
+
+        status, result = self.write(1, self.payload("Older-client edit"))
+
+        self.assertEqual(status, 409)
+        self.assertEqual(result["status"], "incompatible_payload")
+        self.assertEqual(result["missingFields"], ["bookingTargets"])
+        self.assertEqual(self.engine.state, state_before)
+
+    def test_older_schema_write_is_rejected_without_mutation(self):
+        current = self.payload("Schema two")
+        current["schemaVersion"] = 2
+        self.write(0, current)
+        state_before = deepcopy(self.engine.state)
+        older = self.payload("Schema one")
+
+        status, result = self.write(1, older)
+
+        self.assertEqual(status, 409)
+        self.assertEqual(result["status"], "incompatible_payload")
+        self.assertEqual(self.engine.state, state_before)
+
+    def test_additive_payload_fields_are_accepted(self):
+        self.write(0, self.payload("Schema one"))
+        additive = self.payload("Additive edit")
+        additive["bookingTargets"] = [{"id": "crt"}]
+        additive["reservations"] = [{
+            "id": "reservation-1",
+            "type": "dining",
+            "title": "Cinderella's Royal Table",
+            "date": "2027-10-10",
+            "time": "18:30",
+            "location": "Magic Kingdom",
+            "status": "provisional",
+            "durationMinutes": 90,
+            "arrivalBufferMinutes": 20,
+            "notes": "",
+        }]
+
+        status, result = self.write(1, additive)
+
+        self.assertEqual(status, 200)
+        self.assertEqual(result["version"], 2)
+        self.assertEqual(result["payload"], additive)
+
+    def test_restore_cannot_drop_fields_from_the_current_payload(self):
+        original = self.payload("Original")
+        current = self.payload("Future-aware plan")
+        current["bookingTargets"] = [{"id": "crt"}]
+        self.write(0, original)
+        self.write(1, current)
+        state_before = deepcopy(self.engine.state)
+
+        status, result = self.invoke(
+            family_trip.restore_family_trip_version,
+            method="POST",
+            path="/api/family-trip/restore",
+            body={"expectedVersion": 2, "sourceVersion": 1},
+        )
+
+        self.assertEqual(status, 409)
+        self.assertEqual(result["status"], "incompatible_payload")
+        self.assertEqual(result["missingFields"], ["bookingTargets"])
+        self.assertEqual(self.engine.state, state_before)
+
     def seed_device(self, role, status="active", family_id=accounts_schema.FAMILY_WORKSPACE_ID):
         token = generate_access_token(DEVICE_TOKEN_KIND)
         parsed = parse_access_token(token, expected_kind=DEVICE_TOKEN_KIND)

@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2 + 60-day planner
 
-**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The Start checkpoint changes documentation and tracking only; product implementation begins separately with `Start Reservation Awareness Phase 2A`.
+**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The Start checkpoint changed documentation and tracking only. A later repo-first audit opened the bounded [pre–Phase 2A corrective checkpoint](pre-phase-2a-corrective.md); product implementation remains paused until that checkpoint passes paired review, backend-first rollout verification and separate Finalize approval.
 
 ## Existing foundation
 
@@ -100,4 +100,6 @@ Reservation Awareness Phase 2 can finalize only when:
 
 ## Exact next command
 
-`Start Reservation Awareness Phase 2A`
+`Review the reconstructed pre–Phase 2A corrective pull requests`
+
+After CW-016 is separately finalized, the next product command returns to `Start Reservation Awareness Phase 2A`.

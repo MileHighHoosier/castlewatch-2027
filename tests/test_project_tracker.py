@@ -42,7 +42,15 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("`Start Reservation Awareness Phase 2A`", handoff)
+        self.assertIn("`Review the reconstructed pre–Phase 2A corrective pull requests`", handoff)
+
+    def test_phase_2a_is_blocked_by_the_corrective_checkpoint(self):
+        self.assertIn("| CW-016 | Corrective checkpoint |", self.tracker)
+        self.assertIn(
+            "| CW-011 | Product roadmap | Reservation Awareness Phase 2 and 60-day planner | BLOCKED |",
+            self.tracker,
+        )
+        self.assertIn("| CW-016 | NOT_RUN |", self.tracker)
 
 
 if __name__ == "__main__":
