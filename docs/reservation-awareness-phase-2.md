@@ -102,6 +102,6 @@ Reservation Awareness Phase 2 can finalize only when:
 
 ## Exact next command
 
-`Review CW-017 exact-head CI and pull requests`
+`Finalize Reservation Awareness Phase 2A`
 
-Review exact-head CI and the [Phase 2A checkpoint](reservation-awareness-phase-2a.md). Stop on a regression or authoritative-preview failure. Do not merge, deploy, finalize 2A or begin 2B without the corresponding separate authorization.
+Use this command only after reviewing the passed [Phase 2A checkpoint](reservation-awareness-phase-2a.md). Do not merge, deploy, finalize 2A or begin 2B without the corresponding separate authorization.

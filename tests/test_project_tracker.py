@@ -43,8 +43,8 @@ class ProjectTrackerTests(unittest.TestCase):
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
         self.assertIn("Reservation Awareness Phase 2A (CW-017)", handoff)
-        self.assertIn("`Review CW-017 exact-head CI and pull requests`", handoff)
-        self.assertIn("do not merge or deploy", handoff)
+        self.assertIn("`Finalize Reservation Awareness Phase 2A`", handoff)
+        self.assertIn("Do not begin Phase 2B", handoff)
 
     def test_phase_2a_is_active_after_cw016_finalization(self):
         self.assertNotIn("| CW-016 | Corrective checkpoint |", self.tracker)

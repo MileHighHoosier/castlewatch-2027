@@ -192,7 +192,7 @@ Output should remain understandable: keep, swap, wait or review, with reasons an
 
 ### 2. Reservation Awareness Phase 2 + 60-day planner
 
-Status: **Phase 2A active September 8, 2026 — implementation published for review under CW-017**
+Status: **Phase 2A acceptance gates passed September 8, 2026 — awaiting separate Finalize authorization under CW-017**
 
 Build largely together:
 

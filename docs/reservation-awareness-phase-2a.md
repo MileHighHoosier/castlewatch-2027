@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2A checkpoint (CW-017)
 
-**Status:** Active; bounded implementation is published for review.
+**Status:** Acceptance and exact-head review gates passed; awaiting separate Phase 2A Finalize authorization.
 
 **Tracker:** backend issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), with implementation PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) and documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91).
 
@@ -38,7 +38,7 @@ No official booking dates or policy defaults are added. Phase 2A supplies the co
 - [x] No dependency/runtime, backend API, database schema, production data, itinerary, reservation, credential/device, family-key or hosting configuration change is included.
 - [x] Publish the frontend implementation branch after explicit user approval as PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57).
 - [x] Publish and link documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91).
-- [ ] Pass exact-head frontend and backend CI, including the Node 22 mobile browser smoke.
+- [x] Pass exact-head frontend and backend CI, including the Node 22 mobile browser smoke.
 - [ ] Review and separately authorize Phase 2A Finalize before any merge or deployment.
 
 ## Current validation evidence
@@ -51,6 +51,14 @@ Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/5
 - Local mobile browser smoke: **not run** because this runner has no supported Chrome executable; this remains an exact-head CI gate.
 - Backend tracker validator: **passed** with 13 active/future tasks.
 - Full unchanged backend contracts: **101 passed**; production-module compilation also passed.
+
+## Exact-head review evidence
+
+- Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) remained at `4394ab030edf1d4331a95cb64d5ae78e7a3be53e`; `frontend-tests` passed its Node 22 clean install, all 157 contracts, production build and mobile browser smoke.
+- The authoritative `castlewatch-frontend` Vercel preview reported **Ready** for deployment `8kvTTNoBUypeXmxgU4VdPiAW4Kc2`.
+- The separate obsolete `castlewatch-2027` Vercel project reported its known configuration failure. This does not contradict the Ready authoritative preview, and the obsolete project was not altered or bypassed.
+- Documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91) passed `backend-tests` at its published review head before this evidence-only update; the updated head must retain the same gate.
+- Both PRs remain open and unmerged. No production deployment was requested or performed.
 
 ## Preserved boundaries
 
@@ -71,6 +79,6 @@ Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/5
 
 ## Exact next command
 
-`Review CW-017 exact-head CI and pull requests`
+`Finalize Reservation Awareness Phase 2A`
 
-Review both PRs, exact-head CI and the authoritative frontend preview. Do not merge or deploy.
+Use this command only if the acceptance evidence is approved. Otherwise, report the failed criterion or requested correction. Phase 2B remains blocked.
