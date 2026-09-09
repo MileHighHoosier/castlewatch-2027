@@ -642,16 +642,24 @@ The user separately authorized `Finalize Reservation Awareness Phase 2A` on Sept
 
 Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) then merged as `977778c82ac9c6811ca0ad9c88139e77a291b925`. The authoritative `castlewatch-frontend` Vercel production deployment `9iXGxGE4Gx57qj32suwx2EVeAHUZ` and post-merge CI passed. Read-only production smoke returned HTTP 200 for the CastleWatch and Operations pages and live Railway `/api/rides` data. No shared-plan, itinerary, reservation, resort, recommendation, credential/device, family-key, database-schema, dependency/runtime or hosting-configuration mutation occurred. The obsolete secondary Vercel project was not altered.
 
+## Reservation Awareness Phase 2B checkpoint
+
+The user authorized `Start Reservation Awareness Phase 2B` on September 9, 2026. Backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) and the [CW-018 checkpoint](docs/reservation-awareness-phase-2b.md) bound the work to a frontend-only prioritized booking-window planner over the finalized Phase 2A contract.
+
+The planner adds named and custom target creation, priority/date/rule/override planning controls, deterministic readiness states and explicit source/as-of/verification presentation. Named targets intentionally include no official policy defaults. Booking targets remain separate from reservations and itinerary, malformed raw target data remains protected from lossy edits, and Phase 2C lifecycle actions are not exposed. All 163 frontend contracts, the production build and all 102 unchanged backend contracts pass. The updated mobile smoke cannot run in this environment because no Chrome executable is installed and remains an exact-head CI gate after publication.
+
+Implementation is isolated on local frontend branch `feat/cw-018-reservation-awareness-phase-2b` from `977778c82ac9c6811ca0ad9c88139e77a291b925`; documentation is isolated on local backend branch `docs/cw-018-reservation-awareness-phase-2b` from `1bb1df39ffe42ce5a7f75fa0c400f8d7e93db90f`. Neither branch is published and no pull request, merge or deployment is authorized.
+
 ## Current development phase
 
-**Reservation Awareness Phase 2A (CW-017) — complete, production-verified and finalized; Phase 2B not started**
+**Reservation Awareness Phase 2B (CW-018) — implemented and locally verified; awaiting branch-publication and PR authorization**
 
-Sections 1–8, CW-016 and Phase 2A retain their completion records. Phase 2B requires separate explicit Start authorization. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
+Sections 1–8, CW-016 and Phase 2A retain their completion records. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. Keep Phase 2B paused until separate explicit user authorization.
-2. When authorized, run `Start Reservation Awareness Phase 2B` as a new bounded checkpoint.
-3. Keep obsolete Vercel-project cleanup isolated under CW-009; do not combine it with product development.
+1. Await the exact separate authorization recorded in the CW-018 checkpoint before publishing either branch or opening review pull requests.
+2. After publication, require exact-head CI and authoritative frontend preview evidence; do not merge or deploy without later Finalize authorization.
+3. Keep Phase 2C/2D paused and obsolete Vercel-project cleanup isolated under CW-009.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
