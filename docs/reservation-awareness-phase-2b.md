@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2B checkpoint (CW-018)
 
-**Status:** Implemented, locally verified and published for review September 9, 2026. Exact-head CI and authoritative preview review are pending; merge and deployment are not authorized.
+**Status:** Implemented and corrected after exact-head review September 9, 2026. Frontend exact-head CI and the authoritative preview pass; the documentation update still requires its own exact-head CI. Merge and deployment are not authorized.
 
 **Tracker:** backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58), and documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94).
 
@@ -33,6 +33,8 @@ No official booking-policy defaults are added. A named quick-add target begins w
 - [x] Timeline ordering is priority-first and deterministic within each priority.
 - [x] Opening, open-window, deadline and passed-deadline boundary states use date-only comparisons.
 - [x] Missing, unverified, unavailable, malformed or inconsistent rule/override inputs remain explicit and neutral.
+- [x] A newly quick-added target with missing inputs shows the neutral `Date needed` state.
+- [x] A labeled manual opening date remains actionable when the desired trip date and optional deadline are absent.
 - [x] Source, as-of date, verification and manual-override provenance are visible.
 - [x] Planner source is declarative and has no reservation, itinerary, resort or approval mutation path.
 - [x] Existing exact valid/malformed/absent shared booking-target payload behavior remains unchanged.
@@ -43,7 +45,8 @@ No official booking-policy defaults are added. A named quick-add target begins w
 - [x] Backend tracker validation and unchanged backend contracts pass.
 - [x] Both local branches are committed with review-ready evidence.
 - [x] Separate user authorization was received before publishing both branches and opening review pull requests.
-- [ ] Exact-head CI and the authoritative `castlewatch-frontend` preview pass.
+- [x] Corrected frontend exact-head CI, including the Node 22 mobile smoke, and the authoritative `castlewatch-frontend` preview pass.
+- [ ] Documentation PR #94 exact-head CI passes after this evidence update is published.
 - [ ] Separate Finalize authorization is received before any merge or deployment.
 
 ## Preserved boundaries
@@ -58,11 +61,16 @@ No official booking-policy defaults are added. A named quick-add target begins w
 
 ## Local validation evidence
 
-- Frontend reviewed local commit: `e79a81c4018dc534eef7453f18ef92cdb68bde83`; GitHub API publication preserved that tree as remote PR head `d5a4e26045fb270d7b0ae8c51a1e8fc5a3a60706`.
-- Focused Phase 2A/2B contracts: **13 passed**.
-- Full frontend contracts: **163 passed**.
+- Initial frontend review head: `d5a4e26045fb270d7b0ae8c51a1e8fc5a3a60706`.
+- Exact-head review found one bounded presentation defect: missing quick-add inputs were warning instead of neutral, and an absent optional deadline suppressed a labeled manual opening date.
+- The correction is isolated to `bookingTargetTimeline.ts`; the finalized Phase 2A calculation/storage contract remains unchanged.
+- Corrected frontend PR #58 head: `bace8bef57181c89363ef292618411f0df46a839`.
+- Focused Phase 2A/2B contracts: **15 passed**.
+- Full frontend contracts: **165 passed**.
 - Next.js 16.2.6 production build and TypeScript validation: **passed**.
-- Updated 390×844 mobile browser smoke: **not executable locally** because this runner has no supported Chrome binary; the test remains mandatory in exact-head CI after publication.
+- Local 390×844 mobile browser smoke remains unavailable because this runner has no supported Chrome binary; corrected exact-head Node 22 CI ran it successfully.
+- Authoritative `castlewatch-frontend` preview deployment `4xYAsESG1gAjsP8D8ymdJmmjhG4C`: **Ready**.
+- The obsolete `castlewatch-2027` Vercel failure remains the known nonexistent `website` root configuration and was not altered.
 - Backend tracker validator: **passed** with 13 active/future tasks.
 - Full unchanged backend contracts: **102 passed** using the exact pinned requirements.
 - No production or shared-plan write was performed.
@@ -75,4 +83,4 @@ No official booking-policy defaults are added. A named quick-add target begins w
 
 ## Exact next action
 
-Verify frontend PR #58 and documentation PR #94 at their exact remote heads, including the Node 22 mobile browser smoke and the authoritative `castlewatch-frontend` preview. Stop on failure. If every gate passes, request separate `Finalize Reservation Awareness Phase 2B` authorization before any merge or deployment. Do not begin Phase 2C or Phase 2D.
+Publish this evidence update to documentation PR #94 and require its exact-head backend CI to pass. Stop on failure. If that final review gate passes, request separate `Finalize Reservation Awareness Phase 2B` authorization before any merge or deployment. Do not begin Phase 2C or Phase 2D.

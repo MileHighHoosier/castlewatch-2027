@@ -646,19 +646,19 @@ Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/5
 
 The user authorized `Start Reservation Awareness Phase 2B` on September 9, 2026. Backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) and the [CW-018 checkpoint](docs/reservation-awareness-phase-2b.md) bound the work to a frontend-only prioritized booking-window planner over the finalized Phase 2A contract.
 
-The planner adds named and custom target creation, priority/date/rule/override planning controls, deterministic readiness states and explicit source/as-of/verification presentation. Named targets intentionally include no official policy defaults. Booking targets remain separate from reservations and itinerary, malformed raw target data remains protected from lossy edits, and Phase 2C lifecycle actions are not exposed. All 163 frontend contracts, the production build and all 102 unchanged backend contracts pass. The updated mobile smoke cannot run in this environment because no Chrome executable is installed and remains an exact-head CI gate after publication.
+The planner adds named and custom target creation, priority/date/rule/override planning controls, deterministic readiness states and explicit source/as-of/verification presentation. Named targets intentionally include no official policy defaults. Booking targets remain separate from reservations and itinerary, malformed raw target data remains protected from lossy edits, and Phase 2C lifecycle actions are not exposed. Exact-head review found and corrected one bounded presentation defect so missing quick-add inputs remain neutral and a labeled manual opening date works without an optional deadline or desired trip date. All 165 frontend contracts and the production build pass locally; corrected exact-head Node 22 CI also passed the full suite, build and 390×844 mobile smoke, and the authoritative frontend preview is Ready. All 102 unchanged backend contracts pass locally.
 
 Implementation is published on frontend branch `feat/cw-018-reservation-awareness-phase-2b` from `977778c82ac9c6811ca0ad9c88139e77a291b925` as PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58); documentation is published on backend branch `docs/cw-018-reservation-awareness-phase-2b` from `1bb1df39ffe42ce5a7f75fa0c400f8d7e93db90f` as PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94). No merge or deployment is authorized.
 
 ## Current development phase
 
-**Reservation Awareness Phase 2B (CW-018) — implemented, locally verified and published for review; exact-head gates pending**
+**Reservation Awareness Phase 2B (CW-018) — implemented and corrected after exact-head review; frontend gates pass and documentation exact-head CI is pending**
 
 Sections 1–8, CW-016 and Phase 2A retain their completion records. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. Require exact-head CI and authoritative frontend preview evidence for PRs #58 and #94; stop on failure.
+1. Publish the corrected evidence to PR #94 and require its exact-head backend CI; stop on failure.
 2. Do not merge or deploy without later `Finalize Reservation Awareness Phase 2B` authorization.
 3. Keep Phase 2C/2D paused and obsolete Vercel-project cleanup isolated under CW-009.
 
