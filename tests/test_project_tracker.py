@@ -42,9 +42,10 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("Reservation Awareness Phase 2B (CW-018) is implemented and locally verified", handoff)
-        self.assertIn("I approve publishing both CW-018 branches", handoff)
-        self.assertIn("Do not publish, merge, deploy or begin Phase 2C implicitly", handoff)
+        self.assertIn("Reservation Awareness Phase 2B (CW-018) is implemented, locally verified and published for review", handoff)
+        self.assertIn("frontend PR #58 and documentation PR #94", handoff)
+        self.assertIn("No merge or deployment is authorized", handoff)
+        self.assertIn("Stop on failure; do not merge, deploy or begin Phase 2C implicitly", handoff)
 
     def test_phase_2a_is_completed_after_cw016_finalization(self):
         self.assertNotIn("| CW-016 | Corrective checkpoint |", self.tracker)
@@ -67,6 +68,8 @@ class ProjectTrackerTests(unittest.TestCase):
         active = self.tracker.split("## Completed phase summary", 1)[0]
         self.assertIn("| CW-018 | Reservation Awareness Phase 2B |", active)
         self.assertIn("[issue #93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93)", active)
+        self.assertIn("[frontend PR #58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58)", active)
+        self.assertIn("[documentation PR #94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94)", active)
         self.assertIn("[checkpoint](docs/reservation-awareness-phase-2b.md)", active)
 
 

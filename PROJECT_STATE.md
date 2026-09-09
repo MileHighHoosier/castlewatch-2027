@@ -648,18 +648,18 @@ The user authorized `Start Reservation Awareness Phase 2B` on September 9, 2026.
 
 The planner adds named and custom target creation, priority/date/rule/override planning controls, deterministic readiness states and explicit source/as-of/verification presentation. Named targets intentionally include no official policy defaults. Booking targets remain separate from reservations and itinerary, malformed raw target data remains protected from lossy edits, and Phase 2C lifecycle actions are not exposed. All 163 frontend contracts, the production build and all 102 unchanged backend contracts pass. The updated mobile smoke cannot run in this environment because no Chrome executable is installed and remains an exact-head CI gate after publication.
 
-Implementation is isolated on local frontend branch `feat/cw-018-reservation-awareness-phase-2b` from `977778c82ac9c6811ca0ad9c88139e77a291b925`; documentation is isolated on local backend branch `docs/cw-018-reservation-awareness-phase-2b` from `1bb1df39ffe42ce5a7f75fa0c400f8d7e93db90f`. Neither branch is published and no pull request, merge or deployment is authorized.
+Implementation is published on frontend branch `feat/cw-018-reservation-awareness-phase-2b` from `977778c82ac9c6811ca0ad9c88139e77a291b925` as PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58); documentation is published on backend branch `docs/cw-018-reservation-awareness-phase-2b` from `1bb1df39ffe42ce5a7f75fa0c400f8d7e93db90f` as PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94). No merge or deployment is authorized.
 
 ## Current development phase
 
-**Reservation Awareness Phase 2B (CW-018) — implemented and locally verified; awaiting branch-publication and PR authorization**
+**Reservation Awareness Phase 2B (CW-018) — implemented, locally verified and published for review; exact-head gates pending**
 
 Sections 1–8, CW-016 and Phase 2A retain their completion records. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. Await the exact separate authorization recorded in the CW-018 checkpoint before publishing either branch or opening review pull requests.
-2. After publication, require exact-head CI and authoritative frontend preview evidence; do not merge or deploy without later Finalize authorization.
+1. Require exact-head CI and authoritative frontend preview evidence for PRs #58 and #94; stop on failure.
+2. Do not merge or deploy without later `Finalize Reservation Awareness Phase 2B` authorization.
 3. Keep Phase 2C/2D paused and obsolete Vercel-project cleanup isolated under CW-009.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.

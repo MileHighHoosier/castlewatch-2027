@@ -1,8 +1,8 @@
 # Reservation Awareness Phase 2B checkpoint (CW-018)
 
-**Status:** Implemented and locally verified September 9, 2026; awaiting separate authorization to publish branches and open review pull requests. Merge and deployment are not authorized.
+**Status:** Implemented, locally verified and published for review September 9, 2026. Exact-head CI and authoritative preview review are pending; merge and deployment are not authorized.
 
-**Tracker:** backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85).
+**Tracker:** backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58), and documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94).
 
 ## Verified baseline
 
@@ -42,7 +42,9 @@ No official booking-policy defaults are added. A named quick-add target begins w
 - [x] Local 390×844 mobile browser smoke is updated; this runner has no supported Chrome executable, so execution remains an exact-head CI gate after publication.
 - [x] Backend tracker validation and unchanged backend contracts pass.
 - [x] Both local branches are committed with review-ready evidence.
-- [ ] Separate user authorization is received before publishing either branch or opening review pull requests.
+- [x] Separate user authorization was received before publishing both branches and opening review pull requests.
+- [ ] Exact-head CI and the authoritative `castlewatch-frontend` preview pass.
+- [ ] Separate Finalize authorization is received before any merge or deployment.
 
 ## Preserved boundaries
 
@@ -56,7 +58,7 @@ No official booking-policy defaults are added. A named quick-add target begins w
 
 ## Local validation evidence
 
-- Frontend implementation commit: `e79a81c4018dc534eef7453f18ef92cdb68bde83` on local branch `feat/cw-018-reservation-awareness-phase-2b`.
+- Frontend reviewed local commit: `e79a81c4018dc534eef7453f18ef92cdb68bde83`; GitHub API publication preserved that tree as remote PR head `d5a4e26045fb270d7b0ae8c51a1e8fc5a3a60706`.
 - Focused Phase 2A/2B contracts: **13 passed**.
 - Full frontend contracts: **163 passed**.
 - Next.js 16.2.6 production build and TypeScript validation: **passed**.
@@ -73,8 +75,4 @@ No official booking-policy defaults are added. A named quick-add target begins w
 
 ## Exact next action
 
-Local acceptance evidence is complete. To publish both branches and open review pull requests, the user must separately authorize:
-
-`I approve publishing both CW-018 branches to the configured GitHub repositories and opening review pull requests. Do not merge or deploy.`
-
-Do not begin Phase 2C or Phase 2D.
+Verify frontend PR #58 and documentation PR #94 at their exact remote heads, including the Node 22 mobile browser smoke and the authoritative `castlewatch-frontend` preview. Stop on failure. If every gate passes, request separate `Finalize Reservation Awareness Phase 2B` authorization before any merge or deployment. Do not begin Phase 2C or Phase 2D.
