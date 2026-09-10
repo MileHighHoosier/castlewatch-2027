@@ -40,7 +40,7 @@ Status: **Complete, production-verified and finalized September 8, 2026 under CW
 
 ### Reservation Awareness Phase 2B — 60-day planner
 
-Status: **Implemented and corrected through independent post-correction review September 10, 2026 under CW-018; final frontend CI/mobile/preview gates pass and documentation evidence requires exact-head CI.**
+Status: **Implemented with the stale-write correction published after independent review September 10, 2026 under CW-018; final frontend CI/mobile/preview gates pass and documentation evidence requires exact-head CI plus renewed independent review.**
 
 - Present a prioritized timeline for BBB, CRT, 1900 Park Fare, lightsaber building, tours and user-defined targets.
 - Show opening dates, deadlines, countdown/readiness states, assumptions and official-verification needs.
