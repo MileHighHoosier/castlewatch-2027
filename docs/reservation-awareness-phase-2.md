@@ -40,7 +40,7 @@ Status: **Complete, production-verified and finalized September 8, 2026 under CW
 
 ### Reservation Awareness Phase 2B — 60-day planner
 
-Status: **Implemented and corrected after exact-head review September 9, 2026 under CW-018; frontend CI/mobile/preview gates pass and documentation exact-head CI is pending.**
+Status: **Implemented and corrected through independent post-correction review September 10, 2026 under CW-018; final frontend CI/mobile/preview gates pass and documentation evidence requires exact-head CI.**
 
 - Present a prioritized timeline for BBB, CRT, 1900 Park Fare, lightsaber building, tours and user-defined targets.
 - Show opening dates, deadlines, countdown/readiness states, assumptions and official-verification needs.
@@ -104,4 +104,4 @@ Reservation Awareness Phase 2 can finalize only when:
 
 ## Exact next action
 
-Publish the corrected CW-018 evidence to documentation PR #94 and require its exact-head backend CI. Do not merge, deploy, begin Phase 2C/2D or alter the obsolete Vercel project.
+Publish the final CW-018 evidence to documentation PR #94, require its exact-head backend CI, and stop for independent review. Do not merge, deploy, begin Phase 2C/2D or alter the obsolete Vercel project.

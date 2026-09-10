@@ -42,12 +42,13 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("Reservation Awareness Phase 2B (CW-018) is implemented, locally verified, corrected after exact-head review and published for review", handoff)
+        self.assertIn("Reservation Awareness Phase 2B (CW-018) is implemented, locally verified, corrected through independent post-correction review and published for final independent review", handoff)
         self.assertIn("frontend PR [#58]", handoff)
         self.assertIn("documentation PR [#94]", handoff)
         self.assertIn("No merge or deployment is authorized", handoff)
-        self.assertIn("documentation PR #94 must pass exact-head backend CI", handoff)
-        self.assertIn("Stop on failure; do not merge, deploy or begin Phase 2C implicitly", handoff)
+        self.assertIn("documentation PR #94 must publish this final evidence and pass its exact-head backend CI", handoff)
+        self.assertIn("stop for independent review", handoff)
+        self.assertIn("Do not merge, deploy or begin Phase 2C implicitly", handoff)
 
     def test_phase_2a_is_completed_after_cw016_finalization(self):
         self.assertNotIn("| CW-016 | Corrective checkpoint |", self.tracker)
