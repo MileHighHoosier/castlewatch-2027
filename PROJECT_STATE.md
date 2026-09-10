@@ -642,16 +642,24 @@ The user separately authorized `Finalize Reservation Awareness Phase 2A` on Sept
 
 Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) then merged as `977778c82ac9c6811ca0ad9c88139e77a291b925`. The authoritative `castlewatch-frontend` Vercel production deployment `9iXGxGE4Gx57qj32suwx2EVeAHUZ` and post-merge CI passed. Read-only production smoke returned HTTP 200 for the CastleWatch and Operations pages and live Railway `/api/rides` data. No shared-plan, itinerary, reservation, resort, recommendation, credential/device, family-key, database-schema, dependency/runtime or hosting-configuration mutation occurred. The obsolete secondary Vercel project was not altered.
 
+## Reservation Awareness Phase 2B checkpoint
+
+The user authorized `Start Reservation Awareness Phase 2B` on September 9, 2026. Backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) and the [CW-018 checkpoint](docs/reservation-awareness-phase-2b.md) bound the work to a frontend-only prioritized booking-window planner over the finalized Phase 2A contract.
+
+The planner adds named and custom target creation, priority/date/rule/override planning controls, deterministic readiness states and explicit source/as-of/verification presentation. Named targets intentionally include no official policy defaults. Booking targets remain separate from reservations and itinerary, malformed raw target data remains protected from lossy edits, and Phase 2C lifecycle actions are not exposed. Initial exact-head review corrected the two reported missing-input/manual-opening cases. Independent post-correction review then found two adjacent classification gaps: source-only metadata could invalidate a manual opening, while missing-input shortcuts could suppress genuine inconsistent-rule warnings. A later independent review found that planner actions still committed the tab's stale target array and could erase a valid target added by another tab. The bounded correction now applies each add, edit, clear and remove operation to the latest valid stored collection, retains malformed-storage fail-closed behavior and adds a focused multi-tab regression without changing the finalized Phase 2A serialized shape, calculation behavior or shared-sync contract. All 169 frontend contracts and the production build pass locally; exact-head Node 22 CI run `34488901427` passed the full suite, build and 390×844 mobile smoke. The reviewed predecessor head `da1f46036246b4adbe959db55d51da21be99d65a` used authoritative Ready preview `dpl_ApHswspkRF19h7v3nwk85ck8fa3Y`; corrected head `506aa5d49f08a7b6ce49b276599bd8bed57e0352` uses authoritative Ready preview `dpl_2u2JCL2VjgwzxLpcTMK7QgFziBrC`. All 102 unchanged backend contracts pass locally.
+
+Implementation is published on frontend branch `feat/cw-018-reservation-awareness-phase-2b` from `977778c82ac9c6811ca0ad9c88139e77a291b925` as PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58); documentation is published on backend branch `docs/cw-018-reservation-awareness-phase-2b` from `1bb1df39ffe42ce5a7f75fa0c400f8d7e93db90f` as PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94). No merge or deployment is authorized.
+
 ## Current development phase
 
-**Reservation Awareness Phase 2A (CW-017) — complete, production-verified and finalized; Phase 2B not started**
+**Reservation Awareness Phase 2B (CW-018) — stale-write correction published after independent review; frontend gates pass and final documentation evidence requires exact-head CI**
 
-Sections 1–8, CW-016 and Phase 2A retain their completion records. Phase 2B requires separate explicit Start authorization. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
+Sections 1–8, CW-016 and Phase 2A retain their completion records. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. Keep Phase 2B paused until separate explicit user authorization.
-2. When authorized, run `Start Reservation Awareness Phase 2B` as a new bounded checkpoint.
-3. Keep obsolete Vercel-project cleanup isolated under CW-009; do not combine it with product development.
+1. Publish the final evidence to PR #94, require its exact-head backend CI, and stop for independent review.
+2. Do not merge or deploy without a later independent approval and `Finalize Reservation Awareness Phase 2B` authorization.
+3. Keep Phase 2C/2D paused and obsolete Vercel-project cleanup isolated under CW-009.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.

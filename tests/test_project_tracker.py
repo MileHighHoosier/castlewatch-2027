@@ -42,9 +42,13 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("Reservation Awareness Phase 2A (CW-017) is complete", handoff)
-        self.assertIn("`Start Reservation Awareness Phase 2B`", handoff)
-        self.assertIn("Do not begin Phase 2B implicitly", handoff)
+        self.assertIn("Reservation Awareness Phase 2B (CW-018) is implemented, locally verified, corrected after final independent review and published for renewed independent review", handoff)
+        self.assertIn("frontend PR [#58]", handoff)
+        self.assertIn("documentation PR [#94]", handoff)
+        self.assertIn("No merge or deployment is authorized", handoff)
+        self.assertIn("documentation PR #94 must publish the stale-write correction evidence and pass its exact-head backend CI", handoff)
+        self.assertIn("stop for independent review", handoff)
+        self.assertIn("Do not merge, deploy or begin Phase 2C implicitly", handoff)
 
     def test_phase_2a_is_completed_after_cw016_finalization(self):
         self.assertNotIn("| CW-016 | Corrective checkpoint |", self.tracker)
@@ -62,6 +66,14 @@ class ProjectTrackerTests(unittest.TestCase):
             self.tracker,
         )
         self.assertIn("[issue #90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90)", self.tracker)
+
+    def test_phase_2b_is_active_and_bounded(self):
+        active = self.tracker.split("## Completed phase summary", 1)[0]
+        self.assertIn("| CW-018 | Reservation Awareness Phase 2B |", active)
+        self.assertIn("[issue #93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93)", active)
+        self.assertIn("[frontend PR #58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58)", active)
+        self.assertIn("[documentation PR #94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94)", active)
+        self.assertIn("[checkpoint](docs/reservation-awareness-phase-2b.md)", active)
 
 
 if __name__ == "__main__":
