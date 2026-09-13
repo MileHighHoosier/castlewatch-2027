@@ -23,7 +23,7 @@ CastleWatch is an unofficial personal planning tool and is not affiliated with D
 The original feature roadmap is mostly implemented, but CastleWatch is not yet production-hardened enough to treat every recommendation as fully dependable. A reasonable rebaseline is:
 
 - Core tracking and planning foundation: mostly complete.
-- Trip-week planning and decision support: Section 8's unified evidence/scoring and explainability work and the CW-016 corrective checkpoint are complete; Phase 2A's additive planning contract is now in review.
+- Trip-week planning and decision support: Section 8's unified evidence/scoring and explainability work and the CW-016 corrective checkpoint are complete; Phase 2A's additive planning contract is finalized; the Phase 2B planner remains in review.
 - Historical prediction: useful directional signal, not a precise 2027 crowd model.
 - Shared family sync/history: substantial implementation.
 - Account/device migration: Section 5 is complete and production-verified; family-key recovery remains enabled and retirement is not authorized.
@@ -642,16 +642,28 @@ The user separately authorized `Finalize Reservation Awareness Phase 2A` on Sept
 
 Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) then merged as `977778c82ac9c6811ca0ad9c88139e77a291b925`. The authoritative `castlewatch-frontend` Vercel production deployment `9iXGxGE4Gx57qj32suwx2EVeAHUZ` and post-merge CI passed. Read-only production smoke returned HTTP 200 for the CastleWatch and Operations pages and live Railway `/api/rides` data. No shared-plan, itinerary, reservation, resort, recommendation, credential/device, family-key, database-schema, dependency/runtime or hosting-configuration mutation occurred. The obsolete secondary Vercel project was not altered.
 
+## Reservation Awareness Phase 2B checkpoint
+
+The user authorized `Start Reservation Awareness Phase 2B` on September 9, 2026. Backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) and the [CW-018 checkpoint](docs/reservation-awareness-phase-2b.md) bound the work to a frontend-only prioritized booking-window planner over the finalized Phase 2A contract.
+
+The planner adds named and custom target creation, priority/date/rule/override planning controls, deterministic readiness states and explicit source/as-of/verification presentation. Named targets include no official policy defaults. Booking targets remain separate from reservations and itinerary, malformed raw target data is protected, and Phase 2C lifecycle actions are not exposed. Earlier corrections preserve quick-add neutrality, labeled manual openings with absent optional dates/source-only metadata, and genuine inconsistent-rule/invalid-date warnings.
+
+Independent review of `506aa5d49f08a7b6ce49b276599bd8bed57e0352` found that re-reading before a save did not prevent overlapping cross-tab read-modify-write loss. The bounded correction now acquires one origin-scoped exclusive Web Lock before the entire planner read/validate/change/save operation. Explicit shared download and history restore participate in the same lock while retaining their existing intentional replacement semantics. Absent lock support fails closed. Inputs are captured before waiting; optimistic UI drafts reconcile after completion and storage/focus notifications. Phase 2A calculations, serialization, synchronous raw helpers and shared payload shape are unchanged. The cooperative protocol requires old pre-correction tabs to be reloaded/closed before a later rollout and all future app writers to use the same lock.
+
+Frontend head `06cf358ae762aa6963540f246435088531884b8c` passes 22 focused and 172 full contracts, Next.js 16.2.6 production build/TypeScript, and exact-head Node 22 CI run `34738798725`, including 390×844 mobile smoke, 10 ordered rendered two-tab action pairs (add/edit/clear/remove) and 3 malformed/future-storage interleavings. Local Chrome is unavailable; browser execution passed in CI, not locally. Authoritative Ready preview: `dpl_Bj7ERvuRgvVamtosLH765x5QmqkJ`. Historical `506aa5d...` preview `dpl_2u2JCL2VjgwzxLpcTMK7QgFziBrC` and `da1f460...` preview `dpl_ApHswspkRF19h7v3nwk85ck8fa3Y` are predecessor evidence only. Backend tracker validation (13 tasks) and all 102 contracts passed locally for this documentation update; the resulting documentation SHA and exact-head CI are recorded in PR #94 after publication.
+
+Implementation is published on frontend branch `feat/cw-018-reservation-awareness-phase-2b` from `977778c82ac9c6811ca0ad9c88139e77a291b925` as PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58); documentation is published on backend branch `docs/cw-018-reservation-awareness-phase-2b` from `1bb1df39ffe42ce5a7f75fa0c400f8d7e93db90f` as PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94). No merge or deployment is authorized.
+
 ## Current development phase
 
-**Reservation Awareness Phase 2A (CW-017) — complete, production-verified and finalized; Phase 2B not started**
+**Reservation Awareness Phase 2B (CW-018) — overlapping-write correction published; independent review remains required against final exact-head evidence**
 
-Sections 1–8, CW-016 and Phase 2A retain their completion records. Phase 2B requires separate explicit Start authorization. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
+Sections 1–8, CW-016 and Phase 2A retain their completion records. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. Keep Phase 2B paused until separate explicit user authorization.
-2. When authorized, run `Start Reservation Awareness Phase 2B` as a new bounded checkpoint.
-3. Keep obsolete Vercel-project cleanup isolated under CW-009; do not combine it with product development.
+1. Verify the final PR #58/#94 heads and their linked CI/mobile/multi-tab/preview evidence, then stop for independent review. PR #94 records its own post-publication SHA/CI result.
+2. Do not merge or deploy without a later independent approval and `Finalize Reservation Awareness Phase 2B` authorization.
+3. Keep Phase 2C/2D paused and obsolete Vercel-project cleanup isolated under CW-009.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
