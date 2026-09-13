@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2B checkpoint (CW-018)
 
-**Status:** Implemented with the stale-write correction published after independent review September 10, 2026. Final frontend exact-head CI and the authoritative preview pass; this documentation evidence requires its own exact-head CI before renewed independent readiness review. Merge and deployment are not authorized.
+**Status:** Overlapping-write correction published September 13, 2026 for renewed independent review. Frontend exact-head CI, mobile/multi-tab smoke and the authoritative preview pass. PR #94 records this documentation revision's own head and post-publication CI result; acceptance requires that result to pass. Merge and production deployment are not authorized.
 
 **Tracker:** backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58), and documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94).
 
@@ -37,19 +37,23 @@ No official booking-policy defaults are added. A named quick-add target begins w
 - [x] A labeled manual opening date remains actionable when the desired trip date and optional deadline are absent.
 - [x] Source-only rule metadata does not invalidate that labeled manual opening date.
 - [x] Missing-input handling does not suppress genuine inconsistent-rule warnings.
-- [x] Planner actions apply to the latest valid stored target collection so a stale tab preserves valid targets added elsewhere.
+- [x] A common exclusive Web Lock covers the complete planner read/validate/change/save operation, so overlapping participating tabs preserve other valid targets.
+- [x] Malformed/future-format raw storage arriving while a write waits is preserved without running the mutation.
+- [x] Deterministic read/save interleavings and rendered two-tab add/edit/clear-rule/clear-overrides/remove actions are covered in both queue orders.
+- [x] Missing-lock/write/callback failures fail closed; explicit shared download/restore coordinate with planner writes without changing payload or authorization semantics.
 - [x] Source, as-of date, verification and manual-override provenance are visible.
 - [x] Planner source is declarative and has no reservation, itinerary, resort or approval mutation path.
 - [x] Existing exact valid/malformed/absent shared booking-target payload behavior remains unchanged.
 - [x] Focused Phase 2A/2B contracts pass.
 - [x] Full frontend contracts pass.
 - [x] Next.js production build and TypeScript validation pass.
-- [x] Local 390×844 mobile browser smoke is updated; this runner has no supported Chrome executable, so execution remains an exact-head CI gate after publication.
+- [x] Rendered 390×844 mobile and multi-tab smoke pass in exact-head CI; local Chrome is unavailable and is not claimed as a local pass.
 - [x] Backend tracker validation and unchanged backend contracts pass.
 - [x] Both local branches are committed with review-ready evidence.
 - [x] Separate user authorization was received before publishing both branches and opening review pull requests.
 - [x] Corrected frontend exact-head CI, including the Node 22 mobile smoke, and the authoritative `castlewatch-frontend` preview pass.
-- [ ] This final documentation evidence passes PR #94 exact-head CI after publication.
+- [ ] Independent review confirms PR #94's current-head CI using its post-publication PR evidence/checks, not a self-referential SHA in this commit.
+- [ ] Independent review accepts the overlapping-write correction and cooperative-lock rollout boundary.
 - [ ] Separate Finalize authorization is received before any merge or deployment.
 
 ## Preserved boundaries
@@ -62,24 +66,37 @@ No official booking-policy defaults are added. A named quick-add target begins w
 - The obsolete `castlewatch-2027` Vercel project is not altered.
 - Phase 2C and Phase 2D remain paused.
 
-## Local validation evidence
+## Overlapping-write protocol and compatibility
 
-- Initial frontend review head: `d5a4e26045fb270d7b0ae8c51a1e8fc5a3a60706`; first corrected head: `bace8bef57181c89363ef292618411f0df46a839`.
-- Initial exact-head review corrected missing quick-add neutrality and a manual opening without optional deadline/trip date. Independent post-correction review found that source-only metadata could still invalidate the manual opening and missing-input shortcuts could hide genuinely inconsistent rules.
-- The readiness correction remained isolated to Phase 2B presentation plus focused/rendered tests. A later independent review found that planner actions committed stale component state and could erase a valid target added in another tab.
-- The bounded storage correction applies each planner operation to the latest valid stored collection before saving and retains malformed-storage write protection. The finalized Phase 2A serialized shape, calculation behavior and shared-sync contract remain unchanged.
-- Corrected frontend PR #58 head: `506aa5d49f08a7b6ce49b276599bd8bed57e0352`.
-- Focused Phase 2A/2B contracts: **19 passed**, including the new multi-tab/storage regression.
-- Full frontend contracts: **169 passed**.
-- Next.js 16.2.6 production build and TypeScript validation: **passed**.
-- Local 390×844 mobile browser smoke remains unavailable because this runner has no supported Chrome binary. Exact-head runs `34423681014` and `34423886060` exposed timing and escaping defects only in the newly expanded smoke assertion while the contracts and production build passed; both harness defects were corrected.
-- Reviewed predecessor head `da1f46036246b4adbe959db55d51da21be99d65a` passed Node 22 CI run `34424110389`, including rendered quick-add, source-only and manual-opening transitions at 390×844. Its authoritative Ready preview was `dpl_ApHswspkRF19h7v3nwk85ck8fa3Y`.
-- Corrected exact-head Node 22 CI run `34488901427`: **passed**, including all 169 contracts, the production build and rendered 390×844 mobile smoke.
-- Corrected authoritative `castlewatch-frontend` preview deployment `dpl_2u2JCL2VjgwzxLpcTMK7QgFziBrC`: **Ready**.
-- The obsolete `castlewatch-2027` Vercel failure remains the known nonexistent `website` root configuration and was not altered.
-- Backend tracker validator: **passed** with 13 active/future tasks.
-- Full unchanged backend contracts: **102 passed** using the exact pinned requirements.
-- No production or shared-plan write was performed.
+The previous latest-storage helper fixed sequential stale tabs but left a read-modify-write race. The correction uses the origin-scoped exclusive Web Lock `castlewatch.booking-targets.v1.write` before reading storage; validation, operation and save run within the same critical section. Pending operations therefore observe the preceding write, not their component's stale array. No localStorage lock fallback or new serialized field is introduced.
+
+All current application target-writing entry points participate: planner mutations, explicit shared download, and history restore. Shared replacements remain intentional, user-authorized replacements with the existing authorization/version checks; their synchronous Phase 2A raw helpers and payload serialization remain unchanged. A planner operation queued behind a malformed/future-format replacement refuses to overwrite it. Unsupported Web Locks fails closed before a write (including before remote history restore). Write/callback errors release the lock.
+
+UI event values and newly generated IDs are captured before queueing. Optimistic planner drafts are display-only, not saved arrays; completion/failure, storage events and focus reconcile to valid stored state. Malformed storage clears editable cards and blocks writes.
+
+**Cooperative boundary:** Web Locks coordinate participating writers, not arbitrary external localStorage edits or old app tabs that lack this protocol. Reload/close old pre-correction tabs before any later authorized rollout, and require future application writers to use the same lock. No production data or shared restore was exercised during verification.
+
+## Validation evidence
+
+- Authorized correction parents: frontend `506aa5d49f08a7b6ce49b276599bd8bed57e0352`; backend documentation `6b3bcbc6a92a48288d62c1728dedd5c899026165`. Only the existing PR branches are updated.
+- New frontend PR #58 head: `06cf358ae762aa6963540f246435088531884b8c`.
+- Focused Phase 2A/2B contracts: **22 passed**. Deterministic fixtures request a second write after the first read but before its save for add/edit/clear/remove; queued malformed/future payloads, unknown-field preservation, missing locks, write failure and callback failure are covered.
+- Full frontend contracts: **172 passed**.
+- Next.js 16.2.6 production build and TypeScript validation: **passed**. No dependency/runtime manifest changes.
+- Local browser execution could not start because Chrome was missing; the attempted temporary browser download timed out. This is not recorded as a smoke pass.
+- Exact-head Node 22 [CI run 34738798725](https://github.com/MileHighHoosier/castlewatch-frontend/actions/runs/34738798725), job `103674840729`: **passed**, including 172 contracts, build and 390×844 mobile smoke. The checked-out PR merge tree `5a2aef3726f0eaf1b37b4ae6148e9e6fce313ef9` equals the reviewed head tree.
+- The rendered smoke confirms existing quick-add/source-only/manual-opening readiness transitions, then real Web Locks across two pages: **10 ordered action pairs** (add, edit, clear rule, clear overrides, remove versus a second-tab add, both queue orders) and **3 malformed/future-storage interleavings**. It checks queue contention, captured event values, preserved unrelated targets, final stored data, both rendered collections and error rollback.
+- Current authoritative [preview](https://vercel.com/castlewatch/castlewatch-frontend/Bj7ERvuRgvVamtosLH765x5QmqkJ): `dpl_Bj7ERvuRgvVamtosLH765x5QmqkJ`, **READY**, project `prj_9mB5vAdSO9g0UoFZNbNIWIDksHWN`, team `castlewatch`. Vercel metadata confirms the full new frontend head, PR #58 and existing feature branch.
+- Backend tracker validator: **passed (13 active/future tasks)**. Full backend contracts: **102 passed locally**. PR #94 records this documentation revision's resulting SHA and exact-head backend CI after publication. Backend application code is unchanged; only documentation and tracker assertions are updated.
+- No merge, direct deployment, production/shared-plan write or obsolete-project change was performed. The configured Git integration created the preview automatically on authorized branch publication.
+
+### Historical evidence (not current-head gates)
+
+- Initial `d5a4e260...` and `bace8bef...` reviews led to quick-add neutrality and optional-date/manual-opening corrections. Later readiness fixes cover source-only metadata, genuine inconsistent rules and invalid dates without changing Phase 2A calculation/storage semantics.
+- Intermediate smoke runs `34423681014` and `34423886060` failed in harness timing/escaping assertions. Those defects were corrected before `da1f46036246b4adbe959db55d51da21be99d65a`, whose run `34424110389` passed; its Ready preview is `dpl_ApHswspkRF19h7v3nwk85ck8fa3Y`.
+- Sequential stale-write head `506aa5d49f08a7b6ce49b276599bd8bed57e0352` passed 19 focused/169 full tests, run `34488901427` and Ready preview `dpl_2u2JCL2VjgwzxLpcTMK7QgFziBrC`; these did not prove overlapping-write safety. New evidence above supersedes them.
+- Backend predecessor `6b3bcbc6a92a48288d62c1728dedd5c899026165` passed run `34489992135`; it is not evidence for the new documentation head.
+- The obsolete secondary `castlewatch-2027` project's nonexistent `website` root remains a separate known configuration issue; it was not altered.
 
 ## Stop rules
 
@@ -89,4 +106,4 @@ No official booking-policy defaults are added. A named quick-add target begins w
 
 ## Exact next action
 
-Publish this final evidence update to documentation PR #94 and require its exact-head backend CI to pass. Stop on failure and otherwise stop for renewed independent review of both exact heads. Only after that review approves readiness may separate `Finalize Reservation Awareness Phase 2B` authorization be requested. Do not begin Phase 2C or Phase 2D.
+Verify the final PR #58/#94 heads and their linked CI/mobile/multi-tab/Vercel evidence. Stop on a failing required gate and otherwise stop for renewed independent review of both exact heads. Only after that review approves readiness may separate `Finalize Reservation Awareness Phase 2B` authorization be requested. Do not begin Phase 2C or Phase 2D.
