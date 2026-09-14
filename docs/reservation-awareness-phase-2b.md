@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2B checkpoint (CW-018)
 
-**Status:** Overlapping-write correction published September 13, 2026 for renewed independent review. Frontend exact-head CI, mobile/multi-tab smoke and the authoritative preview pass. PR #94 records this documentation revision's own head and post-publication CI result; acceptance requires that result to pass. Merge and production deployment are not authorized.
+**Status:** Complete, production-verified and finalized September 13, 2026. Phase 2C has not started.
 
 **Tracker:** backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58), and documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94).
 
@@ -52,9 +52,9 @@ No official booking-policy defaults are added. A named quick-add target begins w
 - [x] Both local branches are committed with review-ready evidence.
 - [x] Separate user authorization was received before publishing both branches and opening review pull requests.
 - [x] Corrected frontend exact-head CI, including the Node 22 mobile smoke, and the authoritative `castlewatch-frontend` preview pass.
-- [ ] Independent review confirms PR #94's current-head CI using its post-publication PR evidence/checks, not a self-referential SHA in this commit.
-- [ ] Independent review accepts the overlapping-write correction and cooperative-lock rollout boundary.
-- [ ] Separate Finalize authorization is received before any merge or deployment.
+- [x] Independent review confirms PR #94's current-head CI using its post-publication PR evidence/checks, not a self-referential SHA in this commit.
+- [x] Independent review accepts the overlapping-write correction and cooperative-lock rollout boundary.
+- [x] Separate Finalize authorization is received before any merge or deployment.
 
 ## Preserved boundaries
 
@@ -88,7 +88,17 @@ UI event values and newly generated IDs are captured before queueing. Optimistic
 - The rendered smoke confirms existing quick-add/source-only/manual-opening readiness transitions, then real Web Locks across two pages: **10 ordered action pairs** (add, edit, clear rule, clear overrides, remove versus a second-tab add, both queue orders) and **3 malformed/future-storage interleavings**. It checks queue contention, captured event values, preserved unrelated targets, final stored data, both rendered collections and error rollback.
 - Current authoritative [preview](https://vercel.com/castlewatch/castlewatch-frontend/Bj7ERvuRgvVamtosLH765x5QmqkJ): `dpl_Bj7ERvuRgvVamtosLH765x5QmqkJ`, **READY**, project `prj_9mB5vAdSO9g0UoFZNbNIWIDksHWN`, team `castlewatch`. Vercel metadata confirms the full new frontend head, PR #58 and existing feature branch.
 - Backend tracker validator: **passed (13 active/future tasks)**. Full backend contracts: **102 passed locally**. PR #94 records this documentation revision's resulting SHA and exact-head backend CI after publication. Backend application code is unchanged; only documentation and tracker assertions are updated.
-- No merge, direct deployment, production/shared-plan write or obsolete-project change was performed. The configured Git integration created the preview automatically on authorized branch publication.
+- Before rollout, the user confirmed that all old CastleWatch tabs were closed on every browser and device.
+
+## Finalize and production evidence
+
+- Backend documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94) remained at reviewed head `ed003304e07c824484fa0e3a24d23a15d3fd4703` and merged first as `5386c72780952e14a001ef08169dece8841f2e73`.
+- Post-merge backend CI run [34762130384](https://github.com/MileHighHoosier/castlewatch-2027/actions/runs/34762130384) passed. Railway deployment `ea178cea-74bc-4736-a931-b760e64b05f3` succeeded for the exact merge.
+- Production backend `/health`, root, `/api/trip-week` and `/api/rides` reads returned HTTP 200. Unauthenticated `/api/family-trip` returned the expected HTTP 401 without mutation.
+- Frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58) remained at reviewed head `06cf358ae762aa6963540f246435088531884b8c` and merged second as `a82ddaa2628cf139e35c2a917b0033a2e18b81e3`.
+- Post-merge frontend CI run [34762232352](https://github.com/MileHighHoosier/castlewatch-frontend/actions/runs/34762232352) passed all 172 contracts, the production build, 390×844 mobile smoke, 10 ordered rendered two-tab action pairs and 3 malformed/future-storage interleavings.
+- The authoritative `castlewatch-frontend` production deployment `dpl_HKRRybeDZTirzQF4imS93pdBupmx` reported Ready for the exact frontend merge. The canonical CastleWatch and Operations pages returned HTTP 200, exposed the Booking Planner navigation/read-only Operations surface and retained the configured Railway backend; live `/api/rides` data returned HTTP 200.
+- No shared-plan, booking-target, itinerary, reservation, resort, recommendation, credential/device, family-key, database-schema, dependency/runtime or hosting-configuration data was changed. The obsolete secondary Vercel project remained untouched.
 
 ### Historical evidence (not current-head gates)
 
@@ -106,4 +116,6 @@ UI event values and newly generated IDs are captured before queueing. Optimistic
 
 ## Exact next action
 
-Verify the final PR #58/#94 heads and their linked CI/mobile/multi-tab/Vercel evidence. Stop on a failing required gate and otherwise stop for renewed independent review of both exact heads. Only after that review approves readiness may separate `Finalize Reservation Awareness Phase 2B` authorization be requested. Do not begin Phase 2C or Phase 2D.
+`Start Reservation Awareness Phase 2C`
+
+Use this command only after separate explicit user authorization. Do not begin Phase 2C implicitly, and keep Phase 2D paused.

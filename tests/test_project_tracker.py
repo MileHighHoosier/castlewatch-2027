@@ -42,13 +42,11 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("Reservation Awareness Phase 2B (CW-018) is implemented, locally verified, corrected after overlapping-write review and published for renewed independent review", handoff)
+        self.assertIn("Reservation Awareness Phase 2B (CW-018) is complete, production-verified and finalized", handoff)
         self.assertIn("frontend PR [#58]", handoff)
         self.assertIn("documentation PR [#94]", handoff)
-        self.assertIn("No merge or deployment is authorized", handoff)
-        self.assertIn("Require current-head backend CI evidence in documentation PR #94", handoff)
-        self.assertIn("stop for independent review", handoff)
-        self.assertIn("Do not merge, deploy or begin Phase 2C implicitly", handoff)
+        self.assertIn("`Start Reservation Awareness Phase 2C`", handoff)
+        self.assertIn("Do not begin Phase 2C implicitly", handoff)
 
     def test_phase_2a_is_completed_after_cw016_finalization(self):
         self.assertNotIn("| CW-016 | Corrective checkpoint |", self.tracker)
@@ -67,13 +65,15 @@ class ProjectTrackerTests(unittest.TestCase):
         )
         self.assertIn("[issue #90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90)", self.tracker)
 
-    def test_phase_2b_is_active_and_bounded(self):
+    def test_phase_2b_is_completed_and_phase_2c_is_paused(self):
         active = self.tracker.split("## Completed phase summary", 1)[0]
-        self.assertIn("| CW-018 | Reservation Awareness Phase 2B |", active)
-        self.assertIn("[issue #93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93)", active)
-        self.assertIn("[frontend PR #58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58)", active)
-        self.assertIn("[documentation PR #94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94)", active)
-        self.assertIn("[checkpoint](docs/reservation-awareness-phase-2b.md)", active)
+        self.assertNotIn("| CW-018 | Reservation Awareness Phase 2B |", active)
+        self.assertIn("| CW-011 | Product roadmap | Reservation Awareness Phase 2 and 60-day planner | IN_PROGRESS |", active)
+        self.assertIn("Await separate user authorization before running `Start Reservation Awareness Phase 2C`", active)
+        self.assertIn("| Reservation Awareness Phase 2B (CW-018) | Complete, production-verified and finalized September 13, 2026 |", self.tracker)
+        self.assertIn("[issue #93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93)", self.tracker)
+        self.assertIn("[frontend PR #58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58)", self.tracker)
+        self.assertIn("[documentation PR #94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94)", self.tracker)
 
 
 if __name__ == "__main__":
