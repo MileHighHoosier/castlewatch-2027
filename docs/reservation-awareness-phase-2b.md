@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2B checkpoint (CW-018)
 
-**Status:** Complete, production-verified and finalized September 13, 2026. Phase 2C has not started.
+**Status:** Complete, production-verified and finalized September 13, 2026. Phase 2C subsequently started under the separately authorized [CW-019 checkpoint](reservation-awareness-phase-2c.md).
 
 **Tracker:** backend issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58), and documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94).
 
@@ -64,7 +64,7 @@ No official booking-policy defaults are added. A named quick-add target begins w
 - Family-key recovery and `legacy_family_key_enabled` remain unchanged and enabled.
 - No backend API, persistence schema, dependency/runtime, production/shared data, credential/device or hosting configuration change is included.
 - The obsolete `castlewatch-2027` Vercel project is not altered.
-- Phase 2C and Phase 2D remain paused.
+- Phase 2C remained paused throughout CW-018; it later started under CW-019. Phase 2D remains paused.
 
 ## Overlapping-write protocol and compatibility
 
@@ -114,8 +114,8 @@ UI event values and newly generated IDs are captured before queueing. Optimistic
 - Stop if the planner would need an invented official booking rule or a backend/schema change.
 - Do not publish, open pull requests, merge or deploy without the corresponding separate user authorization.
 
-## Exact next action
+## Historical handoff
 
 `Start Reservation Awareness Phase 2C`
 
-Use this command only after separate explicit user authorization. Do not begin Phase 2C implicitly, and keep Phase 2D paused.
+The user later authorized this command and CW-019 now owns the active handoff. Follow the canonical tracker and [Phase 2C checkpoint](reservation-awareness-phase-2c.md); keep Phase 2D paused.

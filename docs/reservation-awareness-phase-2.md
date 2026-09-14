@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2 + 60-day planner
 
-**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The pre–Phase 2A corrective checkpoint and [Phase 2A / CW-017](reservation-awareness-phase-2a.md) were finalized and production-verified September 8, 2026. [Phase 2B / CW-018](reservation-awareness-phase-2b.md) was finalized and production-verified September 13, 2026. Phase 2C has not started.
+**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The pre–Phase 2A corrective checkpoint and [Phase 2A / CW-017](reservation-awareness-phase-2a.md) were finalized and production-verified September 8, 2026. [Phase 2B / CW-018](reservation-awareness-phase-2b.md) was finalized and production-verified September 13, 2026. [Phase 2C / CW-019](reservation-awareness-phase-2c.md) started September 13, 2026 and is published for review in frontend PR #59 and documentation PR #97.
 
 ## Existing foundation
 
@@ -48,6 +48,8 @@ Status: **Complete, production-verified and finalized September 13, 2026 under C
 - Keep the mobile surface readable at the existing 390×844 contract viewport.
 
 ### Reservation Awareness Phase 2C — attempt and contingency workflow
+
+Status: **In progress under the separately authorized CW-019 checkpoint; published for review but not independently accepted, merged or deployed.**
 
 - Support planned, attempted, booked, unavailable and backup lifecycle states.
 - Record attempts and user-selected fallback choices without fabricating availability.
@@ -104,6 +106,4 @@ Reservation Awareness Phase 2 can finalize only when:
 
 ## Exact next action
 
-`Start Reservation Awareness Phase 2C`
-
-Use this command only after the user separately authorizes the Phase 2C checkpoint. Do not begin Phase 2C implicitly, and do not begin Phase 2D or alter the obsolete Vercel project.
+`Perform an independent review of CW-019 Phase 2C at the exact heads of frontend PR #59 and backend documentation PR #97. Verify the Phase 2C contract and acceptance criteria, lifecycle truthfulness, reservation-link safety, Phase 2A/2B calculation/storage/shared-sync compatibility, regression coverage, documentation accuracy, exact-head CI, mobile smoke, and the authoritative castlewatch-frontend preview. State whether controlled finalization is safe and identify any blocker. Do not modify, merge, deploy, begin Phase 2D, alter protected data, or alter the obsolete Vercel project.`
