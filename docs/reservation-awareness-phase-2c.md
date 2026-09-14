@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2C checkpoint (CW-019)
 
-**Status:** Started September 13, 2026 and published for review September 14, 2026; exact-head CI/Vercel evidence and independent review are pending. Phase 2D has not started.
+**Status:** Started September 13, 2026 and published for review September 14, 2026. The bounded exact-head smoke-harness correction is published; its CI/Vercel evidence and independent review are pending. Phase 2D has not started.
 
 **Tracker:** dedicated backend issue [#96](https://github.com/MileHighHoosier/castlewatch-2027/issues/96) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), frontend PR [#59](https://github.com/MileHighHoosier/castlewatch-frontend/pull/59), and documentation PR [#97](https://github.com/MileHighHoosier/castlewatch-2027/pull/97). Publication of the existing branches and review pull requests was separately authorized September 13, 2026.
 
@@ -47,6 +47,8 @@ The planner does not create a reservation. A family member must deliberately cre
 - [x] Backend tracker validation and unchanged backend contracts pass locally.
 - [x] Separate user authorization was received before creating issue #96, publishing branches or opening review pull requests.
 - [x] The dedicated issue, existing frontend branch and existing documentation branch were published as issue #96, frontend PR #59 and documentation PR #97 without merge or deployment.
+- [x] The initial exact-head run's multi-tab failure was isolated to a smoke completion race: deterministic writer tests and the full suite passed, while the harness checked only rendered `aria-busy` before confirming that the real Web Lock queue had drained.
+- [x] The smoke now waits for both held and pending `castlewatch.booking-targets.v1.write` entries to clear before accepting the rendered idle state, with a deterministic harness regression for held, pending, idle and still-rendering states.
 - [ ] Frontend and documentation exact-head CI and the authoritative `castlewatch-frontend` preview pass.
 - [ ] Independent post-publication review accepts the exact heads and all evidence.
 - [ ] Separate Finalize authorization is received before any merge or deployment.
@@ -72,10 +74,12 @@ The planner does not create a reservation. A family member must deliberately cre
 
 ## Local validation evidence
 
-- Focused booking-target calculation/timeline/lifecycle/storage/shared-sync contracts: **30 passed**.
-- Full frontend suite: **180 passed**.
+- Initial frontend head `eb2d177321b61b899da2116c7e95aff60acde23a` passed its full contract suite and production build in CI run `34801378007`, then failed only the rendered multi-tab completion assertion `add preserves the other tab's addition` (`0 !== 1`). The harness had accepted `aria-busy="false"` without first proving that the cross-tab write-lock queue was empty.
+- Corrected frontend head `eaaf71c0cbdb8cfecb4634c45ed3c41b32c909d1` changes only the smoke completion barrier and adds its deterministic regression; application code and write behavior are unchanged.
+- Focused booking-target calculation/timeline/lifecycle/storage/shared-sync/harness contracts: **31 passed**.
+- Full frontend suite: **181 passed**.
 - Next.js 16.2.6 production build and TypeScript validation: **passed** after replacing a temporary worktree-only `node_modules` symlink that Turbopack correctly rejected; no manifest or dependency changed.
-- The rendered smoke now covers planned → attempted → unavailable → backup → booked → explicit unlink, verifies reservation storage is byte-for-byte unchanged, and adds lifecycle attempts to both real-lock queue orders. Execution remains an exact-head CI gate when local Chrome is unavailable.
+- The rendered smoke covers planned → attempted → unavailable → backup → booked → explicit unlink, verifies reservation storage is byte-for-byte unchanged, and adds lifecycle attempts to both real-lock queue orders. It now also requires the actual booking-target Web Lock queue and rendered saving state to be idle before examining persisted results.
 - Local mobile smoke launch stopped before browser execution because no Chrome executable is installed; no smoke pass is claimed. The updated 390×844 lifecycle/multi-tab scenario remains a required exact-head Node 22 CI gate.
 - Backend tracker validation: **passed (13 active/future tasks)**. Full unchanged backend contracts: **102 passed** in the repository's pinned test environment.
 
