@@ -192,7 +192,7 @@ Output should remain understandable: keep, swap, wait or review, with reasons an
 
 ### 2. Reservation Awareness Phase 2 + 60-day planner
 
-Status: **Phase 2A and CW-018 Phase 2B complete, production-verified and finalized; CW-019 Phase 2C frontend exact-head CI/preview passed, with final documentation CI and independent review pending.**
+Status: **Phase 2A and CW-018 Phase 2B complete, production-verified and finalized; CW-019 Phase 2C exact-head CI/preview evidence passed, with independent review pending.**
 
 Build largely together:
 
@@ -209,7 +209,7 @@ Booking targets remain distinct from actual reservations, all target/reservation
 
 CW-016 and Phase 2A remain finalized and production-verified. Phase 2B issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93), frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58), documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94), and the [CW-018 checkpoint](docs/reservation-awareness-phase-2b.md) record the completed prioritized booking-window planner. The reviewed implementation preserves overlapping participating writes through one cooperative Web Lock, retains malformed/future-format protection and Phase 2A compatibility, and passed exact-head plus post-merge CI, backend-first Railway/Vercel rollout, rendered mobile/multi-tab checks and read-only production smoke.
 
-The separately authorized [CW-019 Phase 2C checkpoint](docs/reservation-awareness-phase-2c.md), issue [#96](https://github.com/MileHighHoosier/castlewatch-2027/issues/96), frontend PR [#59](https://github.com/MileHighHoosier/castlewatch-frontend/pull/59) and documentation PR [#97](https://github.com/MileHighHoosier/castlewatch-2027/pull/97) add only explicit target attempt/result records, user-entered backup choices and deliberate links to existing reservations. The planner does not write reservations or itinerary/Trip Week state, does not infer availability and retains the Phase 2A/2B calculation, serialization, shared-sync and cooperative-write boundaries. Corrected frontend exact-head CI, rendered mobile/multi-tab smoke and the authoritative preview pass; final documentation CI and independent review remain pending. Phase 2D has not started.
+The separately authorized [CW-019 Phase 2C checkpoint](docs/reservation-awareness-phase-2c.md), issue [#96](https://github.com/MileHighHoosier/castlewatch-2027/issues/96), frontend PR [#59](https://github.com/MileHighHoosier/castlewatch-frontend/pull/59) and documentation PR [#97](https://github.com/MileHighHoosier/castlewatch-2027/pull/97) add only explicit target attempt/result records, user-entered backup choices and deliberate links to existing reservations. The planner does not write reservations or itinerary/Trip Week state, does not infer availability and retains the Phase 2A/2B calculation, serialization, shared-sync and cooperative-write boundaries. Corrected frontend exact-head CI, rendered mobile/multi-tab smoke, the authoritative preview and documentation evidence CI pass; independent review remains pending. Phase 2D has not started.
 
 ### 3. Prediction Phase 2
 

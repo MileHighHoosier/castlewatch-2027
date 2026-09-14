@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2C checkpoint (CW-019)
 
-**Status:** Started September 13, 2026 and published for review September 14, 2026. The bounded exact-head cross-renderer smoke correction, mobile CI and authoritative preview pass; final documentation CI and independent review are pending. Phase 2D has not started.
+**Status:** Started September 13, 2026 and published for review September 14, 2026. The bounded exact-head cross-renderer smoke correction, mobile CI, authoritative preview and documentation evidence CI pass; independent review is pending. Phase 2D has not started.
 
 **Tracker:** dedicated backend issue [#96](https://github.com/MileHighHoosier/castlewatch-2027/issues/96) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), frontend PR [#59](https://github.com/MileHighHoosier/castlewatch-frontend/pull/59), and documentation PR [#97](https://github.com/MileHighHoosier/castlewatch-2027/pull/97). Publication of the existing branches and review pull requests was separately authorized September 13, 2026.
 
@@ -51,7 +51,7 @@ The planner does not create a reservation. A family member must deliberately cre
 - [x] Follow-up exact-head runs proved that the remaining stale view belonged to the smoke observer after both lock callbacks returned, rather than to the application writer inside the lock.
 - [x] The smoke now waits until both renderer-local storage views converge before evaluating preservation, with deterministic stale-observation and missing-storage regressions.
 - [x] Frontend exact-head CI and the authoritative `castlewatch-frontend` preview pass.
-- [ ] Documentation exact-head CI passes after the final evidence update is published.
+- [x] Documentation exact-head CI passes after the final evidence update is published.
 - [ ] Independent post-publication review accepts the exact heads and all evidence.
 - [ ] Separate Finalize authorization is received before any merge or deployment.
 
@@ -87,6 +87,7 @@ The planner does not create a reservation. A family member must deliberately cre
 - Exact-head Node 22 CI run `34842580087` passed all **183** contracts, the production build, 390×844 mobile smoke, **12 ordered action pairs** and **3 malformed/future-storage interleavings** for final frontend head `bb54a926f284dc5671bb22a3ffb227523b9625fd`.
 - The authoritative `castlewatch-frontend` preview `dpl_ErEbtfEwVtocdsaRQhpy3UYSunUC` is Ready for that exact head. The obsolete secondary Vercel project was not used as deployment authority or altered.
 - Backend tracker validation: **passed (13 active/future tasks)**. Full unchanged backend contracts: **102 passed** in the repository's pinned test environment.
+- Documentation evidence head `5c8029d7cb20bd02ce830d500d321455645889f2` passed exact-head CI run `34842859985`, including the backend contracts and production-module compilation. The final handoff-only documentation update is subject to the same exact-head gate before independent review.
 
 ## Publication and stop rules
 
