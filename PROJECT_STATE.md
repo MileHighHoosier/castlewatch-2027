@@ -23,7 +23,7 @@ CastleWatch is an unofficial personal planning tool and is not affiliated with D
 The original feature roadmap is mostly implemented, but CastleWatch is not yet production-hardened enough to treat every recommendation as fully dependable. A reasonable rebaseline is:
 
 - Core tracking and planning foundation: mostly complete.
-- Trip-week planning and decision support: Section 8's unified evidence/scoring and explainability work, the CW-016 corrective checkpoint, Phase 2A's additive planning contract and the Phase 2B planner are finalized; Phase 2C has not started.
+- Trip-week planning and decision support: Section 8's unified evidence/scoring and explainability work, the CW-016 corrective checkpoint, Phase 2A's additive planning contract and the Phase 2B planner are finalized; Phase 2C is active under CW-019 with local implementation/checks complete and publication/review pending.
 - Historical prediction: useful directional signal, not a precise 2027 crowd model.
 - Shared family sync/history: substantial implementation.
 - Account/device migration: Section 5 is complete and production-verified; family-key recovery remains enabled and retirement is not authorized.
@@ -658,16 +658,24 @@ Frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/5
 
 No shared-plan, booking-target, itinerary, reservation, resort, recommendation, credential/device, family-key, database-schema, dependency/runtime or hosting-configuration mutation occurred during verification. The obsolete `castlewatch-2027` Vercel project was not altered.
 
+## Reservation Awareness Phase 2C checkpoint
+
+The user authorized `Start Reservation Awareness Phase 2C` on September 13, 2026. The bounded [CW-019 checkpoint](docs/reservation-awareness-phase-2c.md) starts from backend `44a335b6a1b77233d6ff55864a43a229d592259d` and frontend `a82ddaa2628cf139e35c2a917b0033a2e18b81e3`, the exact finalized CW-018 production baselines.
+
+The local frontend implementation adds optional dated attempt/result history and a user-entered fallback choice to the existing additive booking-target model. Explicit actions cover attempted, unavailable, backup and booked states. Marking booked requires the user to select an existing reservation that is revalidated at write time; the planner never creates, confirms, edits or deletes a reservation. Broken or inconsistent links remain visible as warnings and are not cleaned into a write. Reservations remain authoritative for timing, transportation, conflicts and Trip Week effects.
+
+All lifecycle actions use the finalized Phase 2B `updateBookingTargets` transaction and cooperative Web Lock, preserve unknown fields and fail closed on malformed/future-format target data or missing lock support. Phase 2A date calculation/serialization and shared sync/history semantics remain unchanged. Dedicated issue [#96](https://github.com/MileHighHoosier/castlewatch-2027/issues/96) records the checkpoint, and the user separately authorized publishing the existing branches and opening review pull requests. Exact-head CI/Vercel evidence and independent review remain required. Phase 2D, production/shared-plan mutation, dependency/runtime work and obsolete Vercel-project work remain out of scope.
+
 ## Current development phase
 
-**Reservation Awareness Phase 2B (CW-018) — complete, production-verified and finalized; Phase 2C not started**
+**Reservation Awareness Phase 2C (CW-019) — local implementation/checks complete; publication and review pending**
 
 Sections 1–8, CW-016, Phase 2A and Phase 2B retain their completion records. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. Keep Phase 2C paused until separate explicit user authorization.
-2. When authorized, run `Start Reservation Awareness Phase 2C` as a new bounded checkpoint.
+1. Publish only the two existing CW-019 branches and open review pull requests under the received authorization.
+2. Run exact-head frontend/backend CI, authoritative `castlewatch-frontend` preview verification and an independent Phase 2C review before any Finalize command.
 3. Keep Phase 2D paused and obsolete Vercel-project cleanup isolated under CW-009.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.
