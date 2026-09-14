@@ -23,7 +23,7 @@ CastleWatch is an unofficial personal planning tool and is not affiliated with D
 The original feature roadmap is mostly implemented, but CastleWatch is not yet production-hardened enough to treat every recommendation as fully dependable. A reasonable rebaseline is:
 
 - Core tracking and planning foundation: mostly complete.
-- Trip-week planning and decision support: Section 8's unified evidence/scoring and explainability work and the CW-016 corrective checkpoint are complete; Phase 2A's additive planning contract is finalized; the Phase 2B planner remains in review.
+- Trip-week planning and decision support: Section 8's unified evidence/scoring and explainability work, the CW-016 corrective checkpoint, Phase 2A's additive planning contract and the Phase 2B planner are finalized; Phase 2C has not started.
 - Historical prediction: useful directional signal, not a precise 2027 crowd model.
 - Shared family sync/history: substantial implementation.
 - Account/device migration: Section 5 is complete and production-verified; family-key recovery remains enabled and retirement is not authorized.
@@ -652,18 +652,22 @@ Independent review of `506aa5d49f08a7b6ce49b276599bd8bed57e0352` found that re-r
 
 Frontend head `06cf358ae762aa6963540f246435088531884b8c` passes 22 focused and 172 full contracts, Next.js 16.2.6 production build/TypeScript, and exact-head Node 22 CI run `34738798725`, including 390×844 mobile smoke, 10 ordered rendered two-tab action pairs (add/edit/clear/remove) and 3 malformed/future-storage interleavings. Local Chrome is unavailable; browser execution passed in CI, not locally. Authoritative Ready preview: `dpl_Bj7ERvuRgvVamtosLH765x5QmqkJ`. Historical `506aa5d...` preview `dpl_2u2JCL2VjgwzxLpcTMK7QgFziBrC` and `da1f460...` preview `dpl_ApHswspkRF19h7v3nwk85ck8fa3Y` are predecessor evidence only. Backend tracker validation (13 tasks) and all 102 contracts passed locally for this documentation update; the resulting documentation SHA and exact-head CI are recorded in PR #94 after publication.
 
-Implementation is published on frontend branch `feat/cw-018-reservation-awareness-phase-2b` from `977778c82ac9c6811ca0ad9c88139e77a291b925` as PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58); documentation is published on backend branch `docs/cw-018-reservation-awareness-phase-2b` from `1bb1df39ffe42ce5a7f75fa0c400f8d7e93db90f` as PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94). No merge or deployment is authorized.
+The user separately authorized `Finalize CW-018 Phase 2B` on September 13, 2026 and confirmed that all old CastleWatch tabs were closed on every browser and device. Documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94) remained at reviewed head `ed003304e07c824484fa0e3a24d23a15d3fd4703` and merged first as `5386c72780952e14a001ef08169dece8841f2e73`. Post-merge backend CI run [34762130384](https://github.com/MileHighHoosier/castlewatch-2027/actions/runs/34762130384) passed, and matching Railway deployment `ea178cea-74bc-4736-a931-b760e64b05f3` succeeded. Production `/health`, root, `/api/trip-week` and `/api/rides` reads returned HTTP 200; unauthenticated `/api/family-trip` returned the expected HTTP 401.
+
+Frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58) remained at reviewed head `06cf358ae762aa6963540f246435088531884b8c` and then merged as `a82ddaa2628cf139e35c2a917b0033a2e18b81e3`. Post-merge frontend CI run [34762232352](https://github.com/MileHighHoosier/castlewatch-frontend/actions/runs/34762232352) passed all 172 contracts, the production build, 390×844 mobile smoke, 10 ordered rendered two-tab action pairs and 3 malformed/future-storage interleavings. The authoritative `castlewatch-frontend` production deployment `dpl_HKRRybeDZTirzQF4imS93pdBupmx` reported Ready for that exact merge. Read-only production smoke returned HTTP 200 for CastleWatch and Operations and confirmed live Railway `/api/rides` data.
+
+No shared-plan, booking-target, itinerary, reservation, resort, recommendation, credential/device, family-key, database-schema, dependency/runtime or hosting-configuration mutation occurred during verification. The obsolete `castlewatch-2027` Vercel project was not altered.
 
 ## Current development phase
 
-**Reservation Awareness Phase 2B (CW-018) — overlapping-write correction published; independent review remains required against final exact-head evidence**
+**Reservation Awareness Phase 2B (CW-018) — complete, production-verified and finalized; Phase 2C not started**
 
-Sections 1–8, CW-016 and Phase 2A retain their completion records. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
+Sections 1–8, CW-016, Phase 2A and Phase 2B retain their completion records. Keep `CASTLEWATCH_FAMILY_KEY` configured and enabled; no retirement or credential migration change is authorized.
 
 ## Exact next priorities
 
-1. Verify the final PR #58/#94 heads and their linked CI/mobile/multi-tab/preview evidence, then stop for independent review. PR #94 records its own post-publication SHA/CI result.
-2. Do not merge or deploy without a later independent approval and `Finalize Reservation Awareness Phase 2B` authorization.
-3. Keep Phase 2C/2D paused and obsolete Vercel-project cleanup isolated under CW-009.
+1. Keep Phase 2C paused until separate explicit user authorization.
+2. When authorized, run `Start Reservation Awareness Phase 2C` as a new bounded checkpoint.
+3. Keep Phase 2D paused and obsolete Vercel-project cleanup isolated under CW-009.
 
 See `ROADMAP.md` for the broader order and `ARCHITECTURE.md` for system boundaries.

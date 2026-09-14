@@ -1,6 +1,6 @@
 # Reservation Awareness Phase 2 + 60-day planner
 
-**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The pre–Phase 2A corrective checkpoint and [Phase 2A / CW-017](reservation-awareness-phase-2a.md) were finalized and production-verified September 8, 2026. The user authorized [Phase 2B / CW-018](reservation-awareness-phase-2b.md) on September 9, 2026; implementation and local checks pass, and frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58) plus documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94) are open for review.
+**Started September 1, 2026.** This document is the scope and safety contract for backend issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). The pre–Phase 2A corrective checkpoint and [Phase 2A / CW-017](reservation-awareness-phase-2a.md) were finalized and production-verified September 8, 2026. [Phase 2B / CW-018](reservation-awareness-phase-2b.md) was finalized and production-verified September 13, 2026. Phase 2C has not started.
 
 ## Existing foundation
 
@@ -40,7 +40,7 @@ Status: **Complete, production-verified and finalized September 8, 2026 under CW
 
 ### Reservation Awareness Phase 2B — 60-day planner
 
-Status: **CW-018 overlapping-write correction published September 13, 2026; frontend exact-head CI/mobile/multi-tab/preview pass. Current-head backend CI evidence is recorded in PR #94 after publication; renewed independent review and separate Finalize authorization remain required.**
+Status: **Complete, production-verified and finalized September 13, 2026 under CW-018.**
 
 - Present a prioritized timeline for BBB, CRT, 1900 Park Fare, lightsaber building, tours and user-defined targets.
 - Show opening dates, deadlines, countdown/readiness states, assumptions and official-verification needs.
@@ -104,4 +104,6 @@ Reservation Awareness Phase 2 can finalize only when:
 
 ## Exact next action
 
-Verify both current PR heads against their exact-head CI and the authoritative frontend preview evidence, then stop for independent review of CW-018. Do not merge, deploy, begin Phase 2C/2D or alter the obsolete Vercel project.
+`Start Reservation Awareness Phase 2C`
+
+Use this command only after the user separately authorizes the Phase 2C checkpoint. Do not begin Phase 2C implicitly, and do not begin Phase 2D or alter the obsolete Vercel project.

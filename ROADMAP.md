@@ -192,7 +192,7 @@ Output should remain understandable: keep, swap, wait or review, with reasons an
 
 ### 2. Reservation Awareness Phase 2 + 60-day planner
 
-Status: **Phase 2A complete and finalized; CW-018 Phase 2B overlapping-write correction published September 13, 2026 for renewed independent review. Frontend gates pass; PR #94 records the documentation head and its post-publication CI. No finalization is authorized.**
+Status: **Phase 2A and CW-018 Phase 2B complete, production-verified and finalized; Phase 2C not started.**
 
 Build largely together:
 
@@ -207,7 +207,7 @@ The [Phase 2 contract](docs/reservation-awareness-phase-2.md) and backend issue 
 
 Booking targets remain distinct from actual reservations, all target/reservation/itinerary changes remain user-controlled, and existing reservation/shared-plan payloads remain backward-compatible. Every calculated date must identify its rule, provenance, as-of/verification state and manual-override precedence. External email, text and push delivery remains reserved for the later Notifications phase.
 
-CW-016 remains finalized and production-verified. Phase 2A issue [#90](https://github.com/MileHighHoosier/castlewatch-2027/issues/90) and its [checkpoint](docs/reservation-awareness-phase-2a.md) record the completed additive booking-target contract and booking-window engine. Frontend PR [#57](https://github.com/MileHighHoosier/castlewatch-frontend/pull/57) and documentation PR [#91](https://github.com/MileHighHoosier/castlewatch-2027/pull/91) passed exact-head and post-merge CI, backend-first Railway/Vercel production rollout and read-only smoke verification. Phase 2B is bounded by issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93), frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58), documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94), and the [CW-018 checkpoint](docs/reservation-awareness-phase-2b.md). Corrected frontend head `06cf358ae762aa6963540f246435088531884b8c` serializes overlapping participating planner writes and explicit shared replacement via one Web Lock, retaining malformed/future-format write protection and unchanged Phase 2A formats/calculation. It passes 172 contracts, production build, rendered mobile smoke, 10 ordered two-tab action pairs and 3 malformed/future-storage interleavings; authoritative preview `dpl_Bj7ERvuRgvVamtosLH765x5QmqkJ` is Ready. Require current-head documentation CI evidence in PR #94 and renewed independent review. Before any separately authorized rollout, reload/close old nonparticipating tabs. No merge or production deployment is authorized.
+CW-016 and Phase 2A remain finalized and production-verified. Phase 2B issue [#93](https://github.com/MileHighHoosier/castlewatch-2027/issues/93), frontend PR [#58](https://github.com/MileHighHoosier/castlewatch-frontend/pull/58), documentation PR [#94](https://github.com/MileHighHoosier/castlewatch-2027/pull/94), and the [CW-018 checkpoint](docs/reservation-awareness-phase-2b.md) record the completed prioritized booking-window planner. The reviewed implementation preserves overlapping participating writes through one cooperative Web Lock, retains malformed/future-format protection and Phase 2A compatibility, and passed exact-head plus post-merge CI, backend-first Railway/Vercel rollout, rendered mobile/multi-tab checks and read-only production smoke. Phase 2C has not started and requires separate explicit Start authorization.
 
 ### 3. Prediction Phase 2
 
