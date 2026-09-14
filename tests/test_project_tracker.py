@@ -42,9 +42,9 @@ class ProjectTrackerTests(unittest.TestCase):
         handoff = self.tracker.split("## Vocabulary", 1)[0]
         self.assertIn("Current phase", handoff)
         self.assertIn("Current blocker", handoff)
-        self.assertIn("Reservation Awareness Phase 2C (CW-019) is started", handoff)
-        self.assertIn("Publication is authorized under issue [#96]", handoff)
-        self.assertIn("exact-head CI/Vercel evidence and independent review remain required", handoff)
+        self.assertIn("Reservation Awareness Phase 2C (CW-019) is published for review", handoff)
+        self.assertIn("published for review in frontend PR [#59]", handoff)
+        self.assertIn("Exact-head CI/Vercel evidence and independent review remain required", handoff)
         self.assertIn("Do not merge or deploy", handoff)
 
     def test_phase_2a_is_completed_after_cw016_finalization(self):

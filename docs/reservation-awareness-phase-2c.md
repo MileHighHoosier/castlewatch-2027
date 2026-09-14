@@ -1,8 +1,8 @@
 # Reservation Awareness Phase 2C checkpoint (CW-019)
 
-**Status:** Started September 13, 2026; implementation is complete locally and awaiting publication, exact-head CI/Vercel evidence and independent review. Phase 2D has not started.
+**Status:** Started September 13, 2026 and published for review September 14, 2026; exact-head CI/Vercel evidence and independent review are pending. Phase 2D has not started.
 
-**Tracker:** dedicated backend issue [#96](https://github.com/MileHighHoosier/castlewatch-2027/issues/96) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85). Publication of the existing local branches and review pull requests was separately authorized September 13, 2026.
+**Tracker:** dedicated backend issue [#96](https://github.com/MileHighHoosier/castlewatch-2027/issues/96) under parent issue [#85](https://github.com/MileHighHoosier/castlewatch-2027/issues/85), frontend PR [#59](https://github.com/MileHighHoosier/castlewatch-frontend/pull/59), and documentation PR [#97](https://github.com/MileHighHoosier/castlewatch-2027/pull/97). Publication of the existing branches and review pull requests was separately authorized September 13, 2026.
 
 ## Verified baseline
 
@@ -46,6 +46,7 @@ The planner does not create a reservation. A family member must deliberately cre
 - [ ] Rendered 390×844 lifecycle and multi-tab smoke pass in exact-head Node 22 CI. Local Chrome availability is not assumed.
 - [x] Backend tracker validation and unchanged backend contracts pass locally.
 - [x] Separate user authorization was received before creating issue #96, publishing branches or opening review pull requests.
+- [x] The dedicated issue, existing frontend branch and existing documentation branch were published as issue #96, frontend PR #59 and documentation PR #97 without merge or deployment.
 - [ ] Frontend and documentation exact-head CI and the authoritative `castlewatch-frontend` preview pass.
 - [ ] Independent post-publication review accepts the exact heads and all evidence.
 - [ ] Separate Finalize authorization is received before any merge or deployment.
@@ -80,12 +81,10 @@ The planner does not create a reservation. A family member must deliberately cre
 
 ## Publication and stop rules
 
-- Publish only the two existing CW-019 branches and open review pull requests under the received authorization; do not create replacement branches or PRs.
+- Continue only on the two published CW-019 branches and existing review PRs; do not create replacement branches or PRs.
 - Stop on any calculation/readiness, reservation/shared-sync, malformed-storage, cooperative-lock, family-key, build, mobile or tracker/backend regression.
 - Do not merge, deploy, mutate production/shared-plan data, begin Phase 2D or alter the obsolete Vercel project.
 
 ## Exact next action
 
-`I approve publishing both CW-019 branches to the configured GitHub repositories, creating the dedicated CW-019 tracking issue, and opening review pull requests. Do not merge or deploy.`
-
-After publication and exact-head checks, use an independent review before any Finalize command.
+`Perform an independent review of CW-019 Phase 2C at the exact heads of frontend PR #59 and backend documentation PR #97. Verify the Phase 2C contract and acceptance criteria, lifecycle truthfulness, reservation-link safety, Phase 2A/2B calculation/storage/shared-sync compatibility, regression coverage, documentation accuracy, exact-head CI, mobile smoke, and the authoritative castlewatch-frontend preview. State whether controlled finalization is safe and identify any blocker. Do not modify, merge, deploy, begin Phase 2D, alter protected data, or alter the obsolete Vercel project.`
